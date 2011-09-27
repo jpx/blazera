@@ -1,0 +1,4 @@
+Blazera is a 2D game engine written in C#.
+It uses SFML .NET binding and LuaInterface.
+
+In src/ folder you may find the library sources.

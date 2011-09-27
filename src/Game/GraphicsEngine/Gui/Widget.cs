@@ -38,10 +38,6 @@ namespace BlazeraLib
         }
     }
 
-    /*
-     * Passer BaseWidget en abstract et faire un GuiBaseWidget et un GameBaseWidget
-     * Les fonctions presentes en cet instant appartiennent au GuiBaseWidget
-     */
     public class EditorBaseWidget : BaseWidget
     {
         private List<WindowedWidget> Windows { get; set; }

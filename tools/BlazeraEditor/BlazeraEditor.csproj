@@ -1,0 +1,99 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{E9E777D5-051F-4F91-96DC-3DC7CD9C48E4}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>BlazeraEditor</RootNamespace>
+    <AssemblyName>BlazeraEditor</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="BlazeraLib">
+      <HintPath>..\..\lib\BlazeraLib.dll</HintPath>
+    </Reference>
+    <Reference Include="LuaInterface">
+      <HintPath>..\..\external\LuaInterface\LuaInterface.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="src\BlazeraEditor.cs" />
+    <Compile Include="src\GameEditor.cs" />
+    <Compile Include="src\GameEngine\GameEngine.cs" />
+    <Compile Include="src\GraphicsEngine\EditorGui\Action\ActionBox.cs" />
+    <Compile Include="src\GraphicsEngine\EditorGui\Action\TakeItemActionBox.cs" />
+    <Compile Include="src\GraphicsEngine\EditorGui\Action\WarpActionBox.cs" />
+    <Compile Include="src\GraphicsEngine\EditorGui\BoundingBoxCreator.cs" />
+    <Compile Include="src\GraphicsEngine\EditorGui\DisplayScreen.cs" />
+    <Compile Include="src\GraphicsEngine\EditorGui\EventCreator.cs" />
+    <Compile Include="src\GraphicsEngine\EditorGui\MapCreator.cs" />
+    <Compile Include="src\GraphicsEngine\EditorGui\MapHandler.cs" />
+    <Compile Include="src\GraphicsEngine\EditorGui\MapMan.cs" />
+    <Compile Include="src\GraphicsEngine\EditorGui\MapWidget.cs" />
+    <Compile Include="src\GraphicsEngine\EditorGui\MiscWidget.cs" />
+    <Compile Include="src\GraphicsEngine\EditorGui\ObjectCreator.cs" />
+    <Compile Include="src\GraphicsEngine\EditorGui\ObjectMan.cs" />
+    <Compile Include="src\GraphicsEngine\EditorGui\ObjectPencil.cs" />
+    <Compile Include="src\GraphicsEngine\EditorGui\PointCreator.cs" />
+    <Compile Include="src\GraphicsEngine\EditorGui\RessourceTextList.cs" />
+    <Compile Include="src\GraphicsEngine\EditorGui\SelectorTool.cs" />
+    <Compile Include="src\GraphicsEngine\EditorGui\TextureCreator.cs" />
+    <Compile Include="src\GraphicsEngine\EditorGui\TextureMan.cs" />
+    <Compile Include="src\GraphicsEngine\EditorGui\TextureRectDrawer.cs" />
+    <Compile Include="src\GraphicsEngine\EditorGui\TextureRemover.cs" />
+    <Compile Include="src\GraphicsEngine\EditorGui\TileContainer.cs" />
+    <Compile Include="src\GraphicsEngine\EditorGui\TileCreator.cs" />
+    <Compile Include="src\GraphicsEngine\EditorGui\TileMan.cs" />
+    <Compile Include="src\GraphicsEngine\EditorGui\TilePencil.cs" />
+    <Compile Include="src\GraphicsEngine\EditorGui\TileSelector.cs" />
+    <Compile Include="src\GraphicsEngine\EditorGui\TileSetCreator.cs" />
+    <Compile Include="src\GraphicsEngine\EditorGui\TileSetMan.cs" />
+    <Compile Include="src\GraphicsEngine\EditorGui\WarpPointCreator.cs" />
+    <Compile Include="src\GraphicsEngine\EditorGui\WarpPointWidget.cs" />
+    <Compile Include="src\GraphicsEngine\GameScreen.cs" />
+    <Compile Include="src\GraphicsEngine\GraphicsEngine.cs" />
+    <Compile Include="src\PlayerHdl.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

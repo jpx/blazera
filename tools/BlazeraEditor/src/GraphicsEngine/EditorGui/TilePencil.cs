@@ -1,0 +1,92 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using BlazeraLib;
+using SFML.Graphics;
+
+namespace BlazeraEditor
+{
+    public class TilePencil : Pencil
+    {
+        #region Singleton
+
+        private static TilePencil _instance;
+        public static TilePencil Instance
+        {
+            get
+            {
+                if (_instance == null)
+                    Instance = new TilePencil();
+
+                return _instance;
+            }
+            private set { _instance = value; }
+        }
+
+        #endregion
+
+        static readonly Texture ICON_TEXTURE = Create.Texture("Tile_TileSet11_22");
+
+        Tile CurrentTile;
+        UInt32 CurrentLayer;
+
+        private TilePencil() :
+            base(ICON_TEXTURE)
+        {
+            Name = "TilePencil";
+
+            LockValue = (UInt32)GameDatas.TILE_SIZE;
+        }
+
+        public void SetCurrentTile(Tile currentTile)
+        {
+            CurrentTile = currentTile;
+            SetCursorTexture(new Texture(CurrentTile.Texture));
+        }
+
+        public void SetCurrentLayer(UInt32 currentLayer)
+        {
+            CurrentLayer = currentLayer;
+        }
+
+        protected override void Empty()
+        {
+            base.Empty();
+
+            CurrentTile = null;
+        }
+
+        protected override Boolean CanPaint(Vector2 point)
+        {
+            if (CurrentTile == null)
+                return false;
+
+            return base.CanPaint(point);
+        }
+
+        protected override Boolean Paint(Vector2 point)
+        {
+            Int32 x = (Int32)point.X / GameDatas.TILE_SIZE;
+            Int32 y = (Int32)point.Y / GameDatas.TILE_SIZE;
+
+            switch (Mode)
+            {
+                case EMode.Normal:
+
+                    MapBox.Map.Ground.GetCell(x, y).SetTile(CurrentLayer, new Tile(CurrentTile));
+
+                    return true;
+
+                case EMode.Pot:
+
+                    MapBox.Map.Ground.FillWithTile(CurrentLayer, CurrentTile);
+
+                    return true;
+
+                default:
+                    return false;
+            }
+        }
+    }
+}

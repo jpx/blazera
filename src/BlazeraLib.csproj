@@ -1,0 +1,278 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{1B269DDD-AD05-410E-821A-230119F5583F}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>BlazeraLib</RootNamespace>
+    <AssemblyName>BlazeraLib</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\lib\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DocumentationFile>..\lib\BlazeraLib.xml</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="LuaInterface">
+      <HintPath>..\external\LuaInterface\LuaInterface.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Game\BaseObject.cs" />
+    <Compile Include="Game\BlazeraProgram\BlazeraProgram.cs" />
+    <Compile Include="Game\BlazeraProgram\Window.cs" />
+    <Compile Include="Game\Combat\BaseCombatant.cs" />
+    <Compile Include="Game\Combat\CellArea.cs" />
+    <Compile Include="Game\Combat\Combat.cs" />
+    <Compile Include="Game\Combat\CombatantAction.cs" />
+    <Compile Include="Game\Combat\CombatantQueue.cs" />
+    <Compile Include="Game\Combat\CombatantStatus.cs" />
+    <Compile Include="Game\Combat\CombatCell.cs" />
+    <Compile Include="Game\Combat\CombatCellSet.cs" />
+    <Compile Include="Game\Combat\CombatMap.cs" />
+    <Compile Include="Game\Combat\Spell\CombatSpell.cs" />
+    <Compile Include="Game\Combat\ICombatEntity.cs" />
+    <Compile Include="Game\Combat\Phase\ActionSelection.cs" />
+    <Compile Include="Game\Combat\Phase\SpellCellSelection.cs" />
+    <Compile Include="Game\Combat\Phase\ItemCellSelection.cs" />
+    <Compile Include="Game\Combat\Phase\Fury.cs" />
+    <Compile Include="Game\Combat\Phase\AttackCellSelection.cs" />
+    <Compile Include="Game\Combat\Phase\ExploreCellSelection.cs" />
+    <Compile Include="Game\Combat\Phase\MoveCellSelection.cs" />
+    <Compile Include="Game\Combat\Phase\Over.cs" />
+    <Compile Include="Game\Combat\Phase\Phase.cs" />
+    <Compile Include="Game\Combat\MonsterGroup.cs" />
+    <Compile Include="Game\Combat\Phase\Placement.cs" />
+    <Compile Include="Game\Combat\Phase\Starting.cs" />
+    <Compile Include="Game\Combat\Phase\TurnOver.cs" />
+    <Compile Include="Game\Combat\Phase\TurnPhase.cs" />
+    <Compile Include="Game\Combat\Phase\TurnStart.cs" />
+    <Compile Include="Game\Combat\PlayerCombatant.cs" />
+    <Compile Include="Game\Combat\Spell\RandomEffectAreaSpell.cs" />
+    <Compile Include="Game\Combat\Team.cs" />
+    <Compile Include="Game\GameEngine\Action\Condition\PossessesItemCondition.cs" />
+    <Compile Include="Game\GameEngine\Action\TalkAction.cs" />
+    <Compile Include="Game\GameEngine\Action\WarpAction.cs" />
+    <Compile Include="Game\GameEngine\Action\TakeItemAction.cs" />
+    <Compile Include="Game\GameEngine\GuidDB.cs" />
+    <Compile Include="Game\GraphicsEngine\BaseDrawable.cs" />
+    <Compile Include="Game\GraphicsEngine\Color.cs" />
+    <Compile Include="Game\GraphicsEngine\DrawableBaseObject.cs" />
+    <Compile Include="Game\GraphicsEngine\GameGui\Combat\CombatActionMenu.cs" />
+    <Compile Include="Game\GraphicsEngine\GameGui\Combat\CombatCursor.cs" />
+    <Compile Include="Game\GraphicsEngine\GameGui\Combat\InfoPanel\CombatantInfoPanelBox.cs" />
+    <Compile Include="Game\GraphicsEngine\GameGui\Combat\InfoPanel\CombatInfoPanel.cs" />
+    <Compile Include="Game\GraphicsEngine\GameGui\Combat\CombatMainMenu.cs" />
+    <Compile Include="Game\GraphicsEngine\GameGui\Combat\ExtendedMenu.cs" />
+    <Compile Include="Game\GraphicsEngine\GameGui\Combat\Menu.cs" />
+    <Compile Include="Game\GraphicsEngine\GameGui\Combat\SpellMenu.cs" />
+    <Compile Include="Game\GraphicsEngine\GameGui\Combat\StatItem.cs" />
+    <Compile Include="Game\GraphicsEngine\GameGui\IGameWidget.cs" />
+    <Compile Include="Game\GraphicsEngine\GameGui\InfoPanel.cs" />
+    <Compile Include="Game\GraphicsEngine\GameGui\InfoPanelBox.cs" />
+    <Compile Include="Game\GraphicsEngine\GameGui\Menu\ExtendedMenu.cs" />
+    <Compile Include="Game\GraphicsEngine\Gui\GridWidget.cs" />
+    <Compile Include="Game\GraphicsEngine\MapTextEffect.cs" />
+    <Compile Include="Game\GraphicsEngine\Shape\BaseDrawableShape.cs" />
+    <Compile Include="Game\GraphicsEngine\Shape\CellShape.cs" />
+    <Compile Include="Game\GraphicsEngine\Shape\CombatCursorShape.cs" />
+    <Compile Include="Game\GraphicsEngine\Shape\GridShape.cs" />
+    <Compile Include="Game\GraphicsEngine\Texture\ComposedTexture.cs" />
+    <Compile Include="Game\GraphicsEngine\GameGui\Menu\Menu.cs" />
+    <Compile Include="Game\GraphicsEngine\GameGui\Menu\MenuItem.cs" />
+    <Compile Include="Game\GraphicsEngine\GameGui\GameWidget.cs" />
+    <Compile Include="Game\GraphicsEngine\Shape\RoundedRectangleShape.cs" />
+    <Compile Include="Game\GraphicsEngine\Shape\SpeechBubbleShape.cs" />
+    <Compile Include="Game\GraphicsEngine\GameGui\Speech\SpeechBubble.cs" />
+    <Compile Include="Game\Item\ItemQuantity.cs" />
+    <Compile Include="Game\Map\AutoTile.cs" />
+    <Compile Include="Game\Map\DynamicObjectDictionary.cs" />
+    <Compile Include="Game\Map\AnimationMapEffect.cs" />
+    <Compile Include="Game\Map\MapEffect.cs" />
+    <Compile Include="Game\Map\MapEffectManager.cs" />
+    <Compile Include="Game\Map\WorldElement\Chest.cs" />
+    <Compile Include="Game\Map\WorldElement\DisplaceableElement.cs" />
+    <Compile Include="Game\Map\WorldElement\Door.cs" />
+    <Compile Include="Game\Map\DynamicWorldObject.cs" />
+    <Compile Include="Game\Map\WorldElement\DynamicWorldElement.cs" />
+    <Compile Include="Game\Map\WorldElement\Element.cs" />
+    <Compile Include="Game\Map\WorldElement\GroundElement.cs" />
+    <Compile Include="Game\Map\WorldElement\House.cs" />
+    <Compile Include="Game\Map\WorldElement\Platform.cs" />
+    <Compile Include="Game\Map\WorldElement\Teleporter.cs" />
+    <Compile Include="Game\Map\WorldElement\Wall.cs" />
+    <Compile Include="Game\Map\WorldElement\WallElement.cs" />
+    <Compile Include="Game\Map\WorldElement\WorldElement.cs" />
+    <Compile Include="Game\GameEngine\Action\Action.cs" />
+    <Compile Include="Game\GameEngine\Create.cs" />
+    <Compile Include="Game\GameEngine\GameDatas.cs" />
+    <Compile Include="Game\GameEngine\Inputs.cs" />
+    <Compile Include="Game\GameEngine\IScriptable.cs" />
+    <Compile Include="Game\GameEngine\ScriptEngine.cs" />
+    <Compile Include="Game\GameEngine\ScriptManager.cs" />
+    <Compile Include="Game\GameEngine\ScriptWriter.cs" />
+    <Compile Include="Game\GraphicsEngine\Drawer.cs" />
+    <Compile Include="Game\GraphicsEngine\Gui\AutoSizeBox.cs" />
+    <Compile Include="Game\GraphicsEngine\Border.cs" />
+    <Compile Include="Game\GraphicsEngine\Gui\BlzEvent.cs" />
+    <Compile Include="Game\GraphicsEngine\Gui\Box.cs" />
+    <Compile Include="Game\GraphicsEngine\Gui\BoxBackground.cs" />
+    <Compile Include="Game\GraphicsEngine\Gui\Button.cs" />
+    <Compile Include="Game\GraphicsEngine\Gui\CheckBox.cs" />
+    <Compile Include="Game\GraphicsEngine\Gui\ConfigurableBox.cs" />
+    <Compile Include="Game\GraphicsEngine\Gui\Container.cs" />
+    <Compile Include="Game\GraphicsEngine\Gui\DialogBox.cs" />
+    <Compile Include="Game\GraphicsEngine\Gui\DownList.cs" />
+    <Compile Include="Game\GraphicsEngine\Gui\ExtendedBox.cs" />
+    <Compile Include="Game\GraphicsEngine\Gui\Label.cs" />
+    <Compile Include="Game\GraphicsEngine\Gui\LabeledWidget.cs" />
+    <Compile Include="Game\GraphicsEngine\Gui\MapBox.cs" />
+    <Compile Include="Game\GraphicsEngine\Gui\Pencil.cs" />
+    <Compile Include="Game\GraphicsEngine\Gui\RadioButton.cs" />
+    <Compile Include="Game\GraphicsEngine\Gui\ScrollableWidget.cs" />
+    <Compile Include="Game\GraphicsEngine\Gui\ScrollableWindowedWidget.cs" />
+    <Compile Include="Game\GraphicsEngine\Gui\ScrollBar.cs" />
+    <Compile Include="Game\GraphicsEngine\Gui\Selector.cs" />
+    <Compile Include="Game\GraphicsEngine\Gui\TextBox.cs" />
+    <Compile Include="Game\GraphicsEngine\Gui\PictureBox.cs" />
+    <Compile Include="Game\GraphicsEngine\Gui\TextList.cs" />
+    <Compile Include="Game\GraphicsEngine\Gui\Tool.cs" />
+    <Compile Include="Game\GraphicsEngine\Gui\UpDownBox.cs" />
+    <Compile Include="Game\GraphicsEngine\Gui\Widget.cs" />
+    <Compile Include="Game\GraphicsEngine\Gui\WindowBackground.cs" />
+    <Compile Include="Game\GraphicsEngine\Gui\WindowedWidget.cs" />
+    <Compile Include="Game\GraphicsEngine\Gui\WindowEvents.cs" />
+    <Compile Include="Game\GraphicsEngine\ParticleEngine\Particle.cs" />
+    <Compile Include="Game\GraphicsEngine\ParticleEngine\ParticleEffect.cs" />
+    <Compile Include="Game\GraphicsEngine\Screen.cs" />
+    <Compile Include="Game\Item\ItemPrice.cs" />
+    <Compile Include="Game\Item\Money.cs" />
+    <Compile Include="Game\Map\Cell.cs" />
+    <Compile Include="Game\Map\WorldElement\WorldItem.cs" />
+    <Compile Include="Game\Map\TileSet.cs" />
+    <Compile Include="Game\Net\ConnectionFailedException.cs" />
+    <Compile Include="Game\Net\Login.cs" />
+    <Compile Include="Game\Net\Packet\PacketHandler.cs" />
+    <Compile Include="Game\Net\Packet\PacketNotSentException.cs" />
+    <Compile Include="Game\Net\Packet\Packet.cs" />
+    <Compile Include="Game\Net\Packet\WorldObject.cs" />
+    <Compile Include="Game\Pathfinding\Node.cs" />
+    <Compile Include="Game\Pathfinding\Pathfinding.cs" />
+    <Compile Include="Game\Personnage\StatisticAmount.cs" />
+    <Compile Include="Game\Personnage\StatusEffect.cs" />
+    <Compile Include="Game\Personnage\Speech\SpeechHandler.cs" />
+    <Compile Include="Game\Personnage\Speech\SpeechManager.cs" />
+    <Compile Include="Game\Personnage\Speech\SpeechMessage.cs" />
+    <Compile Include="Game\Personnage\Statistic.cs" />
+    <Compile Include="Game\Personnage\Status.cs" />
+    <Compile Include="Game\PhysicsEngine\CircleBoundingBox.cs" />
+    <Compile Include="Game\GameEngine\ObjectEvent.cs" />
+    <Compile Include="Game\PhysicsEngine\RectangleBoundingBox.cs" />
+    <Compile Include="Game\PhysicsEngine\TEBoundingBox.cs" />
+    <Compile Include="Game\SFML\Audio\Listener.cs" />
+    <Compile Include="Game\SFML\Audio\Music.cs" />
+    <Compile Include="Game\SFML\Audio\Sound.cs" />
+    <Compile Include="Game\SFML\Audio\SoundBuffer.cs" />
+    <Compile Include="Game\SFML\Audio\SoundBufferRecorder.cs" />
+    <Compile Include="Game\SFML\Audio\SoundRecorder.cs" />
+    <Compile Include="Game\SFML\Audio\SoundStream.cs" />
+    <Compile Include="Game\SFML\Audio\Vector3.cs" />
+    <Compile Include="Game\SFML\Graphics\Color.cs" />
+    <Compile Include="Game\SFML\Graphics\Context.cs" />
+    <Compile Include="Game\SFML\Graphics\Drawable.cs" />
+    <Compile Include="Game\SFML\Graphics\Font.cs" />
+    <Compile Include="Game\SFML\Graphics\Image.cs" />
+    <Compile Include="Game\SFML\Graphics\Rect.cs" />
+    <Compile Include="Game\SFML\Graphics\RenderImage.cs" />
+    <Compile Include="Game\SFML\Graphics\RenderTarget.cs" />
+    <Compile Include="Game\SFML\Graphics\RenderWindow.cs" />
+    <Compile Include="Game\SFML\Graphics\Shader.cs" />
+    <Compile Include="Game\SFML\Graphics\Shape.cs" />
+    <Compile Include="Game\SFML\Graphics\Sprite.cs" />
+    <Compile Include="Game\SFML\Graphics\Text.cs" />
+    <Compile Include="Game\SFML\Graphics\Vector2.cs" />
+    <Compile Include="Game\SFML\Graphics\View.cs" />
+    <Compile Include="Game\SFML\Window\ContextSettings.cs" />
+    <Compile Include="Game\SFML\Window\Event.cs" />
+    <Compile Include="Game\SFML\Window\EventArgs.cs" />
+    <Compile Include="Game\SFML\Window\Input.cs" />
+    <Compile Include="Game\SFML\Window\LoadingFailedException.cs" />
+    <Compile Include="Game\SFML\Window\ObjectBase.cs" />
+    <Compile Include="Game\SFML\Window\VideoMode.cs" />
+    <Compile Include="Game\SFML\Window\Window.cs" />
+    <Compile Include="Game\Skill\SpellPanoply.cs" />
+    <Compile Include="Game\Timer\GameTime.cs" />
+    <Compile Include="Game\GraphicsEngine\Texture\Animation.cs" />
+    <Compile Include="Game\Personnage\Boss.cs" />
+    <Compile Include="Game\Item\Equipment.cs" />
+    <Compile Include="Game\PhysicsEngine\BBoundingBox.cs" />
+    <Compile Include="Game\PhysicsEngine\BoundingBox.cs" />
+    <Compile Include="Game\PhysicsEngine\EBoundingBox.cs" />
+    <Compile Include="Game\Map\Ground.cs" />
+    <Compile Include="Game\GraphicsEngine\IDrawable.cs" />
+    <Compile Include="Game\GraphicsEngine\ImageManager.cs" />
+    <Compile Include="Game\Item\Inventory.cs" />
+    <Compile Include="Game\Item\Item.cs" />
+    <Compile Include="Game\Utils\FileManager.cs" />
+    <Compile Include="Game\Utils\FileReader.cs" />
+    <Compile Include="Game\Utils\GameScoring.cs" />
+    <Compile Include="Game\Utils\IUpdateable.cs" />
+    <Compile Include="Game\Utils\Log.cs" />
+    <Compile Include="Game\Map\Map.cs" />
+    <Compile Include="Game\Personnage\Monster.cs" />
+    <Compile Include="Game\Personnage\NPC.cs" />
+    <Compile Include="Game\Personnage\Personnage.cs" />
+    <Compile Include="Game\Personnage\Player\Player.cs" />
+    <Compile Include="Game\Personnage\Player\PlayerClass.cs" />
+    <Compile Include="Game\Timer\PTimer.cs" />
+    <Compile Include="Game\Skill\Spell.cs" />
+    <Compile Include="Game\Map\Tile.cs" />
+    <Compile Include="Game\Utils\RandomHelper.cs" />
+    <Compile Include="Game\Utils\SoundManager.cs" />
+    <Compile Include="Game\GraphicsEngine\Texture\Texture.cs" />
+    <Compile Include="Game\Timer\Timer.cs" />
+    <Compile Include="Game\Utils\Vector2I.cs" />
+    <Compile Include="Game\Map\WorldObject.cs" />
+    <Compile Include="Game\World.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

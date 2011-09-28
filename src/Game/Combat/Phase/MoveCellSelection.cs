@@ -50,7 +50,14 @@
 
             CurrentCombatant.OnMoveEnding += new CombatantMoveEventHandler(CurrentCombatant_OnMoveEnding);
 
-            foreach (Vector2I cellPosition in Combat.Map.GetPath(CurrentCellPosition, e.CellPosition))
+            System.Collections.Generic.List<Vector2I> path = Combat.Map.GetPath(CurrentCellPosition, e.CellPosition);
+            if (path == null)
+            {
+                Combat.ChangeState(BlazeraLib.Combat.EState.ActionSelection);
+                return;
+            }
+
+            foreach (Vector2I cellPosition in path)
                 CurrentCombatant.AddMovePoint(cellPosition);
 
             Combat.Cursor.Close();

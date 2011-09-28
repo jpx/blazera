@@ -12,17 +12,18 @@ namespace BlazeraLib.Game.Pathfinding
 
         #region Static members
 
+        const double STANDARDIZATION_FACTOR = 1D;
         static Cost Distance(Node node, Node goalNode)
         {
             return new Cost(
-                System.Math.Abs(node.Position.X - goalNode.Position.X) +
-                System.Math.Abs(node.Position.Y - goalNode.Position.Y));
+                (int)(System.Math.Abs(node.Position.X - goalNode.Position.X) * STANDARDIZATION_FACTOR) +
+                (int)(System.Math.Abs(node.Position.Y - goalNode.Position.Y) * STANDARDIZATION_FACTOR));
         }
 
         #endregion
 
         Node[,] Nodes;
-        List<Node> ProcessedNodes;
+        Queue<Node> ProcessedNodes;
         Node StartNode;
         Node GoalNode;
 
@@ -35,7 +36,7 @@ namespace BlazeraLib.Game.Pathfinding
 
         public Pathfinding()
         {
-            ProcessedNodes = new List<Node>();
+            ProcessedNodes = new Queue<Node>();
         }
 
         public void InitNodeSet(CombatMap map)
@@ -90,8 +91,7 @@ namespace BlazeraLib.Game.Pathfinding
 
             while (ProcessedNodes.Count > 0)
             {
-                Node currentNode = ProcessedNodes[0];
-                ProcessedNodes.Remove(currentNode);
+                Node currentNode = ProcessedNodes.Dequeue();
 
                 if (currentNode.Position == goalNode)
                     return GetPath();
@@ -133,6 +133,13 @@ namespace BlazeraLib.Game.Pathfinding
 
             addedNode.Visit();
 
+            addedNode.SetParent(parent);
+
+            ProcessedNodes.Enqueue(addedNode);
+
+            return;
+
+#if false
             if (ProcessedNodes.Count >= SORT_LIMIT_NODE_COUNT)
                 ProcessedNodes.Sort(new Node.Comparer());
 
@@ -148,6 +155,7 @@ namespace BlazeraLib.Game.Pathfinding
             }
 
             ProcessedNodes.Add(addedNode);
+#endif
         }
 
         List<Vector2I> GetPath()

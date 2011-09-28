@@ -38,17 +38,13 @@ namespace BlazeraEditor
         {
             //this.FPS.Update(dt);
 
-            /**
-             * window process
-             */
-            this.Window.DispatchEvents(); // sends the events
-            this.Window.Clear(); // clear the window
+            this.Window.DispatchEvents();
+            this.Window.Clear();
             
-            GameScreen.Run(dt); // run the current screen
+            GameScreen.Run(dt);
 
-            this.Window.Display(); // display the window
+            this.Window.Display();
 
-            // if closed
             this.IsRunning = this.Window.IsOpened();
             return this.IsRunning;
         }

@@ -80,7 +80,7 @@ namespace Blazera
             float moveX = 0.0f;
             float moveY = 0.0f;
 
-            Vector2 p = Map.Combat.Cursor.Position;
+            Vector2 p = Map.Combat.ViewFollowingTarget.Position;
             float velocity = 200F - CombatCursor.TRANSITION_VELOCITY;
 
             if (Math.Abs(p.X - GameView.Center.X) > VIEW_MOVE_TRIGGER_LIMIT)

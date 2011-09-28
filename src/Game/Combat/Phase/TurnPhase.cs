@@ -22,6 +22,7 @@
         public override void Start(StartInfo startInfo = null)
         {
             Combat.Cursor.SetCellPosition(CurrentCombatant.CellPosition);
+            Combat.AttachViewToCursor();
         }
 
         protected void Log(string message)

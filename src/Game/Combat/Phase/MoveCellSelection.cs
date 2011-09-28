@@ -21,6 +21,7 @@
             Log("Move cell selection...");
 
             Combat.MainMenu.Close();
+            Combat.InfoPanel.Close();
 
             Combat.Cursor.Open();
 
@@ -60,6 +61,8 @@
             foreach (Vector2I cellPosition in path)
                 CurrentCombatant.AddMovePoint(cellPosition);
 
+            Combat.AttachViewToCurrentCombatant();
+
             Combat.Cursor.Close();
             End();
         }
@@ -79,7 +82,8 @@
             Combat.Cursor.OnValidation -= new CombatCursorEventHandler(Cursor_OnValidation);
             Combat.Cursor.OnCancellation -= new CombatCursorEventHandler(Cursor_OnCancellation);
 
-            Combat.ClearCellColorEffect();
+            Combat.RemoveCellColorEffect(new CellArea(CellAreaType.Circle, 1, (int)CurrentCombatant.Status[BaseCaracteristic.Mp]), CurrentCombatant.CellPosition, CellSelectionType.Move);
+           // Combat.ClearCellColorEffect();
         }
     }
 }

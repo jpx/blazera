@@ -72,6 +72,8 @@ namespace BlazeraLib
 
         public CombatInfoPanel InfoPanel { get; private set; }
 
+        public IDrawable ViewFollowingTarget { get; private set; }
+
         #endregion
 
         public CombatMap Map { get; private set; }
@@ -129,6 +131,7 @@ namespace BlazeraLib
             ActionMenu.AttachSpellMenu(SpellMenu);
 
             Cursor = new CombatCursor(this);
+            AttachViewToCursor();
 
             InfoPanel = new CombatInfoPanel(this);
             InfoPanel.AddBox(new CombatantInfoPanelBox());
@@ -279,6 +282,7 @@ namespace BlazeraLib
             MainMenu.Reset();
             Cursor.Open();
             Cursor.Disable();
+            InfoPanel.Open();
         }
 
         public void DesactivateMainMenu()
@@ -298,6 +302,16 @@ namespace BlazeraLib
                     cells.Add(GetCell(cellPosition));
 
             return cells;
+        }
+
+        public void AttachViewToCursor()
+        {
+            ViewFollowingTarget = Cursor;
+        }
+
+        public void AttachViewToCurrentCombatant()
+        {
+            ViewFollowingTarget = CurrentCombatant;
         }
     }
 }

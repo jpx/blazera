@@ -832,7 +832,7 @@ namespace BlazeraLib
         }
 
         private Vector2 _position;
-        public virtual Vector2 Position
+        public override Vector2 Position
         {
             get { return _position; }
             set
@@ -850,7 +850,7 @@ namespace BlazeraLib
         }
 
         private Vector2 _dimension;
-        public virtual Vector2 Dimension
+        public override Vector2 Dimension
         {
             get
             {
@@ -920,30 +920,6 @@ namespace BlazeraLib
             return new Vector2(0F, 0F);
         }
 
-        public float Left
-        {
-            get { return this.Position.X; }
-            set { this.Position = new Vector2(value, this.Position.Y); }
-        }
-
-        public float Top
-        {
-            get { return this.Position.Y; }
-            set { this.Position = new Vector2(this.Position.X, value); }
-        }
-
-        public float Right
-        {
-            get { return this.Position.X + this.Dimension.X; }
-            set { this.Position = new Vector2(value - this.Dimension.X, this.Position.Y); }
-        }
-
-        public float Bottom
-        {
-            get { return this.Position.Y + this.Dimension.Y; }
-            set { this.Position = new Vector2(this.Position.X, value - this.Dimension.Y); }
-        }
-
         public float BackgroundRight
         {
             get { return this.Position.X + this.BackgroundDimension.X; }
@@ -954,18 +930,6 @@ namespace BlazeraLib
         {
             get { return this.Position.Y + this.BackgroundDimension.Y; }
             set { this.Position = new Vector2(this.Position.X, value - this.BackgroundDimension.Y); }
-        }
-
-        public Vector2 Center
-        {
-            get { return Position + this.Halfsize; }
-            set { this.Position = value - this.Halfsize; }
-        }
-
-        public Vector2 Halfsize
-        {
-            get { return this.Dimension / 2F; }
-            set { this.Dimension = value * 2F; }
         }
 
         public Vector2 BackgroundHalfsize
@@ -1129,7 +1093,7 @@ namespace BlazeraLib
         }
 
         private Color _color;
-        public virtual Color Color
+        public override Color Color
         {
             get { return _color; }
             set

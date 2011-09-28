@@ -24,6 +24,7 @@ namespace BlazeraLib.Game.Pathfinding
 
         Node[,] Nodes;
         Queue<Node> ProcessedNodes;
+        List<Node> LProcessedNodes;
         Node StartNode;
         Node GoalNode;
 
@@ -37,6 +38,7 @@ namespace BlazeraLib.Game.Pathfinding
         public Pathfinding()
         {
             ProcessedNodes = new Queue<Node>();
+            LProcessedNodes = new List<Node>();
         }
 
         public void InitNodeSet(CombatMap map)
@@ -62,6 +64,7 @@ namespace BlazeraLib.Game.Pathfinding
             }
         }
 
+        // only if we use heuristics
         void PrecomputeCosts()
         {
             for (int y = 0; y < Height; ++y)
@@ -73,9 +76,9 @@ namespace BlazeraLib.Game.Pathfinding
         {
             ProcessedNodes.Clear();
 
-            for (int y = 0; y < Height; ++y)
-                for (int x = 0; x < Width; ++x)
-                    GetNode(x, y).Reset();
+            foreach (Node node in LProcessedNodes)
+                node.Reset();
+            LProcessedNodes.Clear();
         }
 
         public List<Vector2I> FindPath(Vector2I startNode, Vector2I goalNode)
@@ -85,8 +88,6 @@ namespace BlazeraLib.Game.Pathfinding
             StartNode = GetNode(startNode.X, startNode.Y);
             GoalNode = GetNode(goalNode.X, goalNode.Y);
 
-            PrecomputeCosts();
-
             AddNode(null, StartNode.Position.X, StartNode.Position.Y);
 
             while (ProcessedNodes.Count > 0)
@@ -95,8 +96,6 @@ namespace BlazeraLib.Game.Pathfinding
 
                 if (currentNode.Position == goalNode)
                     return GetPath();
-
-                currentNode.Visit();
 
                 AddNode(currentNode, currentNode.Position.X + 1, currentNode.Position.Y);
                 AddNode(currentNode, currentNode.Position.X - 1, currentNode.Position.Y);
@@ -121,7 +120,6 @@ namespace BlazeraLib.Game.Pathfinding
             Nodes[y, x] = node;
         }
 
-        const int SORT_LIMIT_NODE_COUNT = 25;
         void AddNode(Node parent, int x, int y)
         {
             Node addedNode = GetNode(x, y);
@@ -136,26 +134,9 @@ namespace BlazeraLib.Game.Pathfinding
             addedNode.SetParent(parent);
 
             ProcessedNodes.Enqueue(addedNode);
+            LProcessedNodes.Add(addedNode);
 
             return;
-
-#if false
-            if (ProcessedNodes.Count >= SORT_LIMIT_NODE_COUNT)
-                ProcessedNodes.Sort(new Node.Comparer());
-
-            addedNode.SetParent(parent);
-
-            for (int count = 0; count < ProcessedNodes.Count; ++count)
-            {
-                if (addedNode.Cost.Value > ProcessedNodes[count].Cost.Value)
-                    continue;
-
-                ProcessedNodes.Insert(count, addedNode);
-                return;
-            }
-
-            ProcessedNodes.Add(addedNode);
-#endif
         }
 
         List<Vector2I> GetPath()

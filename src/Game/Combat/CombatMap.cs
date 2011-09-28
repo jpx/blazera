@@ -90,7 +90,7 @@ namespace BlazeraLib
                 sp.Name = "LightningTest " + i;
                 p2.SpellPanoply.AddSpell(sp);
             }
-            p2.Move(new Vector2I(10, 13));
+            p2.Move(new Vector2I(8, 10));
             t1.AddCombatant(p2);
 
             MapEffectManager.Instance.AddEffect(new MapTextEffect("2044", Color.Blue), new Vector2(200, 200));

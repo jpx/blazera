@@ -369,11 +369,6 @@ namespace BlazeraLib
                         break;
                 }
 
-                if (drawable is AnimationMapEffect)
-                {
-
-                }
-
                 drawables.Insert(count, drawable);
             }
         }

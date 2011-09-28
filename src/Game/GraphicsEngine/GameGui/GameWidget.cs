@@ -12,7 +12,7 @@ namespace BlazeraLib
 
         public enum ELocation
         {
-            Desactivate,
+            Desactivated,
             TopLeft,
             TopRight,
             BottomLeft,
@@ -27,7 +27,7 @@ namespace BlazeraLib
 
         #region Constants
 
-        const ELocation DEFAULT_LOCATION = ELocation.Desactivate;
+        const ELocation DEFAULT_LOCATION = ELocation.Desactivated;
 
         #endregion
 
@@ -93,7 +93,7 @@ namespace BlazeraLib
 
             switch (Location)
             {
-                case ELocation.Desactivate:
+                case ELocation.Desactivated:
                     return;
 
                 case ELocation.TopLeft:
@@ -118,22 +118,22 @@ namespace BlazeraLib
 
                 case ELocation.MidLeft:
                     Left = GetRoot().Left;
-                    Center = new Vector2(Center.X, GetRoot().Center.Y);
+                    BackgroundCenter = new Vector2(BackgroundCenter.X, GetRoot().BackgroundCenter.Y);
                     break;
 
                 case ELocation.MidTop:
                     Top = GetRoot().Top;
-                    Center = new Vector2(GetRoot().Center.X, Center.Y);
+                    BackgroundCenter = new Vector2(GetRoot().BackgroundCenter.X, BackgroundCenter.Y);
                     break;
 
                 case ELocation.MidRight:
                     BackgroundRight = GetRoot().BackgroundRight;
-                    Center = new Vector2(Center.X, GetRoot().Center.Y);
+                    BackgroundCenter = new Vector2(BackgroundCenter.X, GetRoot().BackgroundCenter.Y);
                     break;
 
                 case ELocation.MidBottom:
                     BackgroundBottom = GetRoot().BackgroundBottom;
-                    Center = new Vector2(GetRoot().Center.X, Center.Y);
+                    BackgroundCenter = new Vector2(GetRoot().BackgroundCenter.X, BackgroundCenter.Y);
                     break;
             }
         }

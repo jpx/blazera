@@ -12,15 +12,22 @@ namespace BlazeraLib
     {
         #region Constants
 
-        protected const float CURSOR_VELOCITY = 100F;
-        protected const float DEFAULT_MARGINS = 20F;
+        protected const float CURSOR_VELOCITY                       = 100F;
+        protected const float DEFAULT_MARGINS                       = 20F;
 
-        protected const HAlignment DEFAULT_ITEM_HALIGNMENT = HAlignment.Center;
+        protected const HAlignment DEFAULT_ITEM_HALIGNMENT          = HAlignment.Center;
 
-        protected const Alignment DEFAULT_ALIGNMENT = Alignment.Vertical;
+        protected const Alignment DEFAULT_ALIGNMENT                 = Alignment.Vertical;
 
-        const bool SWITCHING_RELASED_MODE = false;
-        const double SWITCHING_DEFAULT_DELAY = .1D;
+        const bool SWITCHING_RELASED_MODE                           = false;
+        const double SWITCHING_DEFAULT_DELAY                        = .1D;
+
+        const InputType DEFAULT_VERTICAL_MENU_DOWN_INPUT_TYPE       = InputType.Down;
+        const InputType DEFAULT_VERTICAL_MENU_UP_INPUT_TYPE         = InputType.Up;
+        const InputType DEFAULT_HORIZONTAL_MENU_RIGHT_INPUT_TYPE    = InputType.Right;
+        const InputType DEFAULT_HORIZONTAL_MENU_LEFT_INPUT_TYPE     = InputType.Left;
+        const InputType DEFAULT_VALIDATION_INPUT_TYPE               = InputType.Action;
+        const InputType DEFAULT_CANCELLATION_INPUT_TYPE             = InputType.Back;
 
         #endregion
 
@@ -140,13 +147,13 @@ namespace BlazeraLib
 
                     if (Alignment == BlazeraLib.Alignment.Vertical)
                     {
-                        if (Inputs.IsGameInput(InputType.Down, evt, SWITCHING_RELASED_MODE, SWITCHING_DEFAULT_DELAY))
+                        if (Inputs.IsGameInput(DEFAULT_VERTICAL_MENU_DOWN_INPUT_TYPE, evt, SWITCHING_RELASED_MODE, SWITCHING_DEFAULT_DELAY))
                         {
                             Down();
                             return true;
                         }
 
-                        if (Inputs.IsGameInput(InputType.Up, evt, SWITCHING_RELASED_MODE, SWITCHING_DEFAULT_DELAY))
+                        if (Inputs.IsGameInput(DEFAULT_VERTICAL_MENU_UP_INPUT_TYPE, evt, SWITCHING_RELASED_MODE, SWITCHING_DEFAULT_DELAY))
                         {
                             Up();
                             return true;
@@ -154,26 +161,26 @@ namespace BlazeraLib
                     }
                     else
                     {
-                        if (Inputs.IsGameInput(InputType.Right, evt, SWITCHING_RELASED_MODE, SWITCHING_DEFAULT_DELAY))
+                        if (Inputs.IsGameInput(DEFAULT_HORIZONTAL_MENU_RIGHT_INPUT_TYPE, evt, SWITCHING_RELASED_MODE, SWITCHING_DEFAULT_DELAY))
                         {
                             Down();
                             return true;
                         }
 
-                        if (Inputs.IsGameInput(InputType.Left, evt, SWITCHING_RELASED_MODE, SWITCHING_DEFAULT_DELAY))
+                        if (Inputs.IsGameInput(DEFAULT_HORIZONTAL_MENU_LEFT_INPUT_TYPE, evt, SWITCHING_RELASED_MODE, SWITCHING_DEFAULT_DELAY))
                         {
                             Up();
                             return true;
                         }
                     }
 
-                    if (Inputs.IsGameInput(InputType.Action, evt))
+                    if (Inputs.IsGameInput(DEFAULT_VALIDATION_INPUT_TYPE, evt))
                     {
                         GetCurrentItem().CallValidated();
                         return true;
                     }
 
-                    if (Inputs.IsGameInput(InputType.Back, evt) && Closable)
+                    if (Inputs.IsGameInput(DEFAULT_CANCELLATION_INPUT_TYPE, evt) && Closable)
                     {
                         Close();
                         return true;

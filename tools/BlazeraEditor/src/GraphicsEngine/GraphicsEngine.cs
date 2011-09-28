@@ -40,8 +40,9 @@ namespace BlazeraEditor
 
             this.Window.DispatchEvents();
             this.Window.Clear();
-            
-            GameScreen.Run(dt);
+
+            Time trueDt = new Time(Window.GetFrameTime());
+            GameScreen.Run(trueDt);
 
             this.Window.Display();
 

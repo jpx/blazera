@@ -938,6 +938,12 @@ namespace BlazeraLib
             set { this.BackgroundDimension = value * 2F; }
         }
 
+        public Vector2 BackgroundCenter
+        {
+            get { return Position + BackgroundHalfsize; }
+            set { Position = value - BackgroundHalfsize; }
+        }
+
         protected Boolean Contains(float x, float y, float offset = 0F)
         {
             if (offset >= this.Halfsize.X ||

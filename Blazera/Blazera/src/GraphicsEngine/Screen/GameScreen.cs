@@ -10,15 +10,11 @@ namespace Blazera
 {
     public class GameScreen : Screen
     {
-        Menu MainMenu = new Menu(Alignment.Horizontal);
+        Menu MainMenu = new Menu(Alignment.Horizontal, 15F, 15F);
         MenuItem StatutItem = new MenuItem("Status");
         MenuItem OptionItem = new MenuItem("Option");
         MenuItem QuitItem = new MenuItem("Quit");
         MenuItem CombatTestItem = new MenuItem("[test]Combat");
-
-        Menu StatsMenuTest = new Menu();
-        MenuItem SItem1 = new MenuItem("Hp");
-        MenuItem SItem2 = new MenuItem("Mp");
 
         public GameScreen(RenderWindow window) :
             base(window)
@@ -48,6 +44,7 @@ namespace Blazera
 
             MainMenu.Opened += new OpenEventHandler(MainMenu_Opened);
             MainMenu.Closed += new CloseEventHandler(MainMenu_Closed);
+            MainMenu.SetLocation(GameWidget.ELocation.MidTop);
 
             MainMenu.AddItem(StatutItem);
             MainMenu.AddItem(OptionItem);
@@ -56,12 +53,6 @@ namespace Blazera
             CombatTestItem.Validated += new ValidationEventHandler(CombatTestItem_Validated);
             MainMenu.AddItem(CombatTestItem);
             MainMenu.Close();
-
-            Gui.AddGameWidget(StatsMenuTest);
-            StatutItem.AttachMenu(StatsMenuTest);
-            StatsMenuTest.AddItem(SItem1);
-            StatsMenuTest.AddItem(SItem2);
-            StatsMenuTest.Close();
         }
 
         void CombatTestItem_Validated(MenuItem sender, ValidationEventArgs e)
@@ -102,7 +93,7 @@ namespace Blazera
 
             NextScreen = base.Run(dt);
 
-            NextScreen = ScreenType.BattleScreen;
+          //  NextScreen = ScreenType.BattleScreen;
 
             return NextScreen;
         }
@@ -140,7 +131,8 @@ namespace Blazera
                     if (evt.Key.Code == KeyCode.Escape)
                         Window.Close();
 
-                    if (Inputs.IsGameInput(InputType.Action, evt, true))
+                    if (Inputs.IsGameInput(InputType.Action2, evt, true) &&
+                        PlayerHdl.Vlad.State == State.Inactive)
                     {
                         MainMenu.Open(new OpeningInfo(true));
                         return true;

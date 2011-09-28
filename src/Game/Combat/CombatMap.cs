@@ -161,6 +161,7 @@ namespace BlazeraLib
 
             double alphaValue = AlphaMode ? ALPHA_MODE_VALUE : 100D;
             foreach (WorldObject wObj in Objects)
+                if (wObj.Skin != null) // tmp
                 wObj.Skin.SetAlpha(alphaValue);
         } 
     }

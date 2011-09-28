@@ -1,5 +1,16 @@
 Map_combat_test = Map()
 Map_combat_test.Ground = Create:Ground("combat_test")
+
+-- PNJ Speech
+pnj = Create:NPC("Vlad")
+pnj:AddMessage("Salut a toi, jeune aventurier !")
+pnj:AddMessage("Tu me sembles un peu perdu ici.")
+pnj:AddMessage("D'un autre cote c'est normal, rien n'est encore fait ...")
+
+pnj:SetMap(Map_combat_test, 200, 300)
+
+
+
 Element_BigTree1_6132 = Create:Element("BigTree1")
 Element_BigTree1_6132:SetMap(Map_combat_test, 169, 147)
 Element_StoneStatue_6134 = Create:Element("StoneStatue")

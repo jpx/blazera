@@ -95,7 +95,7 @@ namespace BlazeraLib
         static int co = 0;
         public object[] DoScript(String scriptName)
         {
-           // Log.Cl(co + " : " + scriptName + " " + timer.GetElapsedTime().Value.ToString(), ConsoleColor.Yellow);
+            Log.Cl(co + " : " + scriptName + " " + timer.GetElapsedTime().Value.ToString(), ConsoleColor.Yellow);
             co++;
             try
             {

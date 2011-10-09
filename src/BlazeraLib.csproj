@@ -102,11 +102,14 @@
     <Compile Include="Game\GraphicsEngine\GameGui\InfoPanelBox.cs" />
     <Compile Include="Game\GraphicsEngine\GameGui\Menu\ExtendedMenu.cs" />
     <Compile Include="Game\GraphicsEngine\Gui\GridWidget.cs" />
+    <Compile Include="Game\GraphicsEngine\Gui\ProgressBar.cs" />
     <Compile Include="Game\GraphicsEngine\MapTextEffect.cs" />
     <Compile Include="Game\GraphicsEngine\Shape\BaseDrawableShape.cs" />
     <Compile Include="Game\GraphicsEngine\Shape\CellShape.cs" />
     <Compile Include="Game\GraphicsEngine\Shape\CombatCursorShape.cs" />
     <Compile Include="Game\GraphicsEngine\Shape\GridShape.cs" />
+    <Compile Include="Game\GraphicsEngine\Shape\ProgressBarShape.cs" />
+    <Compile Include="Game\GraphicsEngine\Shape\RectangleShape.cs" />
     <Compile Include="Game\GraphicsEngine\Texture\ComposedTexture.cs" />
     <Compile Include="Game\GraphicsEngine\GameGui\Menu\Menu.cs" />
     <Compile Include="Game\GraphicsEngine\GameGui\Menu\MenuItem.cs" />

@@ -14,7 +14,7 @@ namespace BlazeraLib
         OutOfRange
     }
 
-    public class CellShape : BaseDrawableShape
+    public class CellShape : RectangleShape
     {
         #region Constants
 
@@ -36,30 +36,9 @@ namespace BlazeraLib
         #endregion
 
         public CellShape(CellSelectionType type, uint size) :
-            base()
+            base(new Vector2(size, size), CellSelectionTypeColor[type], false, Color.Black)
         {
-            Color = CellSelectionTypeColor[type];
 
-            Dimension = new Vector2(size, size);
-
-            SetEffect(ShapeEffect.Shade);
-
-            Build();
-        }
-
-        protected override void Build()
-        {
-            BaseShape.AddPoint(new Vector2(0F, 0F), Color);
-            GetShapeFromEffect(ShapeEffect.Shade).AddPoint(new Vector2(0F, 0F), EFFECT_BEGIN_COLOR);
-
-            BaseShape.AddPoint(new Vector2(Dimension.X, 0F), Color);
-            GetShapeFromEffect(ShapeEffect.Shade).AddPoint(new Vector2(Dimension.X, 0F), EFFECT_BEGIN_COLOR);
-
-            BaseShape.AddPoint(Dimension, Color);
-            GetShapeFromEffect(ShapeEffect.Shade).AddPoint(Dimension, EFFECT_END_COLOR);
-
-            BaseShape.AddPoint(new Vector2(0F, Dimension.Y), Color);
-            GetShapeFromEffect(ShapeEffect.Shade).AddPoint(new Vector2(0F, Dimension.Y), EFFECT_END_COLOR);
         }
     }
 }

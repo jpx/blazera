@@ -118,6 +118,8 @@ namespace Blazera
 
         Boolean ConnectionTest()
         {
+            return false;
+
             if (!ClientConnection.IsConnected)
             {
                 Console.Write("Enter a login : ");

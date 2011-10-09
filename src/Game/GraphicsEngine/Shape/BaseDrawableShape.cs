@@ -19,11 +19,11 @@ namespace BlazeraLib
 
         const byte BACKGROUND_COLOR_ALPHA = 192;
 
-        protected const float DEFAULT_SHADOW_OFFSET = 4F;
+        const float DEFAULT_SHADOW_OFFSET = 4F;
 
-        protected static readonly Color EFFECT_BEGIN_COLOR = Color.White;
-        protected static readonly Color EFFECT_END_COLOR = Color.Black;
-        protected static readonly Color SHADOW_EFFECT_COLOR = new Color(0, 0, 0, 128);
+        static readonly Color EFFECT_BEGIN_COLOR = Color.White;
+        static readonly Color EFFECT_END_COLOR = Color.Black;
+        static readonly Color SHADOW_EFFECT_COLOR = new Color(0, 0, 0, 160);
 
         #endregion
 
@@ -31,12 +31,12 @@ namespace BlazeraLib
 
         Dictionary<ShapeEffect, Shape> Effects;
 
-        protected Shape BaseShape;
+        Shape BaseShape;
 
         float OutlineThickness;
-        protected Color OutlineColor { get; private set; }
+        Color OutlineColor;
 
-        protected float ShadowOffset;
+        float ShadowOffset;
 
         #endregion
 
@@ -46,6 +46,8 @@ namespace BlazeraLib
             Effects = new Dictionary<ShapeEffect, Shape>();
             foreach (ShapeEffect effect in System.Enum.GetValues(typeof(ShapeEffect)))
                 Effects.Add(effect, null);
+
+            ShadowOffset = DEFAULT_SHADOW_OFFSET;
 
             OutlineThickness = 0F;
 
@@ -103,13 +105,11 @@ namespace BlazeraLib
 
             BaseShape.OutlineThickness = OutlineThickness;
             BaseShape.EnableOutline(true);
+        }
 
-            foreach (Shape shape in Effects.Values)
-                if (shape != null)
-                {
-                    shape.OutlineThickness = OutlineThickness;
-                    shape.EnableOutline(true);
-                }
+        protected void SetShadowSettings(float shadowOffset)
+        {
+            ShadowOffset = shadowOffset;
         }
 
         public override Vector2 Position
@@ -123,15 +123,27 @@ namespace BlazeraLib
 
                 BaseShape.Position = Position + GetPositionOffset();
 
-                foreach (Shape shape in Effects.Values)
-                    if (shape != null)
-                        shape.Position = Position + GetPositionOffset();
+                if (Effects[ShapeEffect.Shade] != null)
+                    Effects[ShapeEffect.Shade].Position = Position + GetPositionOffset();
+
+                if (Effects[ShapeEffect.Shadow] != null)
+                    Effects[ShapeEffect.Shadow].Position = Position + new Vector2(ShadowOffset, ShadowOffset) + GetPositionOffset();
             }
         }
 
         public override Vector2 Dimension
         {
-            get { return base.Dimension + new Vector2(OutlineThickness * 2F, OutlineThickness * 2F); }
+            get { return base.Dimension + OutlineStructureDimension() + ShadowStructureDimension(); }
+        }
+
+        Vector2 ShadowStructureDimension()
+        {
+            return Effects[ShapeEffect.Shadow] != null ? new Vector2(ShadowOffset, ShadowOffset) : new Vector2();
+        }
+
+        Vector2 OutlineStructureDimension()
+        {
+            return new Vector2(OutlineThickness * 2F, OutlineThickness * 2F);
         }
 
         public Vector2 GetPositionOffset()
@@ -139,14 +151,25 @@ namespace BlazeraLib
             return new Vector2(OutlineThickness, OutlineThickness);
         }
 
-        protected bool IsEffectActive(ShapeEffect effect)
+        protected void AddPoint(Vector2 position)
         {
-            return Effects[effect] != null;
+            BaseShape.AddPoint(position, Color, OutlineColor);
         }
 
-        protected Shape GetShapeFromEffect(ShapeEffect effect)
+        protected void AddShadePoint(Vector2 position, bool effectBegin = true)
         {
-            return Effects[effect];
+            if (Effects[ShapeEffect.Shade] == null)
+                return;
+
+            Effects[ShapeEffect.Shade].AddPoint(position, effectBegin ? EFFECT_BEGIN_COLOR : EFFECT_END_COLOR);
+        }
+
+        protected void AddShadowPoint(Vector2 position)
+        {
+            if (Effects[ShapeEffect.Shadow] == null)
+                return;
+
+            Effects[ShapeEffect.Shadow].AddPoint(position, SHADOW_EFFECT_COLOR);
         }
     }
 }

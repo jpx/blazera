@@ -16,7 +16,9 @@ namespace BlazeraServer
 
         static int CurrentGuid = 0;
 
-        SocketClient SocketClient;
+        //SocketClient SocketClient;
+
+        Socket SocketClient;
 
         NetworkStream Ns;
 
@@ -34,11 +36,11 @@ namespace BlazeraServer
 
         #endregion
 
-        public ClientService(SocketClient socketClient)
+        public ClientService(Socket socketClient)
         {
             IsDropped = false;
             SocketClient = socketClient;
-            Ns = new NetworkStream(SocketClient.Socket);
+            Ns = new NetworkStream(SocketClient);
             Br = new BinaryReader(Ns);
             Bw = new BinaryWriter(Ns);
 
@@ -82,7 +84,7 @@ namespace BlazeraServer
 
                 ReceptionPacket data = new ReceptionPacket(Br);
 
-                Log.Cl("Packet received : " + data.Type.ToString() + " from : " + (Login == null ? "new player ( " + SocketClient.Socket.LocalEndPoint.ToString() + " )" : Login), ConsoleColor.DarkYellow);
+                Log.Cl("Packet received : " + data.Type.ToString() + " from : " + (Login == null ? "new player ( " + SocketClient.LocalEndPoint.ToString() + " )" : Login), ConsoleColor.DarkYellow);
 
                 AddReceivedData(data);
             }
@@ -149,7 +151,7 @@ namespace BlazeraServer
             SetRelay(SPlayer.Handler);
 
             SendingPacket rspData = new SendingPacket(PacketType.SERVER_INFO_MAP_LOADING);
-            // map info
+            // map info ==> to use guid system
             rspData.AddString(map);
             // main player
             rspData.AddDynamicObjectMapAdd(SPlayer);

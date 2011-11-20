@@ -56,7 +56,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Server\BlazeraServer.cs" />
     <Compile Include="Server\ClientService.cs" />
-    <Compile Include="Server\SocketClient.cs" />
     <Compile Include="Server\SWorld.cs" />
     <Compile Include="SGameComponent\SPlayer.cs" />
   </ItemGroup>

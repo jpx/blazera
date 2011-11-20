@@ -2,7 +2,7 @@ Blazera is a 2D game engine written in C#.
 It uses SFML .NET binding and LuaInterface.
 
 In src/ folder you may find the library sources,
-in tools/ the editor and
+in tools/ the editor, the server, a Box2DX demo and
 in Blazera/ a game demo done to test the lib.
 
 To run the game or the editor you have to copy

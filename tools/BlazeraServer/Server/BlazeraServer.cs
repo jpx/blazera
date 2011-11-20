@@ -128,7 +128,7 @@ namespace BlazeraServer
                     break;
                 }
 
-                SocketClient socketClient = new SocketClient(socket);
+                Socket socketClient = socket;
                 socketClient.ReceiveTimeout = GameDatas.SERVER_IO_TIMEOUT;
                 socketClient.SendTimeout = GameDatas.SERVER_IO_TIMEOUT;
 

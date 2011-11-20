@@ -4,12 +4,29 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazeraLib", "..\src\BlazeraLib.csproj", "{1B269DDD-AD05-410E-821A-230119F5583F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazera", "..\Blazera\Blazera\Blazera.csproj", "{FC829269-2F0F-4E71-9162-12A882E8939A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1B269DDD-AD05-410E-821A-230119F5583F} = {1B269DDD-AD05-410E-821A-230119F5583F}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazeraServer", "..\tools\BlazeraServer\BlazeraServer.csproj", "{CAB1DBC3-AC91-4247-8BAF-0F52258EDF0D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1B269DDD-AD05-410E-821A-230119F5583F} = {1B269DDD-AD05-410E-821A-230119F5583F}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazeraEditor", "..\tools\BlazeraEditor\BlazeraEditor.csproj", "{E9E777D5-051F-4F91-96DC-3DC7CD9C48E4}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1B269DDD-AD05-410E-821A-230119F5583F} = {1B269DDD-AD05-410E-821A-230119F5583F}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazeraProgramDemo", "..\tools\BlazeraProgramDemo\BlazeraProgramDemo.csproj", "{72EBC0A7-4028-4EBF-9F79-6985362AA6EB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1B269DDD-AD05-410E-821A-230119F5583F} = {1B269DDD-AD05-410E-821A-230119F5583F}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Box2DXDemo", "..\tools\Box2DXDemo\Box2DXDemo.csproj", "{8EDDAD22-E0A4-4A35-A3F3-7D345CAECCED}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1B269DDD-AD05-410E-821A-230119F5583F} = {1B269DDD-AD05-410E-821A-230119F5583F}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -70,6 +87,15 @@ Global
 		{72EBC0A7-4028-4EBF-9F79-6985362AA6EB}.Release|Mixed Platforms.Build.0 = Release|x86
 		{72EBC0A7-4028-4EBF-9F79-6985362AA6EB}.Release|x86.ActiveCfg = Release|x86
 		{72EBC0A7-4028-4EBF-9F79-6985362AA6EB}.Release|x86.Build.0 = Release|x86
+		{8EDDAD22-E0A4-4A35-A3F3-7D345CAECCED}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{8EDDAD22-E0A4-4A35-A3F3-7D345CAECCED}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{8EDDAD22-E0A4-4A35-A3F3-7D345CAECCED}.Debug|x86.ActiveCfg = Debug|x86
+		{8EDDAD22-E0A4-4A35-A3F3-7D345CAECCED}.Debug|x86.Build.0 = Debug|x86
+		{8EDDAD22-E0A4-4A35-A3F3-7D345CAECCED}.Release|Any CPU.ActiveCfg = Release|x86
+		{8EDDAD22-E0A4-4A35-A3F3-7D345CAECCED}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{8EDDAD22-E0A4-4A35-A3F3-7D345CAECCED}.Release|Mixed Platforms.Build.0 = Release|x86
+		{8EDDAD22-E0A4-4A35-A3F3-7D345CAECCED}.Release|x86.ActiveCfg = Release|x86
+		{8EDDAD22-E0A4-4A35-A3F3-7D345CAECCED}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

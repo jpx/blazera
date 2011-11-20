@@ -9,7 +9,7 @@ PERSONNAGE_RUN_VELOCITY_FACTOR = 1.5
 ANIMATION_DEFAULT_FRAMERATE = 8
 ANIMATION_DEFAULT_STOPFRAME = 0
 DEFAULT_DIRECTION = Direction.S
-INIT_MAP = "combat_test2"
+INIT_MAP = "combat_test"
 WINDOW_WIDTH = 640
 WINDOW_HEIGHT = 480
 WINDOW_STYLE = Styles.Close
@@ -21,18 +21,18 @@ TILE_SIZE = 32
 JOYSTICK_WALK_SENSIBILITY = 25.0
 JOYSTICK_RUN_SENSIBILITY = 90.0
 
-KEY_UP = 	{ KeyCode.W, KeyCode.Up }
-KEY_RIGHT = 	{ KeyCode.D, KeyCode.Right }
-KEY_DOWN = 	{ KeyCode.S, KeyCode.Down }
-KEY_LEFT = 	{ --[[KeyCode.A,--]] KeyCode.Left }
+KEY_UP = 	{ KeyCode.Up }
+KEY_RIGHT = 	{ KeyCode.Right }
+KEY_DOWN = 	{ KeyCode.Down }
+KEY_LEFT = 	{ KeyCode.Left }
 KEY_ACTION = 	{ KeyCode.Return }
 KEY_BACK = 	{ KeyCode.Back, KeyCode.Escape }
 KEY_MISC = 	{ KeyCode.X }
 
-KEY_UP2 = 	{  }
-KEY_RIGHT2 = 	{  }
-KEY_DOWN2 = 	{  }
-KEY_LEFT2 = 	{  }
+KEY_UP2 = 	{ KeyCode.W }
+KEY_RIGHT2 = 	{ KeyCode.D }
+KEY_DOWN2 = 	{ KeyCode.S }
+KEY_LEFT2 = 	{ KeyCode.A  }
 KEY_ACTION2 = 	{ KeyCode.Space }
 
 KEY_SPECIAL0 = 	{ KeyCode.G }

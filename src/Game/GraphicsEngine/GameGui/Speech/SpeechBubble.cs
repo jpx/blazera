@@ -71,7 +71,7 @@ namespace BlazeraLib
             Margins = DEFAULT_MARGINS;
 
             Box = new VAutoSizeBox();
-            Box.Position = GetGlobalFromLocal(new Vector2());
+            Box.Position = GetGlobalFromLocal(new Vector2f());
             AddWidget(Box);
 
             Messages = new List<List<String>>();
@@ -210,9 +210,9 @@ namespace BlazeraLib
 
             const float BUBBLE_MARGIN = 6F;
 
-            Vector2 bubbleDimension = Dimension + GetStructureDimension();
-            Vector2 bubblePosition =
-                GetGuiPointFromMapPoint(Speaker.Position + new Vector2(Speaker.Halfsize.X, 0F)) - new Vector2(0F, bubbleDimension.Y);
+            Vector2f bubbleDimension = Dimension + GetStructureDimension();
+            Vector2f bubblePosition =
+                GetGuiPointFromMapPoint(Speaker.Position + new Vector2f(Speaker.Halfsize.X, 0F)) - new Vector2f(0F, bubbleDimension.Y);
             BorderType bubbleTipBorderType = DEFAULT_BUBBLE_TIP_BORDERTYPE;
 
             if (bubblePosition.Y - DEFAULT_BUBBLE_TIP_SIZE * bubbleDimension.X / 100F * SpeechBubbleShape.TIP_LENGTH_SCALE_FACTOR < BUBBLE_MARGIN)
@@ -233,7 +233,7 @@ namespace BlazeraLib
                 new Color(219, 147, 112), new Color(139, 69, 19), true, bubbleTipBorderType, true, 2F, tipPosition);
 
             if (Speaker != null)
-                SetTipPosition(GetGuiPointFromMapPoint(Speaker.Position + new Vector2(Speaker.Halfsize.X, Bubble.TipBorderType == BorderType.Bottom ? 0F : Speaker.Dimension.Y)));
+                SetTipPosition(GetGuiPointFromMapPoint(Speaker.Position + new Vector2f(Speaker.Halfsize.X, Bubble.TipBorderType == BorderType.Bottom ? 0F : Speaker.Dimension.Y)));
 
             foreach (Label messageLabel in GetCurrentMessageLabels())
                 messageLabel.Text = "";
@@ -416,13 +416,13 @@ namespace BlazeraLib
                 return;
 
             if (Speaker != null)
-                Position = GetGuiPointFromMapPoint(Speaker.Position + new Vector2(Speaker.Halfsize.X, Bubble.TipBorderType == BorderType.Bottom ? 0F : Speaker.Dimension.Y)) -
-                    (Bubble.GetTipExtremityPosition(true) + new Vector2(0F, Bubble.TipBorderType == BorderType.Bottom ? DEFAULT_SPEAKER_OFFSET : -DEFAULT_SPEAKER_OFFSET));
+                Position = GetGuiPointFromMapPoint(Speaker.Position + new Vector2f(Speaker.Halfsize.X, Bubble.TipBorderType == BorderType.Bottom ? 0F : Speaker.Dimension.Y)) -
+                    (Bubble.GetTipExtremityPosition(true) + new Vector2f(0F, Bubble.TipBorderType == BorderType.Bottom ? DEFAULT_SPEAKER_OFFSET : -DEFAULT_SPEAKER_OFFSET));
 
             Bubble.SetPosition(Position, false);
         }
 
-        void SetTipPosition(Vector2 point)
+        void SetTipPosition(Vector2f point)
         {
             if (Bubble == null)
             {
@@ -433,10 +433,10 @@ namespace BlazeraLib
 
             base.Position =
                 point -
-                (Bubble.GetTipExtremityPosition() + new Vector2(0F, Bubble.TipBorderType == BorderType.Bottom ? DEFAULT_SPEAKER_OFFSET : -DEFAULT_SPEAKER_OFFSET));
+                (Bubble.GetTipExtremityPosition() + new Vector2f(0F, Bubble.TipBorderType == BorderType.Bottom ? DEFAULT_SPEAKER_OFFSET : -DEFAULT_SPEAKER_OFFSET));
         }
 
-        public override Vector2 Dimension
+        public override Vector2f Dimension
         {
             get
             {
@@ -447,19 +447,19 @@ namespace BlazeraLib
             }
         }
 
-        protected override Vector2 GetBasePosition()
+        protected override Vector2f GetBasePosition()
         {
-            return base.GetBasePosition() + new Vector2(Margins, Margins);
+            return base.GetBasePosition() + new Vector2f(Margins, Margins);
         }
 
-        protected override Vector2 GetStructureDimension()
+        protected override Vector2f GetStructureDimension()
         {
-            return base.GetStructureDimension() + new Vector2(Margins * 2F, Margins * 2F);
+            return base.GetStructureDimension() + new Vector2f(Margins * 2F, Margins * 2F);
         }
 
-        Vector2 GetMaxDimension()
+        Vector2f GetMaxDimension()
         {
-            return new Vector2(BUBBLE_MAX_WIDTH, BUBBLE_MAX_HEIGHT) - GetStructureDimension();
+            return new Vector2f(BUBBLE_MAX_WIDTH, BUBBLE_MAX_HEIGHT) - GetStructureDimension();
         }
     }
 

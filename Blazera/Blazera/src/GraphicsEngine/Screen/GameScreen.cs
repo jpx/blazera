@@ -13,8 +13,8 @@ namespace Blazera
         Menu MainMenu = new Menu(Alignment.Horizontal, 15F, 15F);
         MenuItem StatutItem = new MenuItem("Status");
         MenuItem OptionItem = new MenuItem("Option");
-        MenuItem QuitItem = new MenuItem("Quit");
-        MenuItem CombatTestItem = new MenuItem("[test]Combat");
+        MenuItem QuitItem = new MenuItem("quit");
+        MenuItem CombatTestItem = new MenuItem("TestCombat");
 
         public GameScreen(RenderWindow window) :
             base(window)
@@ -29,9 +29,11 @@ namespace Blazera
 
             if (!GameSession.Instance.IsOnline())
             {
-                GameScreen.Maps += Create.Map(GameDatas.INIT_MAP);
+                Log.Cldebug("LOADING MAP...");
+                GameScreen.Maps += Create.Map(GameDatas.INIT_MAP); // loading
+                Log.Cldebug("END LOADING MAP.");
                 GameScreen.Maps.Current = GameDatas.INIT_MAP;
-                PlayerHdl.Instance.Init(Create.Player("Vlad"));
+                PlayerHdl.Instance.Init(Create.Player("Vlad")); // loading
                 PlayerHdl.Warp(GetCurrentMap());
 
                 Wall w = new Wall();
@@ -128,7 +130,7 @@ namespace Blazera
             {
                 case EventType.KeyPressed:
 
-                    if (evt.Key.Code == KeyCode.Escape)
+                    if (evt.Key.Code == Keyboard.Key.Escape)
                         Window.Close();
 
                     if (Inputs.IsGameInput(InputType.Action2, evt, true) &&
@@ -274,21 +276,21 @@ namespace Blazera
 
         const float VIEW_MOVE_MINOR_LIMIT = .08F;
         const float VIEW_MOVE_TRIGGER_LIMIT = 20F;
-        private Vector2 GetViewMove(Time dt)
+        private Vector2f GetViewMove(Time dt)
         {
             float moveX = 0.0f;
             float moveY = 0.0f;
 
             if (PlayerHdl.Vlad == null)
             {
-                return new Vector2(moveX, moveY);
+                return new Vector2f(moveX, moveY);
             }
 
-            Vector2 p = PlayerHdl.Vlad.Center;
+            Vector2f p = PlayerHdl.Vlad.Center;
 
-            if (Math.Abs(p.X - GameView.Center.X) > VIEW_MOVE_TRIGGER_LIMIT)
+            if (Math.Abs(p.X - GameView.Center.X) > VIEW_MOVE_TRIGGER_LIMIT * (GameDatas.WINDOW_HEIGHT / GameDatas.WINDOW_WIDTH))
                 moveX = PlayerHdl.Vlad.Velocity * (p.X - this.GameView.Center.X) / 50f * GameDatas.WINDOW_WIDTH / GameDatas.WINDOW_HEIGHT * (float)dt.Value;
-            if (Math.Abs(p.Y - GameView.Center.Y) > VIEW_MOVE_TRIGGER_LIMIT)
+            if (Math.Abs(p.Y - GameView.Center.Y) > VIEW_MOVE_TRIGGER_LIMIT * (GameDatas.WINDOW_WIDTH / GameDatas.WINDOW_HEIGHT))
                 moveY = PlayerHdl.Vlad.Velocity * (p.Y - this.GameView.Center.Y) / 50f * GameDatas.WINDOW_HEIGHT / GameDatas.WINDOW_WIDTH * (float)dt.Value;
 
             /*if (Math.Abs(moveX) < VIEW_MOVE_MINOR_LIMIT)
@@ -299,29 +301,29 @@ namespace Blazera
 
             if (this.GameView.Center.X - this.GameView.Size.X / 2 + moveX < 0F)
             {
-                GameView.Center = new Vector2(0F, GameView.Center.Y) + new Vector2(GameView.Size.X / 2F, 0F);
+                GameView.Center = new Vector2f(0F, GameView.Center.Y) + new Vector2f(GameView.Size.X / 2F, 0F);
                 moveX = 0.0f;
             }
 
             if (this.GameView.Center.X - this.GameView.Size.X / 2 + this.GameView.Size.X + moveX >= GameScreen.GetCurrentMap().Dimension.X)
             {
-                GameView.Center = new Vector2(GetCurrentMap().Dimension.X, GameView.Center.Y) - new Vector2(GameView.Size.X / 2F, 0F);
+                GameView.Center = new Vector2f(GetCurrentMap().Dimension.X, GameView.Center.Y) - new Vector2f(GameView.Size.X / 2F, 0F);
                 moveX = 0.0f;
             }
 
             if (this.GameView.Center.Y - this.GameView.Size.Y / 2 + moveY < 0F)
             {
-                GameView.Center = new Vector2(GameView.Center.X, 0F) + new Vector2(0F, GameView.Size.Y / 2F);
+                GameView.Center = new Vector2f(GameView.Center.X, 0F) + new Vector2f(0F, GameView.Size.Y / 2F);
                 moveY = 0.0f;
             }
 
             if (this.GameView.Center.Y - this.GameView.Size.Y / 2 + this.GameView.Size.Y + moveY >= GameScreen.GetCurrentMap().Dimension.Y)
             {
-                GameView.Center = new Vector2(GameView.Center.X, GetCurrentMap().Dimension.Y) - new Vector2(0F, GameView.Size.Y / 2F);
+                GameView.Center = new Vector2f(GameView.Center.X, GetCurrentMap().Dimension.Y) - new Vector2f(0F, GameView.Size.Y / 2F);
                 moveY = 0.0f;
             }
 
-            return new Vector2(moveX, moveY);
+            return new Vector2f(moveX, moveY);
         }
 
         public static Map GetCurrent()

@@ -73,13 +73,13 @@ namespace BlazeraLib
             if (Alignment == BlazeraLib.Alignment.Vertical)
             {
                 VMainBox = new VAutoSizeBox(true, null, ItemOffset);
-                VMainBox.Position = GetGlobalFromLocal(new Vector2());
+                VMainBox.Position = GetGlobalFromLocal(new Vector2f());
                 AddWidget(VMainBox);
             }
             else
             {
                 HMainBox = new HAutoSizeBox(true, null, ItemOffset);
-                HMainBox.Position = GetGlobalFromLocal(new Vector2());
+                HMainBox.Position = GetGlobalFromLocal(new Vector2f());
                 AddWidget(HMainBox);
             }
         }
@@ -112,21 +112,21 @@ namespace BlazeraLib
 
             if (Alignment == Alignment.Vertical)
             {
-                Cursor.Dimension += new Vector2(
+                Cursor.Dimension += new Vector2f(
                     (GetCurrentItem().BackgroundDimension.X - Cursor.BackgroundDimension.X) / CURSOR_VELOCITY * (float)dt.MS,
                     (GetCurrentItem().BackgroundDimension.Y - Cursor.BackgroundDimension.Y) / CURSOR_VELOCITY * (float)dt.MS);
 
-                Cursor.Center += new Vector2(
+                Cursor.Center += new Vector2f(
                     GetCurrentItem().Center.X - Cursor.Center.X,
                     (GetCurrentItem().Center.Y - Cursor.Center.Y) / CURSOR_VELOCITY * (float)dt.MS);
             }
             else
             {
-                Cursor.Dimension += new Vector2(
+                Cursor.Dimension += new Vector2f(
                     (GetCurrentItem().BackgroundDimension.X - Cursor.BackgroundDimension.X) / CURSOR_VELOCITY * (float)dt.MS,
                     (GetCurrentItem().BackgroundDimension.Y - Cursor.BackgroundDimension.Y) / CURSOR_VELOCITY * (float)dt.MS);
 
-                Cursor.Center += new Vector2(
+                Cursor.Center += new Vector2f(
                     (GetCurrentItem().Center.X - Cursor.Center.X) / CURSOR_VELOCITY * (float)dt.MS,
                     GetCurrentItem().Center.Y - Cursor.Center.Y);
             }
@@ -239,9 +239,9 @@ namespace BlazeraLib
 
             BackgroundShape = new RoundedRectangleShape(Dimension, 20F, 3F, Color.Black, Color.Black, true);
             if (Alignment == BlazeraLib.Alignment.Vertical)
-                VMainBox.Position = GetGlobalFromLocal(new Vector2());
+                VMainBox.Position = GetGlobalFromLocal(new Vector2f());
             else
-                HMainBox.Position = GetGlobalFromLocal(new Vector2());
+                HMainBox.Position = GetGlobalFromLocal(new Vector2f());
             Refresh();
 
             GetCurrentItem().CallOnSelection();
@@ -287,9 +287,9 @@ namespace BlazeraLib
 
             BackgroundShape = new RoundedRectangleShape(Dimension, 20F, 3F, Color.Black, Color.Black, true);
             if (Alignment == BlazeraLib.Alignment.Vertical)
-                VMainBox.Position = GetGlobalFromLocal(new Vector2());
+                VMainBox.Position = GetGlobalFromLocal(new Vector2f());
             else
-                HMainBox.Position = GetGlobalFromLocal(new Vector2());
+                HMainBox.Position = GetGlobalFromLocal(new Vector2f());
             Refresh();
 
             if (GetCurrentItem() != null)
@@ -309,7 +309,7 @@ namespace BlazeraLib
                 RemoveItem(itemsToRemove.Dequeue());
         }
 
-        public override Vector2 Dimension
+        public override Vector2f Dimension
         {
             get
             {
@@ -324,7 +324,7 @@ namespace BlazeraLib
             }
         }
 
-        public override Vector2 BackgroundDimension
+        public override Vector2f BackgroundDimension
         {
             get
             {
@@ -335,14 +335,14 @@ namespace BlazeraLib
             }
         }
 
-        protected override Vector2 GetBasePosition()
+        protected override Vector2f GetBasePosition()
         {
-            return base.GetBasePosition() + new Vector2(Margins, Margins) + (BackgroundShape == null ? new Vector2() : BackgroundShape.GetBasePosition());
+            return base.GetBasePosition() + new Vector2f(Margins, Margins) + (BackgroundShape == null ? new Vector2f() : BackgroundShape.GetBasePosition());
         }
 
-        protected override Vector2 GetStructureDimension()
+        protected override Vector2f GetStructureDimension()
         {
-            return base.GetStructureDimension() + new Vector2(Margins * 2F, Margins * 2F);
+            return base.GetStructureDimension() + new Vector2f(Margins * 2F, Margins * 2F);
         }
     }
 }

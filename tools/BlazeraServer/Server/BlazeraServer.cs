@@ -60,7 +60,7 @@ namespace BlazeraServer
         public void Init()
         {
             ScriptEngine.Instance.Init("GameDatas");
-            ImageManager.Instance.Init();
+            TextureManager.Instance.Init();
 
             IsKilled = false;
         }

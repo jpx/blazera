@@ -180,12 +180,12 @@ namespace BlazeraLib
         {
             if (GetParentMenu().Alignment == Alignment.Horizontal)
             {
-                MenuSwitchingInfo.AttachedMenu.Center = new Vector2(GetParentMenu().Center.X, 0F);
+                MenuSwitchingInfo.AttachedMenu.Center = new Vector2f(GetParentMenu().Center.X, 0F);
                 MenuSwitchingInfo.AttachedMenu.Top = GetParentMenu().BackgroundBottom;
             }
             else
             {
-                MenuSwitchingInfo.AttachedMenu.Center = new Vector2(0F, GetParentMenu().Center.Y);
+                MenuSwitchingInfo.AttachedMenu.Center = new Vector2f(0F, GetParentMenu().Center.Y);
                 MenuSwitchingInfo.AttachedMenu.Left = GetParentMenu().BackgroundRight;
             }
         }

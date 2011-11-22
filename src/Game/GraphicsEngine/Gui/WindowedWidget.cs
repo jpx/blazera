@@ -49,7 +49,7 @@ namespace BlazeraLib
                 FocusedWindow.BackgroundRight = Left;
             else
                 FocusedWindow.Left = BackgroundRight;
-            FocusedWindow.Center = new Vector2(FocusedWindow.Center.X, Center.Y);
+            FocusedWindow.Center = new Vector2f(FocusedWindow.Center.X, Center.Y);
         }
 
         public Boolean GotFocusedWindow(Boolean alive = false)
@@ -90,7 +90,7 @@ namespace BlazeraLib
             this.GetBackground().StateChanged += new StateChangeHandler(WindowedWidget_StateChanged);
 
             this.MainBox = new VAutoSizeBox(true, null, this.Margins);
-            this.MainBox.Position = this.GetGlobalFromLocal(new Vector2(0F, 0F));
+            this.MainBox.Position = this.GetGlobalFromLocal(new Vector2f(0F, 0F));
             this.AddWidget(this.MainBox);
 
             this.Close();
@@ -115,7 +115,7 @@ namespace BlazeraLib
 
                     switch (evt.Key.Code)
                     {
-                        case KeyCode.Return:
+                        case Keyboard.Key.Return:
 
                             if (this.Validated == null)
                                 break;
@@ -124,7 +124,7 @@ namespace BlazeraLib
 
                             return true;
 
-                        case KeyCode.Escape:
+                        case Keyboard.Key.Escape:
 
                             this.Close();
 
@@ -267,16 +267,16 @@ namespace BlazeraLib
             this.Position = e.DragValue;
         }
 
-        protected override Vector2 GetBasePosition()
+        protected override Vector2f GetBasePosition()
         {
-            return new Vector2(
+            return new Vector2f(
                 base.GetBasePosition().X + this.Margins * 2F,
                 base.GetBasePosition().Y + this.GetBackground().TopBorderHeight + this.Margins);
         }
 
-        protected override Vector2 GetStructureDimension()
+        protected override Vector2f GetStructureDimension()
         {
-            return base.GetStructureDimension() + new Vector2(this.Margins * 4F, this.GetBackground().TopBorderHeight + this.Margins * 3F);
+            return base.GetStructureDimension() + new Vector2f(this.Margins * 4F, this.GetBackground().TopBorderHeight + this.Margins * 3F);
         }
 
         public float Margins { get; set; }

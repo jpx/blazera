@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using SFML.Graphics;
+using SFML.Window;
 
 namespace BlazeraLib
 {
@@ -127,9 +128,9 @@ namespace BlazeraLib
             }
         }
 
-        public static String GetStrOfVector2(Vector2 vector2)
+        public static String GetStrOfVector2(Vector2f vector2)
         {
-            return "Vector2 ( " + vector2.X.ToString() + ", " + vector2.Y.ToString() + " )";
+            return "Vector2f ( " + vector2.X.ToString() + ", " + vector2.Y.ToString() + " )";
         }
 
         public static String GetStrOfDirection(Direction direction)

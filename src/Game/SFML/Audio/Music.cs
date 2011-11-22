@@ -2,6 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.IO;
+using SFML.Window;
 
 namespace SFML
 {
@@ -30,23 +31,16 @@ namespace SFML
 
             ////////////////////////////////////////////////////////////
             /// <summary>
-            /// Construct the music from a file in a stream
+            /// Construct the music from a custom stream
             /// </summary>
-            /// <param name="stream">Stream containing the file contents</param>
+            /// <param name="stream">Source stream to read from</param>
             ////////////////////////////////////////////////////////////
             public Music(Stream stream) :
                 base(IntPtr.Zero)
             {
-                stream.Position = 0;
-                byte[] StreamData = new byte[stream.Length];
-                uint Read = (uint)stream.Read(StreamData, 0, StreamData.Length);
-                unsafe
-                {
-                    fixed (byte* dataPtr = StreamData)
-                    {
-                        SetThis(sfMusic_CreateFromMemory((char*)dataPtr, Read));
-                    }
-                }
+                myStream = new StreamAdaptor(stream);
+                SetThis(sfMusic_CreateFromStream(myStream.InputStreamPtr));
+
                 if (This == IntPtr.Zero)
                     throw new LoadingFailedException("music");
             }
@@ -113,10 +107,10 @@ namespace SFML
 
             ////////////////////////////////////////////////////////////
             /// <summary>
-            /// Total duration of the music, in seconds
+            /// Total duration of the music, in milliseconds
             /// </summary>
             ////////////////////////////////////////////////////////////
-            public float Duration
+            public uint Duration
             {
                 get {return sfMusic_GetDuration(This);}
             }
@@ -159,9 +153,9 @@ namespace SFML
             /// 3D position of the music. Default value is (0, 0, 0)
             /// </summary>
             ////////////////////////////////////////////////////////////
-            public Vector3 Position
+            public Vector3f Position
             {
-                get {Vector3 v; sfMusic_GetPosition(This, out v.X, out v.Y, out v.Z); return v;}
+                get {Vector3f v; sfMusic_GetPosition(This, out v.X, out v.Y, out v.Z); return v;}
                 set {sfMusic_SetPosition(This, value.X, value.Y, value.Z);}
             }
 
@@ -206,10 +200,10 @@ namespace SFML
 
             ////////////////////////////////////////////////////////////
             /// <summary>
-            /// Current playing position, in seconds
+            /// Current playing position, in milliseconds
             /// </summary>
             ////////////////////////////////////////////////////////////
-            public float PlayingOffset
+            public uint PlayingOffset
             {
                 get {return sfMusic_GetPlayingOffset(This);}
                 set {sfMusic_SetPlayingOffset(This, value);}
@@ -246,15 +240,23 @@ namespace SFML
             ////////////////////////////////////////////////////////////
             protected override void Destroy(bool disposing)
             {
+                if (disposing)
+                {
+                    if (myStream != null)
+                        myStream.Dispose();
+                }
+
                 sfMusic_Destroy(This);
             }
+
+            private StreamAdaptor myStream = null;
 
             #region Imports
             [DllImport("csfml-audio-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern IntPtr sfMusic_CreateFromFile(string Filename);
 
             [DllImport("csfml-audio-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-            unsafe static extern IntPtr sfMusic_CreateFromMemory(char* Data, uint SizeInBytes);
+            unsafe static extern IntPtr sfMusic_CreateFromStream(IntPtr stream);
 
             [DllImport("csfml-audio-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfMusic_Destroy(IntPtr MusicStream);
@@ -272,7 +274,7 @@ namespace SFML
             static extern SoundStatus sfMusic_GetStatus(IntPtr Music);
 
             [DllImport("csfml-audio-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-            static extern float sfMusic_GetDuration(IntPtr Music);
+            static extern uint sfMusic_GetDuration(IntPtr Music);
 
             [DllImport("csfml-audio-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern uint sfMusic_GetChannelsCount(IntPtr Music);
@@ -302,7 +304,7 @@ namespace SFML
             static extern void sfMusic_SetAttenuation(IntPtr Music, float Attenuation);
             
             [DllImport("csfml-audio-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-            static extern void sfMusic_SetPlayingOffset(IntPtr Music, float TimeOffset);
+            static extern void sfMusic_SetPlayingOffset(IntPtr Music, uint TimeOffset);
 
             [DllImport("csfml-audio-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern bool sfMusic_GetLoop(IntPtr Music);
@@ -326,7 +328,7 @@ namespace SFML
             static extern float sfMusic_GetAttenuation(IntPtr Music);
 
             [DllImport("csfml-audio-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-            static extern float sfMusic_GetPlayingOffset(IntPtr Music);
+            static extern uint sfMusic_GetPlayingOffset(IntPtr Music);
             #endregion
         }
     }

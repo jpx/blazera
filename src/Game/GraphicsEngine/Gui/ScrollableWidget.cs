@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using SFML.Graphics;
+using SFML.Window;
 
 namespace BlazeraLib
 {
@@ -83,7 +84,7 @@ namespace BlazeraLib
             RefreshScrollBar();
         }
 
-        public override Vector2 Dimension
+        public override Vector2f Dimension
         {
             get
             {
@@ -96,7 +97,7 @@ namespace BlazeraLib
 
         public override void Refresh()
         {
-            this.VScrollBar.Dimension = new Vector2(
+            this.VScrollBar.Dimension = new Vector2f(
                 this.VScrollBar.Dimension.X,
                 ExtendedBox.GetTotalSize() == 0 ? DEFAULT_EMPTY_SIZE : this.ExtendedBox.BackgroundDimension.Y);
         }

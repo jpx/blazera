@@ -38,7 +38,7 @@ namespace BlazeraEditor
 
         #endregion
 
-        static readonly Texture ICON_TEXTURE = Create.Texture("Gui_SelectorToolIcon");
+        static readonly BlazeraLib.Texture ICON_TEXTURE = Create.Texture("Gui_SelectorToolIcon");
         static readonly Color FILL_COLOR = new Color(123, 104, 238, 64);
         static readonly Color OUTLINE_COLOR = new Color(128, 255, 255, 128);
 
@@ -69,8 +69,8 @@ namespace BlazeraEditor
         {
             BlazeraLib.FloatRect currentSelectorRect = Selector.GetRect();
 
-            Vector2 currentSelectionTopLeft = MapBox.GetMapLocalFromGlobal(MapBox.GetGlobalFromLocal(new Vector2(currentSelectorRect.Left, currentSelectorRect.Top)));
-            Vector2 currentSelectionBottomRight = MapBox.GetMapLocalFromGlobal(MapBox.GetGlobalFromLocal(new Vector2(currentSelectorRect.Right, currentSelectorRect.Bottom)));
+            Vector2f currentSelectionTopLeft = MapBox.GetMapLocalFromGlobal(MapBox.GetGlobalFromLocal(new Vector2f(currentSelectorRect.Left, currentSelectorRect.Top)));
+            Vector2f currentSelectionBottomRight = MapBox.GetMapLocalFromGlobal(MapBox.GetGlobalFromLocal(new Vector2f(currentSelectorRect.Right, currentSelectorRect.Bottom)));
             CurrentSelectionRect = new BlazeraLib.FloatRect(
                 currentSelectionTopLeft.X,
                 currentSelectionTopLeft.Y,
@@ -104,7 +104,7 @@ namespace BlazeraEditor
             {
                 case EventType.MouseButtonPressed:
 
-                    if (evt.MouseButton.Button != MouseButton.Right)
+                    if (evt.MouseButton.Button != Mouse.Button.Right)
                         break;
 
                     if (!Selector.HolderContains())
@@ -118,9 +118,9 @@ namespace BlazeraEditor
 
                     switch (evt.Key.Code)
                     {
-                        case KeyCode.A:
+                        case Keyboard.Key.A:
 
-                            if (!Root.Window.Input.IsKeyDown(KeyCode.LControl))
+                            if (!Keyboard.IsKeyPressed(Keyboard.Key.LControl))
                                 break;
 
                             if (SelectedObjects.Count > 0)
@@ -130,7 +130,7 @@ namespace BlazeraEditor
 
                             return true;
 
-                        case KeyCode.Delete:
+                        case Keyboard.Key.Delete:
 
                             if (SelectedObjects.Count == 0)
                                 break;

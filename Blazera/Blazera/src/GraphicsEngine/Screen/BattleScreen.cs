@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using BlazeraLib;
 using SFML.Graphics;
+using SFML.Window;
 
 namespace Blazera
 {
@@ -80,7 +81,7 @@ namespace Blazera
             float moveX = 0.0f;
             float moveY = 0.0f;
 
-            Vector2 p = Map.Combat.ViewFollowingTarget.Position;
+            Vector2f p = Map.Combat.ViewFollowingTarget.Position;
             float velocity = 200F - CombatCursor.TRANSITION_VELOCITY;
 
             if (Math.Abs(p.X - GameView.Center.X) > VIEW_MOVE_TRIGGER_LIMIT)
@@ -90,29 +91,29 @@ namespace Blazera
 
             if (GameView.Center.X - GameView.Size.X / 2 + moveX < 0F)
             {
-                GameView.Center = new Vector2(0F, GameView.Center.Y) + new Vector2(GameView.Size.X / 2F, 0F);
+                GameView.Center = new Vector2f(0F, GameView.Center.Y) + new Vector2f(GameView.Size.X / 2F, 0F);
                 moveX = 0.0f;
             }
 
             if (GameView.Center.X - GameView.Size.X / 2 + GameView.Size.X + moveX >= Map.Dimension.X)
             {
-                GameView.Center = new Vector2(Map.Dimension.X, GameView.Center.Y) - new Vector2(GameView.Size.X / 2F, 0F);
+                GameView.Center = new Vector2f(Map.Dimension.X, GameView.Center.Y) - new Vector2f(GameView.Size.X / 2F, 0F);
                 moveX = 0.0f;
             }
 
             if (GameView.Center.Y - GameView.Size.Y / 2 + moveY < 0F)
             {
-                GameView.Center = new Vector2(GameView.Center.X, 0F) + new Vector2(0F, GameView.Size.Y / 2F);
+                GameView.Center = new Vector2f(GameView.Center.X, 0F) + new Vector2f(0F, GameView.Size.Y / 2F);
                 moveY = 0.0f;
             }
 
             if (GameView.Center.Y - GameView.Size.Y / 2 + GameView.Size.Y + moveY >= Map.Dimension.Y)
             {
-                GameView.Center = new Vector2(GameView.Center.X, Map.Dimension.Y) - new Vector2(0F, GameView.Size.Y / 2F);
+                GameView.Center = new Vector2f(GameView.Center.X, Map.Dimension.Y) - new Vector2f(0F, GameView.Size.Y / 2F);
                 moveY = 0.0f;
             }
 
-            Gui.MoveGameView(new Vector2(moveX, moveY));
+            Gui.MoveGameView(new Vector2f(moveX, moveY));
         }
     }
 }

@@ -1,7 +1,9 @@
 using System;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Collections.Generic;
+using SFML.Window;
 
 namespace SFML
 {
@@ -30,6 +32,25 @@ namespace SFML
 
             ////////////////////////////////////////////////////////////
             /// <summary>
+            /// Load the shader from a custom stream
+            /// </summary>
+            /// <param name="stream">Source stream to read from</param>
+            /// <exception cref="LoadingFailedException" />
+            ////////////////////////////////////////////////////////////
+            public Shader(Stream stream) :
+                base(IntPtr.Zero)
+            {
+                using (StreamAdaptor adaptor = new StreamAdaptor(stream))
+                {
+                    SetThis(sfShader_CreateFromStream(adaptor.InputStreamPtr));
+                }
+
+                if (This == IntPtr.Zero)
+                    throw new LoadingFailedException("shader");
+            }
+
+            ////////////////////////////////////////////////////////////
+            /// <summary>
             /// Construct the shader from another shader
             /// </summary>
             /// <param name="copy">Shader to copy</param>
@@ -37,7 +58,7 @@ namespace SFML
             public Shader(Shader copy) :
                 base(sfShader_Copy(copy.This))
             {
-                foreach (KeyValuePair<string, Image> pair in copy.myTextures)
+                foreach (KeyValuePair<string, Texture> pair in copy.myTextures)
                     myTextures[pair.Key] = copy.myTextures[pair.Key];
             }
 
@@ -64,7 +85,7 @@ namespace SFML
             /// <param name="name">Name of the parameter in the shader</param>
             /// <param name="v">Value of the parameter</param>
             ////////////////////////////////////////////////////////////
-            public void SetParameter(string name, Vector2 v)
+            public void SetParameter(string name, Vector2f v)
             {
                 SetParameter(name, v.X, v.Y);
             }
@@ -128,12 +149,23 @@ namespace SFML
             /// Set a texture parameter
             /// </summary>
             /// <param name="name">Name of the texture in the shader</param>
-            /// <param name="texture">Image to set (pass null to use the texture of the object being drawn)</param>
+            /// <param name="texture">Texture to set</param>
             ////////////////////////////////////////////////////////////
-            public void SetTexture(string name, Image texture)
+            public void SetTexture(string name, Texture texture)
             {
                 myTextures[name] = texture;
-                sfShader_SetTexture(This, name, texture != null ? texture.This : IntPtr.Zero);
+                sfShader_SetTexture(This, name, texture.This);
+            }
+
+            ////////////////////////////////////////////////////////////
+            /// <summary>
+            /// Set the current texture parameter
+            /// </summary>
+            /// <param name="name">Name of the texture in the shader</param>
+            ////////////////////////////////////////////////////////////
+            public void SetCurrentTexture(string name)
+            {
+                sfShader_SetCurrentTexture(This, name);
             }
 
             ////////////////////////////////////////////////////////////
@@ -164,16 +196,6 @@ namespace SFML
             public static bool IsAvailable
             {
                 get {return sfShader_IsAvailable();}
-            }
-
-            ////////////////////////////////////////////////////////////
-            /// <summary>
-            /// Special image representing the texture used by the object being drawn
-            /// </summary>
-            ////////////////////////////////////////////////////////////
-            public static Image CurrentTexture
-            {
-                get {return null;}
             }
 
             ////////////////////////////////////////////////////////////
@@ -216,7 +238,7 @@ namespace SFML
             {
             }
 
-            Dictionary<string, Image> myTextures = new Dictionary<string, Image>();
+            Dictionary<string, Texture> myTextures = new Dictionary<string, Texture>();
 
             #region Imports
            
@@ -225,6 +247,9 @@ namespace SFML
 
             [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern IntPtr sfShader_CreateFromMemory(string Shader);
+
+            [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+            static extern IntPtr sfShader_CreateFromStream(IntPtr stream);
 
             [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern IntPtr sfShader_Copy(IntPtr Shader);
@@ -246,6 +271,9 @@ namespace SFML
 
             [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfShader_SetTexture(IntPtr Shader, string Name, IntPtr Texture);
+
+            [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+            static extern void sfShader_SetCurrentTexture(IntPtr Shader, string Name);
 
             [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfShader_Bind(IntPtr Shader);

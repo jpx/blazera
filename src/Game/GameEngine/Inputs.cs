@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using SFML.Window;
+using SFML.Graphics;
 
 namespace BlazeraLib
 {
@@ -38,7 +39,7 @@ namespace BlazeraLib
     {
         class GameInput
         {
-            List<KeyCode> Keys;
+            List<Keyboard.Key> Keys;
 
             Timer Timer;
 
@@ -48,7 +49,7 @@ namespace BlazeraLib
 
             Boolean IsHandled;
 
-            public GameInput(List<KeyCode> keys)
+            public GameInput(List<Keyboard.Key> keys)
             {
                 Keys = keys;
 

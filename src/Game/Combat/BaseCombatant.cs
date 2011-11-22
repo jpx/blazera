@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using SFML.Graphics;
+using SFML.Window;
 
 namespace BlazeraLib
 {
@@ -157,7 +158,7 @@ namespace BlazeraLib
 
             Direction CurrentDirection;
             Vector2I CurrentGoal;
-            Vector2 CurrentGoalPoint;
+            Vector2f CurrentGoalPoint;
             bool PointIsReached;
 
             #endregion
@@ -189,7 +190,7 @@ namespace BlazeraLib
 
                 Combatant.State = CombatantState.Moving;
 
-                CurrentGoalPoint = (CurrentGoal.ToVector2() + new Vector2(.5F, .5F)) * CombatMap.CELL_SIZE;
+                CurrentGoalPoint = (CurrentGoal.ToVector2() + new Vector2f(.5F, .5F)) * CombatMap.CELL_SIZE;
 
                 if (CurrentGoal.X < Combatant.CellPosition.X)
                     CurrentDirection = Direction.O;
@@ -230,7 +231,7 @@ namespace BlazeraLib
                     }
                 }
 
-                Vector2 move = BlazeraLib.Map.GetMove(CurrentDirection, DEFAULT_VELOCITY, dt);
+                Vector2f move = BlazeraLib.Map.GetMove(CurrentDirection, DEFAULT_VELOCITY, dt);
 
                 switch (CurrentDirection)
                 {
@@ -424,7 +425,7 @@ namespace BlazeraLib
             return Animations[State][Direction];
         }
 
-        public override Vector2 Position
+        public override Vector2f Position
         {
             set
             {
@@ -436,24 +437,24 @@ namespace BlazeraLib
             }
         }
 
-        Vector2 GetBasePoint()
+        Vector2f GetBasePoint()
         {
-            return new Vector2(
+            return new Vector2f(
                 Halfsize.X,
                 Dimension.Y * (float)(BASE_POINT_HEIGHT_PERCENTAGE / 100D));
         }
 
-        Vector2 GetBasePosition()
+        Vector2f GetBasePosition()
         {
             return Position + GetBasePoint();
         }
 
-        void SetBasePoint(Vector2 point)
+        void SetBasePoint(Vector2f point)
         {
             Position = point - GetBasePoint();
         }
 
-        public override Vector2 Dimension
+        public override Vector2f Dimension
         {
             get { return GetCurrentAnimation().Dimension; }
         }
@@ -477,7 +478,7 @@ namespace BlazeraLib
         {
             CellPosition = cellPosition;
 
-            SetBasePoint((CellPosition.ToVector2() + new Vector2(.5F, .5F)) * CombatMap.CELL_SIZE);
+            SetBasePoint((CellPosition.ToVector2() + new Vector2f(.5F, .5F)) * CombatMap.CELL_SIZE);
         }
 
         public void SetMap(CombatMap map)
@@ -491,7 +492,7 @@ namespace BlazeraLib
             int damages = RandomHelper.Get(0, 10);
             Status[BaseCaracteristic.Hp] -= (uint)damages;
 
-            MapEffectManager.Instance.AddEffect(new MapTextEffect(damages.ToString(), Color.Black), new Vector2(Center.X, Top));
+            MapEffectManager.Instance.AddEffect(new MapTextEffect(damages.ToString(), Color.Black), new Vector2f(Center.X, Top));
         }
     }
 }

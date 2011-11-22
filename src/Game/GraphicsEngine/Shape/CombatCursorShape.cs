@@ -1,4 +1,5 @@
 ﻿using SFML.Graphics;
+using SFML.Window;
 
 namespace BlazeraLib
 {
@@ -56,17 +57,17 @@ namespace BlazeraLib
                 DEFAULT_CENTER_COLOR.B,
                 DEFAULT_CENTER_ALPHA);
 
-            SideSquare.AddPoint(new Vector2(0F, 0F), sideColor, sideColor);
-            SideSquare.AddPoint(new Vector2(Size, 0F), sideColor, sideColor);
-            SideSquare.AddPoint(new Vector2(Size, Size), sideColor, sideColor);
-            SideSquare.AddPoint(new Vector2(0F, Size), sideColor, sideColor);
+            SideSquare.AddPoint(new Vector2f(0F, 0F), sideColor, sideColor);
+            SideSquare.AddPoint(new Vector2f(Size, 0F), sideColor, sideColor);
+            SideSquare.AddPoint(new Vector2f(Size, Size), sideColor, sideColor);
+            SideSquare.AddPoint(new Vector2f(0F, Size), sideColor, sideColor);
 
             float centerOffset = Size * (float)((100D - CENTERSQUARE_SCALE_FACTOR) / 100D / 2D);
 
-            CenterSquare.AddPoint(new Vector2(centerOffset, centerOffset), centerColor, sideColor);
-            CenterSquare.AddPoint(new Vector2(Size - centerOffset, centerOffset), centerColor, sideColor);
-            CenterSquare.AddPoint(new Vector2(Size - centerOffset, Size - centerOffset), centerColor, sideColor);
-            CenterSquare.AddPoint(new Vector2(centerOffset, Size - centerOffset), centerColor, sideColor);
+            CenterSquare.AddPoint(new Vector2f(centerOffset, centerOffset), centerColor, sideColor);
+            CenterSquare.AddPoint(new Vector2f(Size - centerOffset, centerOffset), centerColor, sideColor);
+            CenterSquare.AddPoint(new Vector2f(Size - centerOffset, Size - centerOffset), centerColor, sideColor);
+            CenterSquare.AddPoint(new Vector2f(centerOffset, Size - centerOffset), centerColor, sideColor);
         }
 
         public override void Draw(RenderWindow window)
@@ -78,7 +79,7 @@ namespace BlazeraLib
             window.Draw(CenterSquare);
         }
 
-        public override Vector2 Position
+        public override Vector2f Position
         {
             set
             {
@@ -89,9 +90,9 @@ namespace BlazeraLib
             }
         }
 
-        public override Vector2 Dimension
+        public override Vector2f Dimension
         {
-            get { return new Vector2(Size, Size); }
+            get { return new Vector2f(Size, Size); }
         }
     }
 }

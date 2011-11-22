@@ -7,6 +7,7 @@ using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization;
 using SFML.Graphics;
+using SFML.Window;
 
 namespace BlazeraLib
 {
@@ -154,7 +155,7 @@ namespace BlazeraLib
             AppendObj(data);
         }
 
-        public void AddVector2(Vector2 data)
+        public void AddVector2(Vector2f data)
         {
             AppendObj(data.X);
             AppendObj(data.Y);
@@ -200,9 +201,9 @@ namespace BlazeraLib
             return Parser.GetInt();
         }
 
-        public Vector2 ReadVector2()
+        public Vector2f ReadVector2()
         {
-            return new Vector2(
+            return new Vector2f(
                 Parser.GetFloat(),
                 Parser.GetFloat());
         }

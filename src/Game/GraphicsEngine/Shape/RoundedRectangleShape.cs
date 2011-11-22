@@ -25,8 +25,8 @@ namespace BlazeraLib
         Shape Effect;
         Shape ShadowEffect;
 
-        Vector2 Position;
-        Vector2 Dimension;
+        Vector2f Position;
+        Vector2f Dimension;
 
         float Radius;
         float OutlineThickness;
@@ -35,10 +35,10 @@ namespace BlazeraLib
         Color OutlineColor;
 
         Boolean ShadowMode;
-        Vector2 ShadowOffset;
+        Vector2f ShadowOffset;
 
         public RoundedRectangleShape(
-            Vector2 dimension,
+            Vector2f dimension,
             float radius,
             float outlineThickness,
             Color backgroundColor,
@@ -59,7 +59,7 @@ namespace BlazeraLib
             ShadowEffect.EnableOutline(true);
 
             ShadowMode = shadowMode;
-            ShadowOffset = new Vector2(shadowOffset, shadowOffset);
+            ShadowOffset = new Vector2f(shadowOffset, shadowOffset);
 
             Radius = radius;
             OutlineThickness = outlineThickness;
@@ -93,16 +93,16 @@ namespace BlazeraLib
                 --Radius;
         }
 
-        Vector2 GetCenter(CornerType cornerType)
+        Vector2f GetCenter(CornerType cornerType)
         {
-            Vector2 center = new Vector2();
+            Vector2f center = new Vector2f();
 
             switch (cornerType)
             {
-                case CornerType.TopLeft: center = Position + new Vector2(Radius, Radius); break;
-                case CornerType.TopRight: center = new Vector2(Position.X + Dimension.X - Radius, Position.Y + Radius); break;
-                case CornerType.BottomRight: center = Position + Dimension - new Vector2(Radius, Radius); break;
-                case CornerType.BottomLeft: center = new Vector2(Position.X + Radius, Position.Y + Dimension.Y - Radius); break;
+                case CornerType.TopLeft: center = Position + new Vector2f(Radius, Radius); break;
+                case CornerType.TopRight: center = new Vector2f(Position.X + Dimension.X - Radius, Position.Y + Radius); break;
+                case CornerType.BottomRight: center = Position + Dimension - new Vector2f(Radius, Radius); break;
+                case CornerType.BottomLeft: center = new Vector2f(Position.X + Radius, Position.Y + Dimension.Y - Radius); break;
             }
 
             return center;
@@ -115,9 +115,9 @@ namespace BlazeraLib
             for (UInt32 count = pointCount / 2; count < pointCount * .75; ++count)
             {
                 float angle = count * 2 * (float)Math.PI / pointCount;
-                Vector2 offset = new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
+                Vector2f offset = new Vector2f((float)Math.Cos(angle), (float)Math.Sin(angle));
 
-                Vector2 center = GetCenter(CornerType.TopLeft);
+                Vector2f center = GetCenter(CornerType.TopLeft);
 
                 Background.AddPoint(center + offset * Radius, BackgroundColor, OutlineColor);
                 Effect.AddPoint(center + offset * Radius, EFFECT_BEGIN_COLOR, EFFECT_END_COLOR);
@@ -128,9 +128,9 @@ namespace BlazeraLib
             for (UInt32 count = pointCount - pointCount / 4; count < pointCount; ++count)
             {
                 float angle = count * 2 * (float)Math.PI / pointCount;
-                Vector2 offset = new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
+                Vector2f offset = new Vector2f((float)Math.Cos(angle), (float)Math.Sin(angle));
 
-                Vector2 center = GetCenter(CornerType.TopRight);
+                Vector2f center = GetCenter(CornerType.TopRight);
 
                 Background.AddPoint(center + offset * Radius, BackgroundColor, OutlineColor);
                 Effect.AddPoint(center + offset * Radius, EFFECT_BEGIN_COLOR, EFFECT_END_COLOR);
@@ -140,9 +140,9 @@ namespace BlazeraLib
             for (UInt32 count = 0; count < pointCount / 4; ++count)
             {
                 float angle = count * 2 * (float)Math.PI / pointCount;
-                Vector2 offset = new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
+                Vector2f offset = new Vector2f((float)Math.Cos(angle), (float)Math.Sin(angle));
 
-                Vector2 center = GetCenter(CornerType.BottomRight);
+                Vector2f center = GetCenter(CornerType.BottomRight);
 
                 Background.AddPoint(center + offset * Radius, BackgroundColor, OutlineColor);
                 Effect.AddPoint(center + offset * Radius, EFFECT_END_COLOR, EFFECT_END_COLOR);
@@ -153,9 +153,9 @@ namespace BlazeraLib
             for (UInt32 count = pointCount / 4; count < pointCount / 2; ++count)
             {
                 float angle = count * 2 * (float)Math.PI / pointCount;
-                Vector2 offset = new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
+                Vector2f offset = new Vector2f((float)Math.Cos(angle), (float)Math.Sin(angle));
 
-                Vector2 center = GetCenter(CornerType.BottomLeft);
+                Vector2f center = GetCenter(CornerType.BottomLeft);
 
                 Background.AddPoint(center + offset * Radius, BackgroundColor, OutlineColor);
                 Effect.AddPoint(center + offset * Radius, EFFECT_END_COLOR, EFFECT_END_COLOR);
@@ -163,7 +163,7 @@ namespace BlazeraLib
             }
         }
 
-        public void SetPosition(Vector2 position)
+        public void SetPosition(Vector2f position)
         {
             Position = Vector2I.FromVector2(position).ToVector2() + GetBasePosition();
 
@@ -180,14 +180,14 @@ namespace BlazeraLib
             window.Draw(Background);
         }
 
-        public Vector2 GetBackgroundDimension()
+        public Vector2f GetBackgroundDimension()
         {
-            return Dimension + new Vector2(OutlineThickness * 2F, OutlineThickness * 2F) + (ShadowMode ? ShadowOffset : new Vector2());
+            return Dimension + new Vector2f(OutlineThickness * 2F, OutlineThickness * 2F) + (ShadowMode ? ShadowOffset : new Vector2f());
         }
 
-        public Vector2 GetBasePosition()
+        public Vector2f GetBasePosition()
         {
-            return new Vector2(OutlineThickness, OutlineThickness);
+            return new Vector2f(OutlineThickness, OutlineThickness);
         }
     }
 }

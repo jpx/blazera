@@ -85,12 +85,12 @@ namespace BlazeraLib
                 drawableTexture.Draw(window);
         }
 
-        public override SFML.Graphics.Vector2 Position
+        public override SFML.Window.Vector2f Position
         {
             get { return base.Position; }
             set
             {
-                SFML.Graphics.Vector2 offset = value - Position;
+                SFML.Window.Vector2f offset = value - Position;
 
                 base.Position = value;
 
@@ -102,11 +102,11 @@ namespace BlazeraLib
             }
         }
 
-        public override SFML.Graphics.Vector2 Dimension
+        public override SFML.Window.Vector2f Dimension
         {
             get
             {
-                return new SFML.Graphics.Vector2(Width * GameDatas.TILE_SIZE, Height * GameDatas.TILE_SIZE);
+                return new SFML.Window.Vector2f(Width * GameDatas.TILE_SIZE, Height * GameDatas.TILE_SIZE);
             }
         }
 

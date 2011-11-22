@@ -84,12 +84,17 @@ namespace Blazera
         {
             AddMap(rcvData.ReadString());
 
-            PlayerHdl.Instance.Init(new CPlayer((Player)rcvData.ReadDynamicObjectMapAdd()));
-            PlayerHdl.Warp(CurrentMap);
-
-            for (int count = 0; count < rcvData.ReadCount(); ++count)
-                ;
-
+            int maxCount = rcvData.ReadCount();
+            //!\\ TODO : add all dynamic objects, causes exception on HandleObjectMove //!\\
+            for (int count = 0; count < maxCount; ++count)
+            {
+                if (count == 0)
+                {
+                    PlayerHdl.Instance.Init(new CPlayer((Player)rcvData.ReadDynamicObjectMapAdd()));
+                    PlayerHdl.Warp(CurrentMap);
+                }
+            }
+             
             return true;
         }
 
@@ -114,6 +119,8 @@ namespace Blazera
             dObj.MoveTo(rcvData.ReadVector2());
             dObj.Direction = rcvData.ReadDirection();
             dObj.ResetDirectionStates(rcvData.ReadDirectionStates());
+
+            Log.Cldebug(dObj.Guid, "Moved oject", System.ConsoleColor.Cyan);
 
             return true;
         }

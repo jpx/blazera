@@ -75,7 +75,7 @@ namespace Blazera
 
                     switch (evt.Key.Code)
                     {
-                        case KeyCode.Escape:
+                        case Keyboard.Key.Escape:
 
                             Window.Close();
 

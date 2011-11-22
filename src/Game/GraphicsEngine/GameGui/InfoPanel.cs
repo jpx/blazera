@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using SFML.Graphics;
+using SFML.Window;
 
 namespace BlazeraLib
 {
@@ -57,7 +58,7 @@ namespace BlazeraLib
 
             BackgroundShape = new RoundedRectangleShape(Dimension, 20F, 3F, Color.Black, Color.Black, true);
             BackgroundShape.SetPosition(Position);
-            MainBox.Position = GetGlobalFromLocal(new Vector2());
+            MainBox.Position = GetGlobalFromLocal(new Vector2f());
 
             if (GetRoot() == null)
                 return;
@@ -72,7 +73,7 @@ namespace BlazeraLib
                 BackgroundBottom = GetRoot().BackgroundBottom;
         }
 
-        public override Vector2 Dimension
+        public override Vector2f Dimension
         {
             get
             {
@@ -83,7 +84,7 @@ namespace BlazeraLib
             }
         }
 
-        public override Vector2 BackgroundDimension
+        public override Vector2f BackgroundDimension
         {
             get
             {
@@ -94,14 +95,14 @@ namespace BlazeraLib
             }
         }
 
-        protected override Vector2 GetBasePosition()
+        protected override Vector2f GetBasePosition()
         {
-            return base.GetBasePosition() + new Vector2(Margins, Margins) + (BackgroundShape == null ? new Vector2() : BackgroundShape.GetBasePosition());
+            return base.GetBasePosition() + new Vector2f(Margins, Margins) + (BackgroundShape == null ? new Vector2f() : BackgroundShape.GetBasePosition());
         }
 
-        protected override Vector2 GetStructureDimension()
+        protected override Vector2f GetStructureDimension()
         {
-            return base.GetStructureDimension() + new Vector2(Margins * 2F, Margins * 2F);
+            return base.GetStructureDimension() + new Vector2f(Margins * 2F, Margins * 2F);
         }
     }
 }

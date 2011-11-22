@@ -51,14 +51,14 @@ namespace BlazeraLib
 
                     switch (evt.Key.Code)
                     {
-                        case KeyCode.Down:
+                        case Keyboard.Key.Down:
 
                             if (CursorMode && !Down())
                                 break;
 
                             return true;
 
-                        case KeyCode.Up:
+                        case Keyboard.Key.Up:
 
                             if (CursorMode && !Up())
                                 break;
@@ -295,11 +295,11 @@ namespace BlazeraLib
             if (this.Current == null)
                 return;
 
-            this.Cursor.Dimension += new Vector2(
+            this.Cursor.Dimension += new Vector2f(
                 (this.Current.Dimension.X - this.Cursor.Dimension.X) / CURSOR_VELOCITY * (float)dt.MS,
                 (this.Current.Dimension.Y - this.Cursor.Dimension.Y) / CURSOR_VELOCITY * (float)dt.MS);
 
-            this.Cursor.Position += new Vector2(
+            this.Cursor.Position += new Vector2f(
                 this.Current.Position.X - this.Cursor.Position.X,
                 (this.Current.Center.Y - this.Cursor.Center.Y) / CURSOR_VELOCITY * (float)dt.MS);
         }

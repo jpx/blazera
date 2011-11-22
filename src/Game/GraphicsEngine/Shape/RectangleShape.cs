@@ -1,4 +1,5 @@
 ﻿using SFML.Graphics;
+using SFML.Window;
 
 namespace BlazeraLib
 {
@@ -14,7 +15,7 @@ namespace BlazeraLib
         #endregion
 
         public RectangleShape(
-            Vector2 dimension,
+            Vector2f dimension,
             Color color,
             bool outlineMode,
             Color outlineColor,
@@ -45,21 +46,21 @@ namespace BlazeraLib
 
         protected override void Build()
         {
-            AddPoint(new Vector2(0F, 0F));
-            AddShadePoint(new Vector2(0F, 0F));
-            AddShadowPoint(new Vector2(0F, 0F));
+            AddPoint(new Vector2f(0F, 0F));
+            AddShadePoint(new Vector2f(0F, 0F));
+            AddShadowPoint(new Vector2f(0F, 0F));
 
-            AddPoint(new Vector2(Dimension.X, 0F));
-            AddShadePoint(new Vector2(Dimension.X, 0F));
-            AddShadowPoint(new Vector2(Dimension.X, 0F));
+            AddPoint(new Vector2f(Dimension.X, 0F));
+            AddShadePoint(new Vector2f(Dimension.X, 0F));
+            AddShadowPoint(new Vector2f(Dimension.X, 0F));
 
             AddPoint(Dimension);
             AddShadePoint(Dimension, false);
             AddShadowPoint(Dimension);
 
-            AddPoint(new Vector2(0F, Dimension.Y));
-            AddShadePoint(new Vector2(0F, Dimension.Y), false);
-            AddShadowPoint(new Vector2(0F, Dimension.Y));
+            AddPoint(new Vector2f(0F, Dimension.Y));
+            AddShadePoint(new Vector2f(0F, Dimension.Y), false);
+            AddShadowPoint(new Vector2f(0F, Dimension.Y));
         }
     }
 }

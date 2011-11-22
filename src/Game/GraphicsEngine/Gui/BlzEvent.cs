@@ -41,8 +41,8 @@ namespace BlazeraLib
                 this.Type == EventType.LostFocus)
                 return EType.MouseMove;
 
-            if (this.Type == EventType.JoyButtonPressed ||
-                this.Type == EventType.JoyButtonReleased ||
+            if (this.Type == EventType.JoystickButtonPressed ||
+                this.Type == EventType.JoystickButtonReleased ||
                 this.Type == EventType.KeyPressed ||
                 this.Type == EventType.KeyReleased ||
                 this.Type == EventType.TextEntered)
@@ -51,14 +51,14 @@ namespace BlazeraLib
             return EType.MouseButton;
         }
 
-        public JoyButtonEvent JoyButton
+        public JoystickButtonEvent JoyButton
         {
-            get { return this.Event.JoyButton; }
+            get { return this.Event.JoystickButton; }
         }
 
-        public JoyMoveEvent JoyMove
+        public JoystickMoveEvent JoyMove
         {
-            get { return this.Event.JoyMove; }
+            get { return this.Event.JoystickMove; }
         }
 
         public KeyEvent Key

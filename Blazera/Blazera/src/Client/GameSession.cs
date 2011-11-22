@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading;
 using BlazeraLib;
 using SFML.Graphics;
+using SFML.Window;
 
 namespace Blazera
 {
@@ -18,7 +19,7 @@ namespace Blazera
 
         class SessionInfo
         {
-            public SessionInfo(String login, String initMap, Vector2 initPos)
+            public SessionInfo(String login, String initMap, Vector2f initPos)
             {
                 this.Login = login;
                 this.InitMap = initMap;
@@ -27,7 +28,7 @@ namespace Blazera
 
             public String Login;
             public String InitMap;
-            public Vector2 InitPos;
+            public Vector2f InitPos;
         }
 
         #endregion
@@ -110,7 +111,7 @@ namespace Blazera
                     return;
                 }
 
-                Info = new SessionInfo(ClientConnection.Login, GameDatas.INIT_MAP, new Vector2());
+                Info = new SessionInfo(ClientConnection.Login, GameDatas.INIT_MAP, new Vector2f());
 
                 ReceptionThread.Start();
             }
@@ -118,8 +119,6 @@ namespace Blazera
 
         Boolean ConnectionTest()
         {
-            return false;
-
             if (!ClientConnection.IsConnected)
             {
                 Console.Write("Enter a login : ");
@@ -173,7 +172,7 @@ namespace Blazera
         {
             Guid = data.ReadGuid();
 
-            Log.Cl("Logged as " + GetLogin() + " Guid " + Guid.ToString(), ConsoleColor.Green);
+            Log.Cldebug("Logged as " + GetLogin() + " with Guid " + Guid.ToString(), ConsoleColor.Green);
 
             SendingPacket sndData = new SendingPacket(PacketType.CLIENT_REQUEST_MAP_LOADING);
             SendPacket(sndData);

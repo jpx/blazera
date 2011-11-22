@@ -30,7 +30,7 @@ namespace BlazeraEditor
         #region Constants
 
         public const float DEFAULT_SIZE = 14F;
-        static readonly Vector2 SIZE = new Vector2(DEFAULT_SIZE, DEFAULT_SIZE) * GameDatas.TILE_SIZE;
+        static readonly Vector2f SIZE = new Vector2f(DEFAULT_SIZE, DEFAULT_SIZE) * GameDatas.TILE_SIZE;
 
         static readonly Color CURRENT_SELECTED_OBJECT_COLOR = new Color(238, 64, 0, 192);
 
@@ -140,7 +140,7 @@ namespace BlazeraEditor
 
         void UpdatePlayerPos()
         {
-            PlayerHdl.Vlad.MoveTo(new Vector2(XPosUpDownBox.GetCurrentValue(), YPosUpDownBox.GetCurrentValue()));
+            PlayerHdl.Vlad.MoveTo(new Vector2f(XPosUpDownBox.GetCurrentValue(), YPosUpDownBox.GetCurrentValue()));
         }
 
         void lockViewCheckBox_Checked(object sender, CheckEventArgs e)
@@ -198,7 +198,7 @@ namespace BlazeraEditor
                 return;
 
             if (Clicked != null)
-                Clicked(this, new MapClickEventArgs(new Vector2(e.X, e.Y)));
+                Clicked(this, new MapClickEventArgs(new Vector2f(e.X, e.Y)));
         }
         #endregion
 
@@ -307,7 +307,7 @@ namespace BlazeraEditor
             SetFocusedWindow(BoundingBoxCreator.Instance, new OpeningInfo(true, new Dictionary<String, Object>()
                 {
                     { "Mode", "MapHandler_Add_Mode" },
-                    { "Texture", new Texture(CurrentSelectedObjectTexture) }
+                    { "Texture", new BlazeraLib.Texture(CurrentSelectedObjectTexture) }
                 }), OnBoundingBoxCreatorAddValidation);
         }
 
@@ -340,7 +340,7 @@ namespace BlazeraEditor
         {
             CurrentEditedBBButton = (Button)sender;
 
-            if (e.Button == MouseButton.Right)
+            if (e.Button == Mouse.Button.Right)
             {
                 CallConfirmationDialogBox(new String[]
                 {
@@ -356,7 +356,7 @@ namespace BlazeraEditor
             {
                 { "Mode", "MapHandler_Edit_Mode" },
                 { "BoundingBox", BB },
-                { "Texture", new Texture(CurrentSelectedObjectTexture) }
+                { "Texture", new BlazeraLib.Texture(CurrentSelectedObjectTexture) }
             }), OnBoundingBoxCreatorEditValidated);
         }
 
@@ -432,7 +432,7 @@ namespace BlazeraEditor
             AddSelectedObject(e.Object);
         }
 
-        Texture CurrentSelectedObjectTexture;
+        BlazeraLib.Texture CurrentSelectedObjectTexture;
         void objectButton_Clicked(object sender, MouseButtonEventArgs e)
         {
             CurrentSelectedObjectExternalBoundingBoxes.Clear();
@@ -442,7 +442,7 @@ namespace BlazeraEditor
 
             CurrentSelectedObject = SelectedObjects[((Button)sender).Text];
 
-            CurrentSelectedObjectTexture = new Texture(SelectedObjects[((Button)sender).Text].Skin);
+            CurrentSelectedObjectTexture = new BlazeraLib.Texture(SelectedObjects[((Button)sender).Text].Skin);
             CurrentSelectedObjectTexture.Color = Color.White;
             SelectorToolCurrentObjectDisplayScreen.SetCurrentPicture(CurrentSelectedObjectTexture);
 
@@ -658,9 +658,9 @@ namespace BlazeraEditor
 
     public class MapClickEventArgs : EventArgs
     {
-        public Vector2 Point { get; private set; }
+        public Vector2f Point { get; private set; }
 
-        public MapClickEventArgs(Vector2 point)
+        public MapClickEventArgs(Vector2f point)
         {
             Point = point;
         }

@@ -62,11 +62,11 @@ namespace BlazeraLib
         public Button RestoreBtn { get; set; }
 
         private Boolean IsDragged { get; set; }
-        private Vector2 DragPoint { get; set; }
+        private Vector2f DragPoint { get; set; }
 
         public event DragEventHandler Dragged;
 
-        public WindowBackground(Vector2 dimension, float topBorderHeight = DEFAULT_TOPBORDER_HEIGHT) :
+        public WindowBackground(Vector2f dimension, float topBorderHeight = DEFAULT_TOPBORDER_HEIGHT) :
             base()
         {
             this.TopBorderHeight = topBorderHeight;
@@ -76,12 +76,12 @@ namespace BlazeraLib
             this.Dimension = dimension;
 
             this.UpBorder = new Border(
-                new Vector2(
+                new Vector2f(
                     this.Dimension.X,
                     this.TopBorderHeight));
 
             this.DownBorder = new Border(
-                new Vector2(
+                new Vector2f(
                     this.Dimension.X,
                     this.Dimension.Y));
 
@@ -137,7 +137,7 @@ namespace BlazeraLib
             this.Title = new Label(title);
             Title.Style = LABEL_STYLE;
             Title.IsColorLinked = false;
-            this.Title.Center = this.GetGlobalFromLocal(new Vector2(Border.GetWindowBorderWidth() * 2F + this.Title.Halfsize.X, this.TopBorderHeight / 2F));
+            this.Title.Center = this.GetGlobalFromLocal(new Vector2f(Border.GetWindowBorderWidth() * 2F + this.Title.Halfsize.X, this.TopBorderHeight / 2F));
             this.AddWidget(this.Title);
         }
 
@@ -212,7 +212,7 @@ namespace BlazeraLib
                         if (this.TopBorderContainsMouse())
                         {
                             this.IsDragged = true;
-                            this.DragPoint = this.GetLocalFromGlobal(new Vector2(evt.MouseButton.X, evt.MouseButton.Y));
+                            this.DragPoint = this.GetLocalFromGlobal(new Vector2f(evt.MouseButton.X, evt.MouseButton.Y));
 
                             return true;
                         }
@@ -223,7 +223,7 @@ namespace BlazeraLib
                     if (this.TopBorderContainsMouse())
                     {
                         this.IsDragged = true;
-                        this.DragPoint = this.GetLocalFromGlobal(new Vector2(evt.MouseButton.X, evt.MouseButton.Y));
+                        this.DragPoint = this.GetLocalFromGlobal(new Vector2f(evt.MouseButton.X, evt.MouseButton.Y));
 
                         return true;
                     }
@@ -232,7 +232,7 @@ namespace BlazeraLib
 
                 case EventType.MouseButtonReleased:
 
-                    if (evt.MouseButton.Button != MouseButton.Left)
+                    if (evt.MouseButton.Button != Mouse.Button.Left)
                     {
                         if (this.ContainsMouse())
                             evt.IsHandled = true;
@@ -260,7 +260,7 @@ namespace BlazeraLib
                     {
                         if (this.Dragged != null)
                         {
-                            this.Dragged(this, new DragEventArgs(new Vector2(
+                            this.Dragged(this, new DragEventArgs(new Vector2f(
                                 evt.MouseMove.X - this.DragPoint.X,
                                 evt.MouseMove.Y - this.DragPoint.Y)));
 
@@ -296,21 +296,21 @@ namespace BlazeraLib
 
             if (this.State == EState.Reducing)
             {
-                this.DownBorder.Resize(new Vector2(1F, 1F - (float)(RESIZE_VELOCITY * dt.Value)));
+                this.DownBorder.Resize(new Vector2f(1F, 1F - (float)(RESIZE_VELOCITY * dt.Value)));
                 if (this.DownBorder.Dimension.Y <= this.UpBorder.Dimension.Y)
                 {
                     this.State = EState.Reduced;
-                    this.DownBorder.Resize(new Vector2(1F, this.UpBorder.Dimension.Y / this.DownBorder.Dimension.Y));
+                    this.DownBorder.Resize(new Vector2f(1F, this.UpBorder.Dimension.Y / this.DownBorder.Dimension.Y));
                 }
             }
 
             else if (this.State == EState.Restoring)
             {
-                this.DownBorder.Resize(new Vector2(1F, 1F + (float)(RESIZE_VELOCITY * dt.Value)));
+                this.DownBorder.Resize(new Vector2f(1F, 1F + (float)(RESIZE_VELOCITY * dt.Value)));
                 if (this.DownBorder.Dimension.Y >= this.Dimension.Y)
                 {
                     this.State = EState.Restored;
-                    this.DownBorder.Resize(new Vector2(1F, this.Dimension.Y / this.DownBorder.Dimension.Y));
+                    this.DownBorder.Resize(new Vector2f(1F, this.Dimension.Y / this.DownBorder.Dimension.Y));
                 }
             }
         }
@@ -326,10 +326,10 @@ namespace BlazeraLib
 
         private Boolean TopBorderContainsMouse()
         {
-            return this.GetLocalFromGlobal(new Vector2(this.Root.Window.Input.GetMouseX(), this.Root.Window.Input.GetMouseY())).Y < this.TopBorderHeight &&
-                   this.GetLocalFromGlobal(new Vector2(this.Root.Window.Input.GetMouseX(), this.Root.Window.Input.GetMouseY())).Y >= 0F &&
-                   this.GetLocalFromGlobal(new Vector2(this.Root.Window.Input.GetMouseX(), this.Root.Window.Input.GetMouseY())).X >= 0F &&
-                   this.GetLocalFromGlobal(new Vector2(this.Root.Window.Input.GetMouseX(), this.Root.Window.Input.GetMouseY())).X < this.Dimension.X;
+            return this.GetLocalFromGlobal(new Vector2f(Mouse.GetPosition(Root.Window).X, Mouse.GetPosition(Root.Window).Y)).Y < this.TopBorderHeight &&
+                   this.GetLocalFromGlobal(new Vector2f(Mouse.GetPosition(Root.Window).X, Mouse.GetPosition(Root.Window).Y)).Y >= 0F &&
+                   this.GetLocalFromGlobal(new Vector2f(Mouse.GetPosition(Root.Window).X, Mouse.GetPosition(Root.Window).Y)).X >= 0F &&
+                   this.GetLocalFromGlobal(new Vector2f(Mouse.GetPosition(Root.Window).X, Mouse.GetPosition(Root.Window).Y)).X < this.Dimension.X;
         }
 
         public override void Refresh()
@@ -338,36 +338,36 @@ namespace BlazeraLib
                 this.DownBorder == null)
                 return;
 
-            this.UpBorder.Resize(new Vector2(
+            this.UpBorder.Resize(new Vector2f(
                 this.Dimension.X / this.UpBorder.Dimension.X,
                 this.TopBorderHeight / this.UpBorder.Dimension.Y));
 
             if (this.State == EState.Restored)
-                this.DownBorder.Resize(new Vector2(
+                this.DownBorder.Resize(new Vector2f(
                     this.Dimension.X / this.DownBorder.Dimension.X,
                     this.Dimension.Y / this.DownBorder.Dimension.Y));
 
-            this.CloseBtn.Dimension = new Vector2(
+            this.CloseBtn.Dimension = new Vector2f(
                 this.TopBorderHeight * BUTTON_SCALE_FACTOR,
                 this.TopBorderHeight * BUTTON_SCALE_FACTOR);
 
-            this.CloseBtn.Position = this.GetGlobalFromLocal(new Vector2(
+            this.CloseBtn.Position = this.GetGlobalFromLocal(new Vector2f(
                 this.Dimension.X - Border.GetWindowBorderWidth() * 2F - this.CloseBtn.Dimension.X,
                 this.TopBorderHeight / 2F - this.CloseBtn.Halfsize.Y));
 
-            this.ReduceBtn.Dimension = new Vector2(
+            this.ReduceBtn.Dimension = new Vector2f(
                 this.TopBorderHeight * BUTTON_SCALE_FACTOR,
                 this.TopBorderHeight * BUTTON_SCALE_FACTOR);
 
-            this.ReduceBtn.Position = this.GetGlobalFromLocal(new Vector2(
+            this.ReduceBtn.Position = this.GetGlobalFromLocal(new Vector2f(
                 this.Dimension.X - this.CloseBtn.Dimension.X * 2 - Border.GetWindowBorderWidth() * 2F,
                 this.TopBorderHeight / 2F - this.ReduceBtn.Halfsize.Y));
 
-            this.RestoreBtn.Dimension = new Vector2(
+            this.RestoreBtn.Dimension = new Vector2f(
                 this.TopBorderHeight * BUTTON_SCALE_FACTOR,
                 this.TopBorderHeight * BUTTON_SCALE_FACTOR);
 
-            this.RestoreBtn.Position = this.GetGlobalFromLocal(new Vector2(
+            this.RestoreBtn.Position = this.GetGlobalFromLocal(new Vector2f(
                 this.Dimension.X - this.CloseBtn.Dimension.X * 2 - Border.GetWindowBorderWidth() * 2F,
                 this.TopBorderHeight / 2F - this.RestoreBtn.Halfsize.Y));
 
@@ -398,12 +398,12 @@ namespace BlazeraLib
 
     public class DragEventArgs : EventArgs
     {
-        public DragEventArgs(Vector2 dragValue)
+        public DragEventArgs(Vector2f dragValue)
         {
             this.DragValue = dragValue;
         }
 
-        public Vector2 DragValue { get; set; }
+        public Vector2f DragValue { get; set; }
     }
 
     public delegate void StateChangeHandler(WindowBackground sender, StateChangeEventArgs e);

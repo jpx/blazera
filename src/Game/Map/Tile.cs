@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using SFML.Graphics;
+using SFML.Window;
 
 namespace BlazeraLib
 {
@@ -10,8 +11,8 @@ namespace BlazeraLib
     {
         public Texture Texture { get; set; }
         
-        private Vector2 _position;
-        public Vector2 Position
+        private Vector2f _position;
+        public Vector2f Position
         {
             get { return _position; }
             set

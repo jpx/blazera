@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using SFML.Graphics;
+using SFML.Window;
 
 namespace BlazeraLib
 {
@@ -10,11 +11,11 @@ namespace BlazeraLib
     {
         public Particle(
             Texture texture,
-            Vector2 position,
+            Vector2f position,
             float velocity,
             float acceleration,
             double durationTime,
-            Vector2 scale,
+            Vector2f scale,
             float angle,
             float rotation,
             Color color,
@@ -27,7 +28,7 @@ namespace BlazeraLib
             this.Velocity = velocity;
             this.Acceleration = acceleration;
             this.DurationTime = new Time(durationTime);
-            this.Texture.Dimension = new Vector2(this.Texture.Dimension.X * scale.X,
+            this.Texture.Dimension = new Vector2f(this.Texture.Dimension.X * scale.X,
                                                  this.Texture.Dimension.Y * scale.Y);
             this.Angle = angle;
             this.Rotation = rotation;
@@ -65,7 +66,7 @@ namespace BlazeraLib
                                                   (byte)(this.Color.B + this.DColor.B),
                                                   this.Color.A);
 
-            this.Position += new Vector2(this.Velocity * (float)Math.Cos(this.Angle * Math.PI / 180),
+            this.Position += new Vector2f(this.Velocity * (float)Math.Cos(this.Angle * Math.PI / 180),
                                          this.Velocity * (float)Math.Sin(this.Angle * Math.PI / 180)) * (float)dt.Value;
 
             this.Velocity += this.Acceleration * (float)dt.Value;
@@ -115,8 +116,8 @@ namespace BlazeraLib
             set;
         }
 
-        private Vector2 _position;
-        public Vector2 Position
+        private Vector2f _position;
+        public Vector2f Position
         {
             get
             {
@@ -133,7 +134,7 @@ namespace BlazeraLib
             }
         }
 
-        public Vector2 Scale
+        public Vector2f Scale
         {
             get;
             set;

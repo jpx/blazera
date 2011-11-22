@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using SFML.Graphics;
+using SFML.Window;
 
 namespace BlazeraLib
 {
@@ -103,12 +104,12 @@ namespace BlazeraLib
             return new Vector2I(v.X - x, v.Y - x);
         }
 
-        public Vector2 ToVector2()
+        public Vector2f ToVector2()
         {
-            return new Vector2((float)this.X, (float)this.Y);
+            return new Vector2f((float)this.X, (float)this.Y);
         }
 
-        public static Vector2I FromVector2(Vector2 vector2)
+        public static Vector2I FromVector2(Vector2f vector2)
         {
             return new Vector2I((int)vector2.X, (int)vector2.Y);
         }
@@ -118,21 +119,21 @@ namespace BlazeraLib
             return new Vector2I((int)x, (int)y);
         }
 
-        public static Vector2 ToVector2(Vector2I vector2I)
+        public static Vector2f ToVector2(Vector2I vector2I)
         {
-            return new Vector2((float)vector2I.X, (float)vector2I.Y);
+            return new Vector2f((float)vector2I.X, (float)vector2I.Y);
         }
 
-        public static Vector2 ToVector2(int x, int y)
+        public static Vector2f ToVector2(int x, int y)
         {
-            return new Vector2((float)x, (float)y);
+            return new Vector2f((float)x, (float)y);
         }
 
         public int X { get; set; }
 
         public int Y { get; set; }
 
-        public static double GetDistanceBetween(Vector2 point1, Vector2 point2)
+        public static double GetDistanceBetween(Vector2f point1, Vector2f point2)
         {
             return Math.Sqrt(Math.Pow((point2 - point1).X, 2D) + Math.Pow((point2 - point1).Y, 2D));
         }
@@ -171,12 +172,12 @@ namespace BlazeraLib
             return rect + offset;
         }
 
-        public static IntRect operator +(IntRect rect, Vector2 offset)
+        public static IntRect operator +(IntRect rect, Vector2f offset)
         {
             return rect + Vector2I.FromVector2(offset);
         }
 
-        public static IntRect operator +(Vector2 offset, IntRect rect)
+        public static IntRect operator +(Vector2f offset, IntRect rect)
         {
             return rect + offset;
         }

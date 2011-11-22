@@ -1,6 +1,7 @@
 using System;
 using System.Security;
 using System.Runtime.InteropServices;
+using SFML.Window;
 
 namespace SFML
 {
@@ -73,14 +74,14 @@ namespace SFML
             /// </summary>
             /// <param name="str">String to display</param>
             /// <param name="font">Font to use</param>
-            /// <param name="size">Base characters size</param>
+            /// <param name="characterSize">Base characters size</param>
             ////////////////////////////////////////////////////////////
-            public Text(string str, Font font, uint size) :
+            public Text(string str, Font font, uint characterSize) :
                 base(sfText_Create())
             {
                 DisplayedString = str;
                 Font = font;
-                Size = size;
+                CharacterSize = characterSize;
             }
 
             ////////////////////////////////////////////////////////////
@@ -100,9 +101,9 @@ namespace SFML
             /// Position of the object on screen
             /// </summary>
             ////////////////////////////////////////////////////////////
-            public override Vector2 Position
+            public override Vector2f Position
             {
-                get { return new Vector2(sfText_GetX(This), sfText_GetY(This)); }
+                get { return new Vector2f(sfText_GetX(This), sfText_GetY(This)); }
                 set { sfText_SetPosition(This, value.X, value.Y); }
             }
 
@@ -122,9 +123,9 @@ namespace SFML
             /// Vertical and horizontal scale of the object
             /// </summary>
             ////////////////////////////////////////////////////////////
-            public override Vector2 Scale
+            public override Vector2f Scale
             {
-                get { return new Vector2(sfText_GetScaleX(This), sfText_GetScaleY(This)); }
+                get { return new Vector2f(sfText_GetScaleX(This), sfText_GetScaleY(This)); }
                 set { sfText_SetScale(This, value.X, value.Y); }
             }
 
@@ -134,9 +135,9 @@ namespace SFML
             /// (center of translation, rotation and scale)
             /// </summary>
             ////////////////////////////////////////////////////////////
-            public override Vector2 Origin
+            public override Vector2f Origin
             {
-                get { return new Vector2(sfText_GetOriginX(This), sfText_GetOriginY(This)); }
+                get { return new Vector2f(sfText_GetOriginX(This), sfText_GetOriginY(This)); }
                 set { sfText_SetOrigin(This, value.X, value.Y); }
             }
 
@@ -170,9 +171,9 @@ namespace SFML
             /// <param name="point">Point to transform</param>
             /// <returns>Transformed point</returns>
             ////////////////////////////////////////////////////////////
-            public override Vector2 TransformToLocal(Vector2 point)
+            public override Vector2f TransformToLocal(Vector2f point)
             {
-                Vector2 Transformed;
+                Vector2f Transformed;
                 sfText_TransformToLocal(This, point.X, point.Y, out Transformed.X, out Transformed.Y);
 
                 return Transformed;
@@ -186,18 +187,14 @@ namespace SFML
             /// <param name="point">Point to transform</param>
             /// <returns>Transformed point</returns>
             ////////////////////////////////////////////////////////////
-            public override Vector2 TransformToGlobal(Vector2 point)
+            public override Vector2f TransformToGlobal(Vector2f point)
             {
-                Vector2 Transformed;
+                Vector2f Transformed;
                 sfText_TransformToGlobal(This, point.X, point.Y, out Transformed.X, out Transformed.Y);
 
                 return Transformed;
             }
 
-
-            // /!\ MODIFIED /!\
-            // /!\ MODIFIED /!\
-            // /!\ MODIFIED /!\
             ////////////////////////////////////////////////////////////
             /// <summary>
             /// String which is displayed
@@ -205,17 +202,33 @@ namespace SFML
             ////////////////////////////////////////////////////////////
             public string DisplayedString
             {
-                // TODO : use unicode functions
-                // (convert from UTF-16 to UTF-32, and find how to marshal System.String as sfUint32*...)
-                get { return Marshal.PtrToStringAnsi(sfText_GetString(This)); }
-                set {sfText_SetString(This, value);}
-            }
+                get
+                {
+                    // Get the number of characters
+                    // This is probably not the most optimized way; if anyone has a better solution...
+                    int length = Marshal.PtrToStringAnsi(sfText_GetString(This)).Length;
 
-            [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-            static extern IntPtr sfText_GetString(IntPtr This);
-            // /!\ MODIFIED /!\
-            // /!\ MODIFIED /!\
-            // /!\ MODIFIED /!\
+                    // Copy the characters
+                    byte[] characters = new byte[length * 4];
+                    Marshal.Copy(sfText_GetUnicodeString(This), characters, 0, characters.Length);
+
+                    // Convert from UTF-32 to String (UTF-16)
+                    return System.Text.Encoding.UTF32.GetString(characters);
+                }
+
+                set
+                {
+                    // Convert from String (UTF-16) to UTF-32
+                    int[] characters = new int[value.Length];
+                    for (int i = 0; i < value.Length; ++i)
+                        characters[i] = Char.ConvertToUtf32(value, i);
+
+                    // Transform to raw and pass to the C API
+                    GCHandle handle = GCHandle.Alloc(characters, GCHandleType.Pinned);
+                    sfText_SetUnicodeString(This, handle.AddrOfPinnedObject());
+                    handle.Free();
+                }
+            }
 
             ////////////////////////////////////////////////////////////
             /// <summary>
@@ -233,7 +246,7 @@ namespace SFML
             /// Base size of characters
             /// </summary>
             ////////////////////////////////////////////////////////////
-            public uint Size
+            public uint CharacterSize
             {
                 get {return sfText_GetCharacterSize(This);}
                 set {sfText_SetCharacterSize(This, value);}
@@ -270,9 +283,9 @@ namespace SFML
             /// <param name="index">Index of the character</param>
             /// <returns>Position of the Index-th character (end of text if Index is out of range)</returns>
             ////////////////////////////////////////////////////////////
-            public Vector2 GetCharacterPos(uint index)
+            public Vector2f GetCharacterPos(uint index)
             {
-                Vector2 Pos;
+                Vector2f Pos;
                 sfText_GetCharacterPos(This, index, out Pos.X, out Pos.Y);
                 
                 return Pos;
@@ -295,7 +308,7 @@ namespace SFML
                        " BlendMode(" + BlendMode + ")" +
                        " String(" + DisplayedString + ")" +
                        " Font(" + Font + ")" +
-                       " Size(" + Size + ")" +
+                       " CharacterSize(" + CharacterSize + ")" +
                        " Style(" + Style + ")" +
                        " Rectangle(" + GetRect() + ")";
             }
@@ -317,17 +330,17 @@ namespace SFML
 
             ////////////////////////////////////////////////////////////
             /// <summary>
-            /// Render the object into the given render image
+            /// Render the object into the given render texture
             /// </summary>
-            /// <param name="target">Target render image</param>
+            /// <param name="target">Target render texture</param>
             /// <param name="shader">Shader to apply</param>
             ////////////////////////////////////////////////////////////
-            internal override void Render(RenderImage target, Shader shader)
+            internal override void Render(RenderTexture target, Shader shader)
             {
                 if (shader == null)
-                    sfRenderImage_DrawText(target.This, This);
+                    sfRenderTexture_DrawText(target.This, This);
                 else
-                    sfRenderImage_DrawTextWithShader(target.This, This, shader.This);
+                    sfRenderTexture_DrawTextWithShader(target.This, This, shader.This);
             }
 
             ////////////////////////////////////////////////////////////
@@ -399,10 +412,10 @@ namespace SFML
             static extern BlendMode sfText_GetBlendMode(IntPtr This);
 
             [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-            static extern Vector2 sfText_TransformToLocal(IntPtr This, float PointX, float PointY, out float X, out float Y);
+            static extern Vector2f sfText_TransformToLocal(IntPtr This, float PointX, float PointY, out float X, out float Y);
 
             [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-            static extern Vector2 sfText_TransformToGlobal(IntPtr This, float PointX, float PointY, out float X, out float Y);
+            static extern Vector2f sfText_TransformToGlobal(IntPtr This, float PointX, float PointY, out float X, out float Y);
 
             [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfRenderWindow_DrawText(IntPtr This, IntPtr String);
@@ -411,13 +424,13 @@ namespace SFML
             static extern void sfRenderWindow_DrawTextWithShader(IntPtr This, IntPtr String, IntPtr Shader);
 
             [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-            static extern void sfRenderImage_DrawText(IntPtr This, IntPtr String);
+            static extern void sfRenderTexture_DrawText(IntPtr This, IntPtr String);
 
             [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-            static extern void sfRenderImage_DrawTextWithShader(IntPtr This, IntPtr String, IntPtr Shader);
+            static extern void sfRenderTexture_DrawTextWithShader(IntPtr This, IntPtr String, IntPtr Shader);
 
-            [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi), SuppressUnmanagedCodeSecurity]
-            static extern void sfText_SetString(IntPtr This, string Text);
+            [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+            static extern void sfText_SetUnicodeString(IntPtr This, IntPtr Text);
 
             [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfText_SetFont(IntPtr This, IntPtr Font);
@@ -428,8 +441,11 @@ namespace SFML
             [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfText_SetStyle(IntPtr This, Styles Style);
 
-            //[DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi), SuppressUnmanagedCodeSecurity]
-            //static extern string sfText_GetString(IntPtr This);
+            [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+            static extern IntPtr sfText_GetString(IntPtr This);
+
+            [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+            static extern IntPtr sfText_GetUnicodeString(IntPtr This);
 
             [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern uint sfText_GetCharacterSize(IntPtr This);

@@ -151,8 +151,8 @@ namespace Box2DXDemo
                 Vec2 position2 = body2.GetPosition();
                 float angle2 = body2.GetAngle();
 
-                pl.Position = new Vector2(position.X, position.Y);
-                pl2.Position = new Vector2(position2.X, position2.Y);
+                pl.Position = new Vector2f(position.X, position.Y);
+                pl2.Position = new Vector2f(position2.X, position2.Y);
                 ///////////////////////////////////////////////////////////////////////
 
                 // map update comes here

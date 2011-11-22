@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using SFML.Graphics;
+using SFML.Window;
 
 namespace BlazeraLib
 {
@@ -63,7 +64,7 @@ namespace BlazeraLib
 
         public void SetCell(Int32 x, Int32 y, Cell cell)
         {
-            cell.Position = new Vector2(
+            cell.Position = new Vector2f(
                 GameDatas.TILE_SIZE * x,
                 GameDatas.TILE_SIZE * y);
             CellSet[y, x] = cell;
@@ -280,7 +281,7 @@ namespace BlazeraLib
             return GetCell(x, y).GetEBoundingBoxesEnumerator(z);
         }
 
-        public Boolean CanFit(WorldObject wObj, Vector2 position)
+        public Boolean CanFit(WorldObject wObj, Vector2f position)
         {
             foreach (BBoundingBox BB in wObj.BBoundingBoxes)
             {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using SFML.Graphics;
+using SFML.Window;
 
 namespace BlazeraLib
 {
@@ -10,13 +11,13 @@ namespace BlazeraLib
 
     public class WarpPoint
     {
-        static readonly WarpPoint DEFAULT = new WarpPoint("Default", new Vector2(), GameDatas.DEFAULT_DIRECTION);
+        static readonly WarpPoint DEFAULT = new WarpPoint("Default", new Vector2f(), GameDatas.DEFAULT_DIRECTION);
 
         public String Name { get; set; }
-        public Vector2 Point { get; set; }
+        public Vector2f Point { get; set; }
         public Direction Direction { get; set; }
 
-        public WarpPoint(String name, Vector2 point, Direction direction)
+        public WarpPoint(String name, Vector2f point, Direction direction)
         {
             this.Name = name;
             this.Point = point;
@@ -103,7 +104,7 @@ namespace BlazeraLib
             Ground.Generate();
         }
 
-        public virtual Vector2 GetPositionFromCell(Vector2I cell)
+        public virtual Vector2f GetPositionFromCell(Vector2I cell)
         {
             return cell.ToVector2() * GameDatas.TILE_SIZE;
         }
@@ -118,7 +119,7 @@ namespace BlazeraLib
 
         #region WarpPoint
 
-        public void AddWarpPoint(String name, Vector2 point, Direction direction, Boolean defaultWarpPoint = false)
+        public void AddWarpPoint(String name, Vector2f point, Direction direction, Boolean defaultWarpPoint = false)
         {
             AddWarpPoint(new WarpPoint(name, point, direction), defaultWarpPoint);
         }
@@ -301,8 +302,8 @@ namespace BlazeraLib
         const float OBJECT_DRAW_MARGIN = 10F;
         Boolean ViewContainsObject(RenderWindow window, WorldObject wObj)
         {
-            Vector2 viewTopLeft = window.GetView().Center - window.GetView().Size / 2F;
-            Vector2 viewBottomRight = viewTopLeft + window.GetView().Size;
+            Vector2f viewTopLeft = window.GetView().Center - window.GetView().Size / 2F;
+            Vector2f viewBottomRight = viewTopLeft + window.GetView().Size;
 
             FloatRect viewRect = new FloatRect(
                 viewTopLeft.X - OBJECT_DRAW_MARGIN,
@@ -477,12 +478,7 @@ namespace BlazeraLib
         {
             IEnumerator<WorldObject> objectsEnum = this.Objects.GetEnumerator();
             while (objectsEnum.MoveNext())
-            {
-                objectsEnum.Current.DisableDirection(Direction.N);
-                objectsEnum.Current.DisableDirection(Direction.E);
-                objectsEnum.Current.DisableDirection(Direction.S);
-                objectsEnum.Current.DisableDirection(Direction.O);
-            }
+                objectsEnum.Current.StopMove();
         }
 
         public List<WorldObject> GetMovingObjects()
@@ -505,12 +501,12 @@ namespace BlazeraLib
 
         public void UpdateObjectMoves(Time dt, WorldObject wObj)
         {
-            Vector2 move = this.GetMove(wObj, dt);
+            Vector2f move = this.GetMove(wObj, dt);
 
             if (Math.Abs(move.X) < DECOMPOSITION_LIMIT &&
                 Math.Abs(move.Y) < DECOMPOSITION_LIMIT)
             {
-                wObj.Move(new Vector2(this.GetPhysicalMoveX(wObj, move.X), this.GetPhysicalMoveY(wObj, move.Y)));
+                wObj.Move(new Vector2f(this.GetPhysicalMoveX(wObj, move.X), this.GetPhysicalMoveY(wObj, move.Y)));
 
                 return;
             }
@@ -522,15 +518,15 @@ namespace BlazeraLib
 
             for (Int32 count = 0; count < decompositionCount; ++count)
             {
-                Vector2 decomposedMove = move / (float)decompositionCount;
+                Vector2f decomposedMove = move / (float)decompositionCount;
 
-                wObj.Move(new Vector2(GetPhysicalMoveX(wObj, decomposedMove.X), GetPhysicalMoveY(wObj, decomposedMove.Y)));
+                wObj.Move(new Vector2f(GetPhysicalMoveX(wObj, decomposedMove.X), GetPhysicalMoveY(wObj, decomposedMove.Y)));
             }
         }
 
-        protected Vector2 GetMove(WorldObject wObj, Time dt)
+        protected Vector2f GetMove(WorldObject wObj, Time dt)
         {
-            Vector2 move = new Vector2();
+            Vector2f move = new Vector2f();
 
             float velocity = wObj.Velocity;
 
@@ -539,31 +535,31 @@ namespace BlazeraLib
 
             switch (wObj.Direction)
             {
-                case Direction.N:   move = new Vector2(0F, -d);     break;
-                case Direction.S:   move = new Vector2(0F, d);      break;
-                case Direction.E:   move = new Vector2(d, 0F);      break;
-                case Direction.O:   move = new Vector2(-d, 0F);     break;
-                case Direction.NE:  move = new Vector2(dd, -dd);    break;
-                case Direction.NO:  move = new Vector2(-dd, -dd);   break;
-                case Direction.SE:  move = new Vector2(dd, dd);     break;
-                case Direction.SO:  move = new Vector2(-dd, dd);    break;
+                case Direction.N:   move = new Vector2f(0F, -d);     break;
+                case Direction.S:   move = new Vector2f(0F, d);      break;
+                case Direction.E:   move = new Vector2f(d, 0F);      break;
+                case Direction.O:   move = new Vector2f(-d, 0F);     break;
+                case Direction.NE:  move = new Vector2f(dd, -dd);    break;
+                case Direction.NO:  move = new Vector2f(-dd, -dd);   break;
+                case Direction.SE:  move = new Vector2f(dd, dd);     break;
+                case Direction.SO:  move = new Vector2f(-dd, dd);    break;
             }
 
             return move;
         }
 
-        public static Vector2 GetMove(Direction direction, float velocity, Time dt)
+        public static Vector2f GetMove(Direction direction, float velocity, Time dt)
         {
-            Vector2 move = new Vector2();
+            Vector2f move = new Vector2f();
 
             float d = (float)(velocity * dt.Value);
 
             switch (direction)
             {
-                case Direction.N: move = new Vector2(0F, -d); break;
-                case Direction.S: move = new Vector2(0F, d); break;
-                case Direction.E: move = new Vector2(d, 0F); break;
-                case Direction.O: move = new Vector2(-d, 0F); break;
+                case Direction.N: move = new Vector2f(0F, -d); break;
+                case Direction.S: move = new Vector2f(0F, d); break;
+                case Direction.E: move = new Vector2f(d, 0F); break;
+                case Direction.O: move = new Vector2f(-d, 0F); break;
             }
 
             return move;
@@ -573,7 +569,7 @@ namespace BlazeraLib
         {
             foreach (BBoundingBox BB in wObj.BBoundingBoxes)
             {
-                BlazeraLib.IntRect tmp = BB.GetNextTRect(new Vector2(offset, 0.0f));
+                BlazeraLib.IntRect tmp = BB.GetNextTRect(new Vector2f(offset, 0.0f));
 
                 for (Int32 y = tmp.Top; y < tmp.Bottom + 1; ++y)
                     for (Int32 x = tmp.Left; x < tmp.Right + 1; ++x)
@@ -583,7 +579,7 @@ namespace BlazeraLib
 
             foreach (BBoundingBox BB in wObj.BBoundingBoxes)
             {
-                BlazeraLib.IntRect tmp = BB.GetNextTRect(new Vector2(offset, 0.0f));
+                BlazeraLib.IntRect tmp = BB.GetNextTRect(new Vector2f(offset, 0.0f));
 
                 for (int y = tmp.Top; y < tmp.Bottom + 1; ++y)
                     for (int x = tmp.Left; x < tmp.Right + 1; ++x)
@@ -597,7 +593,7 @@ namespace BlazeraLib
                             if (BB.Holder.Equals(iEnum.Current.Holder))
                                 continue;
 
-                            if (BB.BoundingBoxTest(iEnum.Current, new Vector2(offset, 0F)))
+                            if (BB.BoundingBoxTest(iEnum.Current, new Vector2f(offset, 0F)))
                                 return 0F;
                         }
                     }
@@ -610,7 +606,7 @@ namespace BlazeraLib
         {
             foreach (BBoundingBox BB in wObj.BBoundingBoxes)
             {
-                BlazeraLib.IntRect tmp = BB.GetNextTRect(new Vector2(0.0f, offset));
+                BlazeraLib.IntRect tmp = BB.GetNextTRect(new Vector2f(0.0f, offset));
 
                 for (Int32 y = tmp.Top; y < tmp.Bottom + 1; ++y)
                     for (Int32 x = tmp.Left; x < tmp.Right + 1; ++x)
@@ -620,7 +616,7 @@ namespace BlazeraLib
 
             foreach (BBoundingBox BB in wObj.BBoundingBoxes)
             {
-                BlazeraLib.IntRect tmp = BB.GetNextTRect(new Vector2(0.0f, offset));
+                BlazeraLib.IntRect tmp = BB.GetNextTRect(new Vector2f(0.0f, offset));
 
                 for (int y = tmp.Top; y < tmp.Bottom + 1; ++y)
                     for (int x = tmp.Left; x < tmp.Right + 1; ++x)
@@ -634,7 +630,7 @@ namespace BlazeraLib
                             if (BB.Holder.Equals(iEnum.Current.Holder))
                                 continue;
 
-                            if (BB.BoundingBoxTest(iEnum.Current, new Vector2(0F, offset)))
+                            if (BB.BoundingBoxTest(iEnum.Current, new Vector2f(0F, offset)))
                                 return 0F;
                         }
                     }
@@ -903,7 +899,7 @@ namespace BlazeraLib
 
         #region Dimension
 
-        public Boolean ContainsPoint(Vector2 point)
+        public Boolean ContainsPoint(Vector2f point)
         {
             return !(
                 point.X < 0F ||
@@ -917,16 +913,16 @@ namespace BlazeraLib
             return ContainsPoint(point.ToVector2());
         }
 
-        public Vector2 Center
+        public Vector2f Center
         {
             get { return Dimension / 2F; }
         }
 
-        public virtual Vector2 Dimension
+        public virtual Vector2f Dimension
         {
             get
             {
-                return new Vector2(this.Width * GameDatas.TILE_SIZE, 
+                return new Vector2f(this.Width * GameDatas.TILE_SIZE, 
                                    this.Height * GameDatas.TILE_SIZE);
             }
         }
@@ -941,7 +937,7 @@ namespace BlazeraLib
             get { return this.Ground.Height; }
         }
 
-        public Vector2 Halfsize
+        public Vector2f Halfsize
         {
             get { return this.Dimension / 2F; }
         }

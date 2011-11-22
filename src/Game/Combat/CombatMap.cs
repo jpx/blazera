@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using SFML.Graphics;
+using SFML.Window;
 
 namespace BlazeraLib
 {
@@ -93,7 +94,7 @@ namespace BlazeraLib
             p2.Move(new Vector2I(8, 10));
             t1.AddCombatant(p2);
 
-            MapEffectManager.Instance.AddEffect(new MapTextEffect("2044", Color.Blue), new Vector2(200, 200));
+            MapEffectManager.Instance.AddEffect(new MapTextEffect("2044", Color.Blue), new Vector2f(200, 200));
 
             Combat.AddTeam(t1);
             #endregion
@@ -127,11 +128,11 @@ namespace BlazeraLib
             Combat.Update(dt);
         }
 
-        public override Vector2 Dimension
+        public override Vector2f Dimension
         {
             get
             {
-                return new Vector2(Width, Height) * CELL_SIZE;
+                return new Vector2f(Width, Height) * CELL_SIZE;
             }
         }
 
@@ -145,9 +146,9 @@ namespace BlazeraLib
             get { return base.Height * GameDatas.TILE_SIZE / (int)CELL_SIZE; }
         }
 
-        public override Vector2 GetPositionFromCell(Vector2I cell)
+        public override Vector2f GetPositionFromCell(Vector2I cell)
         {
-            return (cell.ToVector2() + new Vector2(.5F, .5F)) * CELL_SIZE;
+            return (cell.ToVector2() + new Vector2f(.5F, .5F)) * CELL_SIZE;
         }
 
         public void SwitchGridVisibility()

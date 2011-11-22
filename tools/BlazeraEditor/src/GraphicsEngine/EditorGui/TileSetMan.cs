@@ -88,7 +88,7 @@ namespace BlazeraEditor
         void tileSetButton_Clicked(object sender, MouseButtonEventArgs e)
         {
             CurrentEditedTileSetType = ((Button)sender).Text;
-            if (e.Button == MouseButton.Right)
+            if (e.Button == Mouse.Button.Right)
             {
                 CallConfirmationDialogBox(new String[] { ConfirmationDialogBox.Instance.GetDeletionStr("TileSet", CurrentEditedTileSetType) }, RemoveTileSet);
                 return;

@@ -1,4 +1,5 @@
 ﻿using SFML.Graphics;
+using SFML.Window;
 
 namespace BlazeraLib
 {
@@ -27,13 +28,13 @@ namespace BlazeraLib
             if (Alignment == BlazeraLib.Alignment.Vertical)
             {
                 ExtendedMainVBox = new ExtendedVBox(DEFAULT_SIZE);
-                ExtendedMainVBox.Position = GetGlobalFromLocal(new Vector2());
+                ExtendedMainVBox.Position = GetGlobalFromLocal(new Vector2f());
                 AddWidget(ExtendedMainVBox);
             }
             else
             {
                 ExtendedMainHBox = new ExtendedHBox(DEFAULT_SIZE);
-                ExtendedMainHBox.Position = GetGlobalFromLocal(new Vector2());
+                ExtendedMainHBox.Position = GetGlobalFromLocal(new Vector2f());
                 AddWidget(ExtendedMainHBox);
             }
         }
@@ -66,7 +67,7 @@ namespace BlazeraLib
             return true;
         }
 
-        public override Vector2 Dimension
+        public override Vector2f Dimension
         {
             get
             {
@@ -132,9 +133,9 @@ namespace BlazeraLib
         {
             BackgroundShape = new RoundedRectangleShape(Dimension, 20F, 3F, Color.Black, Color.Black, true);
             if (Alignment == BlazeraLib.Alignment.Vertical)
-                ExtendedMainVBox.Position = GetGlobalFromLocal(new Vector2());
+                ExtendedMainVBox.Position = GetGlobalFromLocal(new Vector2f());
             else
-                ExtendedMainHBox.Position = GetGlobalFromLocal(new Vector2());
+                ExtendedMainHBox.Position = GetGlobalFromLocal(new Vector2f());
         }
     }
 }

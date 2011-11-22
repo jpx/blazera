@@ -180,7 +180,7 @@ namespace BlazeraLib
             CurrentItem.Activate(false);
         }
 
-        public override SFML.Graphics.Vector2 Dimension
+        public override SFML.Window.Vector2f Dimension
         {
             get
             {

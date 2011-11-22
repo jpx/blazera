@@ -168,25 +168,25 @@ namespace BlazeraEditor
 
             if (MultiBox.GetItemCount() == 0)
             {
-                VScrollBar.Dimension = new Vector2(
+                VScrollBar.Dimension = new Vector2f(
                     VScrollBar.Dimension.X,
                     DEFAULT_EMPTY_VSCROLLBAR_HEIGHT);
 
-                HScrollBar.Dimension = new Vector2(
+                HScrollBar.Dimension = new Vector2f(
                     DEFAULT_EMPTY_HSCROLLBAR_WIDTH,
                     HScrollBar.Dimension.Y);
             }
 
-            VScrollBar.Dimension = new Vector2(
+            VScrollBar.Dimension = new Vector2f(
                 VScrollBar.Dimension.X,
                 MultiBox.BackgroundDimension.Y);
 
-            HScrollBar.Dimension = new Vector2(
+            HScrollBar.Dimension = new Vector2f(
                 MultiBox.BackgroundDimension.X,
                 HScrollBar.Dimension.Y);
         }
 
-        public override Vector2 Dimension
+        public override Vector2f Dimension
         {
             get
             {

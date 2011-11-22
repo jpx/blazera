@@ -18,9 +18,9 @@ namespace BlazeraLib
         {
             window.Closed += new EventHandler(window_Closed);
             window.GainedFocus += new EventHandler(window_GainedFocus);
-            window.JoyButtonPressed += new EventHandler<JoyButtonEventArgs>(window_JoyButtonPressed);
-            window.JoyButtonReleased += new EventHandler<JoyButtonEventArgs>(window_JoyButtonReleased);
-            window.JoyMoved += new EventHandler<JoyMoveEventArgs>(window_JoyMoved);
+            window.JoystickButtonPressed += new EventHandler<JoystickButtonEventArgs>(window_JoyButtonPressed);
+            window.JoystickButtonReleased += new EventHandler<JoystickButtonEventArgs>(window_JoyButtonReleased);
+            window.JoystickMoved += new EventHandler<JoystickMoveEventArgs>(window_JoyMoved);
             window.KeyPressed += new EventHandler<KeyEventArgs>(window_KeyPressed);
             window.KeyReleased += new EventHandler<KeyEventArgs>(window_KeyReleased);
             window.LostFocus += new EventHandler(window_LostFocus);
@@ -142,33 +142,33 @@ namespace BlazeraLib
             this.Events.Enqueue(evt);
         }
 
-        private void window_JoyMoved(object sender, JoyMoveEventArgs e)
+        private void window_JoyMoved(object sender, JoystickMoveEventArgs e)
         {
             Event evt = new Event();
-            evt.Type = EventType.JoyMoved;
-            evt.JoyMove.Axis = e.Axis;
-            evt.JoyMove.JoystickId = e.JoystickId;
-            evt.JoyMove.Position = e.Position;
+            evt.Type = EventType.JoystickMoved;
+            evt.JoystickMove.Axis = e.Axis;
+            evt.JoystickMove.JoystickId = e.JoystickId;
+            evt.JoystickMove.Position = e.Position;
 
             this.Events.Enqueue(evt);
         }
 
-        private void window_JoyButtonReleased(object sender, JoyButtonEventArgs e)
+        private void window_JoyButtonReleased(object sender, JoystickButtonEventArgs e)
         {
             Event evt = new Event();
-            evt.Type = EventType.JoyButtonReleased;
-            evt.JoyButton.Button = e.Button;
-            evt.JoyButton.JoystickId = e.JoystickId;
+            evt.Type = EventType.JoystickButtonReleased;
+            evt.JoystickButton.Button = e.Button;
+            evt.JoystickButton.JoystickId = e.JoystickId;
 
             this.Events.Enqueue(evt);
         }
 
-        private void window_JoyButtonPressed(object sender, JoyButtonEventArgs e)
+        private void window_JoyButtonPressed(object sender, JoystickButtonEventArgs e)
         {
             Event evt = new Event();
-            evt.Type = EventType.JoyButtonPressed;
-            evt.JoyButton.Button = e.Button;
-            evt.JoyButton.JoystickId = e.JoystickId;
+            evt.Type = EventType.JoystickButtonPressed;
+            evt.JoystickButton.Button = e.Button;
+            evt.JoystickButton.JoystickId = e.JoystickId;
 
             this.Events.Enqueue(evt);
         }
@@ -220,35 +220,35 @@ namespace BlazeraLib
             set;
         }
 
-        public static KeyCode KeyCodeFromString(String str)
+        public static Keyboard.Key KeyCodeFromString(String str)
         {
-            if (str == "A") return KeyCode.A;
-            if (str == "B") return KeyCode.B;
-            if (str == "C") return KeyCode.C;
-            if (str == "D") return KeyCode.D;
-            if (str == "E") return KeyCode.E;
-            if (str == "F") return KeyCode.F;
-            if (str == "G") return KeyCode.G;
-            if (str == "H") return KeyCode.H;
-            if (str == "I") return KeyCode.I;
-            if (str == "J") return KeyCode.J;
-            if (str == "K") return KeyCode.K;
-            if (str == "L") return KeyCode.L;
-            if (str == "M") return KeyCode.M;
-            if (str == "N") return KeyCode.N;
-            if (str == "O") return KeyCode.O;
-            if (str == "P") return KeyCode.P;
-            if (str == "Q") return KeyCode.Q;
-            if (str == "R") return KeyCode.R;
-            if (str == "S") return KeyCode.S;
-            if (str == "T") return KeyCode.T;
-            if (str == "U") return KeyCode.U;
-            if (str == "V") return KeyCode.V;
-            if (str == "W") return KeyCode.W;
-            if (str == "X") return KeyCode.X;
-            if (str == "Y") return KeyCode.Y;
-            if (str == "Z") return KeyCode.Z;
-            return new KeyCode();
+            if (str == "A") return Keyboard.Key.A;
+            if (str == "B") return Keyboard.Key.B;
+            if (str == "C") return Keyboard.Key.C;
+            if (str == "D") return Keyboard.Key.D;
+            if (str == "E") return Keyboard.Key.E;
+            if (str == "F") return Keyboard.Key.F;
+            if (str == "G") return Keyboard.Key.G;
+            if (str == "H") return Keyboard.Key.H;
+            if (str == "I") return Keyboard.Key.I;
+            if (str == "J") return Keyboard.Key.J;
+            if (str == "K") return Keyboard.Key.K;
+            if (str == "L") return Keyboard.Key.L;
+            if (str == "M") return Keyboard.Key.M;
+            if (str == "N") return Keyboard.Key.N;
+            if (str == "O") return Keyboard.Key.O;
+            if (str == "P") return Keyboard.Key.P;
+            if (str == "Q") return Keyboard.Key.Q;
+            if (str == "R") return Keyboard.Key.R;
+            if (str == "S") return Keyboard.Key.S;
+            if (str == "T") return Keyboard.Key.T;
+            if (str == "U") return Keyboard.Key.U;
+            if (str == "V") return Keyboard.Key.V;
+            if (str == "W") return Keyboard.Key.W;
+            if (str == "X") return Keyboard.Key.X;
+            if (str == "Y") return Keyboard.Key.Y;
+            if (str == "Z") return Keyboard.Key.Z;
+            return new Keyboard.Key();
         }
     }
 }

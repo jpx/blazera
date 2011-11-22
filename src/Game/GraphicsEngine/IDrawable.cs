@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using SFML.Graphics;
+using SFML.Window;
 
 namespace BlazeraLib
 {
@@ -19,8 +20,8 @@ namespace BlazeraLib
 
         bool IsVisible { get; set; }
 
-        Vector2 Position { get; set; }
-        Vector2 Dimension { get; set; }
+        Vector2f Position { get; set; }
+        Vector2f Dimension { get; set; }
 
         Color Color { get; set; }
 
@@ -28,10 +29,10 @@ namespace BlazeraLib
         float Top { get; set; }
         float Right { get; set; }
         float Bottom { get; set; }
-        Vector2 Halfsize { get; set; }
-        Vector2 Center { get; set; }
+        Vector2f Halfsize { get; set; }
+        Vector2f Center { get; set; }
 
-        Vector2 BasePoint { get; set; }
+        Vector2f BasePoint { get; set; }
 
         ComparisonPointYType ComparisonPointYType { get; set; }
     }

@@ -1,4 +1,5 @@
 ﻿using SFML.Graphics;
+using SFML.Window;
 
 namespace BlazeraLib
 {
@@ -22,7 +23,7 @@ namespace BlazeraLib
         /// <summary>
         /// Position of the effect when it starts.
         /// </summary>
-        protected Vector2 BasePosition;
+        protected Vector2f BasePosition;
 
         #endregion
 
@@ -54,7 +55,7 @@ namespace BlazeraLib
 
         public abstract void Update(Time dt);
 
-        public virtual void SetBasePosition(Vector2 basePosition)
+        public virtual void SetBasePosition(Vector2f basePosition)
         {
             BasePosition = basePosition;
         }

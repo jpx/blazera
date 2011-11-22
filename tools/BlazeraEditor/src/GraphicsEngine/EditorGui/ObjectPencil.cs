@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using BlazeraLib;
 using SFML.Graphics;
+using SFML.Window;
 
 namespace BlazeraEditor
 {
@@ -26,14 +27,14 @@ namespace BlazeraEditor
 
         #endregion
 
-        static readonly Texture ICON_TEXTURE = Create.Texture("Element_TestTree");
+        static readonly BlazeraLib.Texture ICON_TEXTURE = Create.Texture("Element_TestTree");
 
         WorldObject CurrentObject;
 
         public void SetCurrentObject(WorldObject wObj)
         {
             CurrentObject = wObj;
-            SetCursorTexture(new Texture(wObj.Skin));
+            SetCursorTexture(new BlazeraLib.Texture(wObj.Skin));
         }
 
         protected override void Empty()
@@ -49,7 +50,7 @@ namespace BlazeraEditor
             Name = "ObjectPencil";
         }
 
-        protected override Boolean CanPaint(Vector2 point)
+        protected override Boolean CanPaint(Vector2f point)
         {
             if (CurrentObject == null)
                 return false;
@@ -57,7 +58,7 @@ namespace BlazeraEditor
             return CanFit(point - CurrentObject.Halfsize);
         }
 
-        protected override Boolean Paint(Vector2 point)
+        protected override Boolean Paint(Vector2f point)
         {
             switch (Mode)
             {
@@ -84,7 +85,7 @@ namespace BlazeraEditor
             }
         }
 
-        Boolean CanFit(Vector2 position)
+        Boolean CanFit(Vector2f position)
         {
             return MapBox.Map.Ground.CanFit(CurrentObject, position);
         }
@@ -102,8 +103,8 @@ namespace BlazeraEditor
             {
                 while (x < MapBox.Map.Dimension.X + offset + CurrentObject.Dimension.X)
                 {
-                    if (CanPaint(new Vector2(x, y)))
-                        Paint(new Vector2(x, y));
+                    if (CanPaint(new Vector2f(x, y)))
+                        Paint(new Vector2f(x, y));
 
                     x += offset;
                 }
@@ -128,10 +129,10 @@ namespace BlazeraEditor
                 Int32 x = RandomHelper.Get(0, (Int32)(MapBox.Map.Dimension.X + CurrentObject.Dimension.X));
                 Int32 y = RandomHelper.Get(0, (Int32)(MapBox.Map.Dimension.Y + CurrentObject.Dimension.Y));
 
-                if (!CanPaint(new Vector2(x, y)))
+                if (!CanPaint(new Vector2f(x, y)))
                     continue;
 
-                Paint(new Vector2(x, y));
+                Paint(new Vector2f(x, y));
                 ++count;
             }
         }

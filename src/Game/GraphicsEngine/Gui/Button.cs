@@ -77,7 +77,7 @@ namespace BlazeraLib
 
         protected const Boolean DEFAULT_SHORTCUT_MODE = false;
 
-        KeyCode ShortCutKey;
+        Keyboard.Key ShortCutKey;
         protected Boolean ShortCutMode;
 
         public Button(Texture backgroundN, Texture backgroundO) :
@@ -162,7 +162,7 @@ namespace BlazeraLib
                     return CallClicked(new MouseButtonEventArgs(evt.MouseButton));
 
                 case EventType.MouseButtonPressed:
-                    if (evt.MouseButton.Button == MouseButton.Left)
+                    if (evt.MouseButton.Button == Mouse.Button.Left)
                         if (this.BackgroundContainsMouse(this.ClickOffset))
                             return true;
 
@@ -223,7 +223,7 @@ namespace BlazeraLib
             {
                 this.Label.Dimension = this.Dimension;
 
-                this.Label.Position = this.GetGlobalFromLocal(new Vector2(0F, 0F));
+                this.Label.Position = this.GetGlobalFromLocal(new Vector2f(0F, 0F));
             }
 
             if (this.Mode == EMode.Background)
@@ -266,24 +266,24 @@ namespace BlazeraLib
             }
         }
 
-        protected override Vector2 GetBasePosition()
+        protected override Vector2f GetBasePosition()
         {
             if (this.Mode == EMode.BackgroundLabel)
                 return
                     base.GetBasePosition() +
-                    new Vector2(
+                    new Vector2f(
                         LABEL_OFFSET,
                         LABEL_OFFSET);
 
             return base.GetBasePosition();
         }
 
-        protected override Vector2 GetStructureDimension()
+        protected override Vector2f GetStructureDimension()
         {
             if (this.Mode == EMode.BackgroundLabel)
                 return
                     base.GetStructureDimension() +
-                    new Vector2(
+                    new Vector2f(
                         LABEL_OFFSET * 2F,
                         LABEL_OFFSET * 2F);
 
@@ -300,7 +300,7 @@ namespace BlazeraLib
             }
         }
 
-        public override Vector2 Dimension
+        public override Vector2f Dimension
         {
             get
             {

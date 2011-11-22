@@ -36,7 +36,7 @@ namespace BlazeraLib
             {
                 case EventType.MouseButtonPressed:
 
-                    if (evt.MouseButton.Button != MouseButton.Left)
+                    if (evt.MouseButton.Button != Mouse.Button.Left)
                         break;
 
                     if (!IsActive)
@@ -48,7 +48,7 @@ namespace BlazeraLib
 
                 case EventType.MouseButtonReleased:
 
-                    if (evt.MouseButton.Button != MouseButton.Left)
+                    if (evt.MouseButton.Button != Mouse.Button.Left)
                         break;
 
                     if (!IsActive)
@@ -62,7 +62,7 @@ namespace BlazeraLib
 
                     switch (evt.Key.Code)
                     {
-                        case KeyCode.Escape:
+                        case Keyboard.Key.Escape:
 
                             if (!IsActive)
                                 break;
@@ -125,14 +125,14 @@ namespace BlazeraLib
             Reduce();
         }
 
-        public override Vector2 Dimension
+        public override Vector2f Dimension
         {
             get
             {
                 if (this.Top == null || this.ScrollBox == null)
                     return base.Dimension;
 
-                return new Vector2(
+                return new Vector2f(
                     Top.Dimension.X,
                     this.Top.Dimension.Y);
             }

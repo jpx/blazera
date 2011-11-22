@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using SFML.Graphics;
+using SFML.Window;
 
 namespace BlazeraLib
 {
@@ -17,24 +18,24 @@ namespace BlazeraLib
             this.XExtremityOffset = xExtremityOffset;
         }
 
-        private Vector2 GetMaxDimension()
+        private Vector2f GetMaxDimension()
         {
             if (Items.Count == 0)
-                return new Vector2();
+                return new Vector2f();
 
-            Vector2 maxDimension = new Vector2();
+            Vector2f maxDimension = new Vector2f();
 
             IEnumerator<Widget> iEnum = this.Items.GetEnumerator();
 
             while (iEnum.MoveNext())
             {
-                maxDimension = new Vector2(
+                maxDimension = new Vector2f(
                     maxDimension.X + iEnum.Current.BackgroundDimension.X + this.Offset,
                     iEnum.Current.BackgroundDimension.Y + this.GetLevelOffset(iEnum.Current) > maxDimension.Y ? iEnum.Current.BackgroundDimension.Y + this.GetLevelOffset(iEnum.Current) : maxDimension.Y);
             }
 
             if (this.Items.Count > 0)
-                maxDimension = new Vector2(maxDimension.X - this.Offset + this.XExtremityOffset * 2F, maxDimension.Y);
+                maxDimension = new Vector2f(maxDimension.X - this.Offset + this.XExtremityOffset * 2F, maxDimension.Y);
 
             return maxDimension;
         }
@@ -58,24 +59,24 @@ namespace BlazeraLib
             this.YExtremityOffset = yExtremityOffset;
         }
 
-        private Vector2 GetMaxDimension()
+        private Vector2f GetMaxDimension()
         {
             if (Items.Count == 0)
-                return new Vector2();
+                return new Vector2f();
 
-            Vector2 maxDimension = new Vector2();
+            Vector2f maxDimension = new Vector2f();
 
             IEnumerator<Widget> iEnum = this.Items.GetEnumerator();
 
             while (iEnum.MoveNext())
             {
-                maxDimension = new Vector2(
+                maxDimension = new Vector2f(
                     iEnum.Current.BackgroundDimension.X + this.GetLevelOffset(iEnum.Current) > maxDimension.X ? iEnum.Current.BackgroundDimension.X + this.GetLevelOffset(iEnum.Current) : maxDimension.X,
                     maxDimension.Y + iEnum.Current.BackgroundDimension.Y + this.Offset);
             }
 
             if (this.Items.Count > 0)
-                maxDimension = new Vector2(maxDimension.X, maxDimension.Y - this.Offset + this.YExtremityOffset * 2F);
+                maxDimension = new Vector2f(maxDimension.X, maxDimension.Y - this.Offset + this.YExtremityOffset * 2F);
 
             return maxDimension;
         }

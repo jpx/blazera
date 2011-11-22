@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using BlazeraLib;
 using SFML.Graphics;
+using SFML.Window;
 
 namespace BlazeraEditor
 {
@@ -81,7 +82,7 @@ namespace BlazeraEditor
         #endregion
 
         BlazeraLib.FloatRect CurrentRect;
-        Texture CurrentTexture;
+        BlazeraLib.Texture CurrentTexture;
         float SelectorResizeValue = DEFAULT_SELECTOR_OFFSET;
 
         private TextureRectDrawer() :
@@ -232,8 +233,8 @@ namespace BlazeraEditor
             if (CurrentTexture == null)
                 return;
 
-            Vector2 position = DisplayScreen.GetLocalFromGlobal(CurrentTexture.Position);
-            Vector2 dimension = CurrentTexture.Dimension;
+            Vector2f position = DisplayScreen.GetLocalFromGlobal(CurrentTexture.Position);
+            Vector2f dimension = CurrentTexture.Dimension;
 
             if (AdjustToTextureCheckBox.IsChecked)
             {
@@ -244,10 +245,10 @@ namespace BlazeraEditor
             position = DisplayScreen.GetLocalFromGlobalTexturePoint(position);
 
             Selector.SetRect(
-                new Vector2(
+                new Vector2f(
                     XUpDownBox.GetCurrentValue(),
                     YUpDownBox.GetCurrentValue()) + position,
-                new Vector2(
+                new Vector2f(
                     WidthUpDownBox.GetCurrentValue(),
                     HeightUpDownBox.GetCurrentValue()));
         }
@@ -255,6 +256,7 @@ namespace BlazeraEditor
         //!\\ TODO //!\\
         void AutoAdjustRect()
         {
+            /*
             UInt32
                 left = CurrentRect.Left < 0 ? 0 : (UInt32)CurrentRect.Left,
                 top = CurrentRect.Top < 0 ? 0 : (UInt32)CurrentRect.Top,
@@ -351,9 +353,10 @@ namespace BlazeraEditor
                 top + newTop,
                 right + newRight,
                 bottom + newBottom));
+             */
         }
 
-        void SetCurrentTexture(Texture currentTexture)
+        void SetCurrentTexture(BlazeraLib.Texture currentTexture)
         {
             CurrentTexture = currentTexture;
 
@@ -405,7 +408,7 @@ namespace BlazeraEditor
                     DisplayScreen.ChangeMode(DisplayScreen.EMode.Scroll);
                     RefreshUpDownBoxes(DisplayScreen.EMode.Scroll);
 
-                    SetCurrentTexture(openingInfo.GetArg<Texture>("Texture"));
+                    SetCurrentTexture(openingInfo.GetArg<BlazeraLib.Texture>("Texture"));
 
                     if (!openingInfo.GetArg<Boolean>("RectIsValid"))
                         break;
@@ -425,7 +428,7 @@ namespace BlazeraEditor
                     DisplayScreen.ChangeMode(DisplayScreen.EMode.Scroll);
                     RefreshUpDownBoxes(DisplayScreen.EMode.Normal);
                     DisplayScreen.TextureLocalRectMode = true;
-                    SetCurrentTexture(openingInfo.GetArg<Texture>("Texture"));
+                    SetCurrentTexture(openingInfo.GetArg<BlazeraLib.Texture>("Texture"));
 
                     break;
             }

@@ -50,7 +50,7 @@ namespace BlazeraLib
         private Button Label;
         private Button Picture;
 
-        KeyCode ShortCutKey;
+        Keyboard.Key ShortCutKey;
         Boolean ShortCutMode;
 
         public LabeledWidget(String label = null, EMode mode = DEFAULT_MODE, Boolean shortCutMode = DEFAULT_SHORTCUT_MODE) :
@@ -87,7 +87,7 @@ namespace BlazeraLib
                 Type = EType.Picture;
 
                 Picture = new Button(picture, null);
-                Picture.Dimension = new SFML.Graphics.Vector2(DEFAULT_PICTURE_SIZE, DEFAULT_PICTURE_SIZE);
+                Picture.Dimension = new SFML.Window.Vector2f(DEFAULT_PICTURE_SIZE, DEFAULT_PICTURE_SIZE);
 
                 switch (this.Mode)
                 {
@@ -130,7 +130,7 @@ namespace BlazeraLib
             }
         }
 
-        public override SFML.Graphics.Vector2 Dimension
+        public override SFML.Window.Vector2f Dimension
         {
             get
             {

@@ -64,7 +64,7 @@ namespace BlazeraLib
             this.TextBox = new TextBox(BlazeraLib.TextBox.EInputType.Numeric);
 
             this.SetCurrentValue(GetDefaultValue());
-            this.TextBox.Dimension = new SFML.Graphics.Vector2(40F, this.UpBtn.Dimension.Y + this.DownBtn.Dimension.Y);
+            this.TextBox.Dimension = new SFML.Window.Vector2f(40F, this.UpBtn.Dimension.Y + this.DownBtn.Dimension.Y);
 
             this.TextBox.TextAdded += new TextAddedEventHandler(TextBox_TextAdded);
             this.AddWidget(this.TextBox);
@@ -111,13 +111,13 @@ namespace BlazeraLib
 
                     switch (evt.Key.Code)
                     {
-                        case SFML.Window.KeyCode.Up:
+                        case SFML.Window.Keyboard.Key.Up:
 
                             this.Up();
 
                             return true;
 
-                        case SFML.Window.KeyCode.Down:
+                        case SFML.Window.Keyboard.Key.Down:
 
                             this.Down();
 
@@ -141,13 +141,13 @@ namespace BlazeraLib
 
                     switch (evt.Key.Code)
                     {
-                        case SFML.Window.KeyCode.Up:
+                        case SFML.Window.Keyboard.Key.Up:
 
                             this.Up();
 
                             return true;
 
-                        case SFML.Window.KeyCode.Down:
+                        case SFML.Window.Keyboard.Key.Down:
 
                             this.Down();
 

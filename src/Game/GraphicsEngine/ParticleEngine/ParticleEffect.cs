@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using SFML.Graphics;
+using SFML.Window;
 
 namespace BlazeraLib
 {
@@ -57,7 +58,7 @@ namespace BlazeraLib
                 RandomHelper.Get(this.Velocity.X, this.Velocity.Y),
                 RandomHelper.Get(this.Acceleration.X, this.Acceleration.Y),
                 RandomHelper.Get(this.DurationTime.X, this.DurationTime.Y),
-                new Vector2(RandomHelper.Get(this.MinScale.X, this.MaxScale.X), RandomHelper.Get(this.MinScale.Y, this.MaxScale.Y)),
+                new Vector2f(RandomHelper.Get(this.MinScale.X, this.MaxScale.X), RandomHelper.Get(this.MinScale.Y, this.MaxScale.Y)),
                 RandomHelper.Get(this.Angle.X, this.Angle.Y),
                 RandomHelper.Get(this.Rotation.X, this.Rotation.Y),
                 this.Color,
@@ -75,7 +76,7 @@ namespace BlazeraLib
             set;
         }
 
-        public Vector2 Position
+        public Vector2f Position
         {
             get;
             set;
@@ -111,49 +112,49 @@ namespace BlazeraLib
             set;
         }
 
-        public Vector2 Velocity
+        public Vector2f Velocity
         {
             get;
             set;
         }
 
-        public Vector2 Acceleration
+        public Vector2f Acceleration
         {
             get;
             set;
         }
 
-        public Vector2 DurationTime
+        public Vector2f DurationTime
         {
             get;
             set;
         }
 
-        public Vector2 MinScale
+        public Vector2f MinScale
         {
             get;
             set;
         }
 
-        public Vector2 MaxScale
+        public Vector2f MaxScale
         {
             get;
             set;
         }
 
-        public Vector2 AlphaLimit
+        public Vector2f AlphaLimit
         {
             get;
             set;
         }
 
-        public Vector2 Angle
+        public Vector2f Angle
         {
             get;
             set;
         }
 
-        public Vector2 Rotation
+        public Vector2f Rotation
         {
             get;
             set;

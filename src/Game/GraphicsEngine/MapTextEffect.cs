@@ -1,4 +1,5 @@
 ﻿using SFML.Graphics;
+using SFML.Window;
 
 namespace BlazeraLib
 {
@@ -73,7 +74,7 @@ namespace BlazeraLib
         {
             base.Start();
 
-            Position -= new Vector2(0F, CurrentYOffset);
+            Position -= new Vector2f(0F, CurrentYOffset);
         }
 
         public override void Update(Time dt)
@@ -124,8 +125,8 @@ namespace BlazeraLib
 
             }
 
-            Text.Scale = new Vector2(CurrentZoomingFactor, 1F + CurrentZoomingFactor * ZOOM_Y_FACTOR);
-            Text.Position = new Vector2(BasePosition.X - Halfsize.X, BasePosition.Y - CurrentYOffset);
+            Text.Scale = new Vector2f(CurrentZoomingFactor, 1F + CurrentZoomingFactor * ZOOM_Y_FACTOR);
+            Text.Position = new Vector2f(BasePosition.X - Halfsize.X, BasePosition.Y - CurrentYOffset);
             Text.Refresh();
             Text.Color = new Color(Text.Color.R, Text.Color.G, Text.Color.B, (byte)CurrentAlpha);
         }
@@ -138,14 +139,14 @@ namespace BlazeraLib
             Text.Draw(window);
         }
 
-        public override void SetBasePosition(Vector2 basePosition)
+        public override void SetBasePosition(Vector2f basePosition)
         {
             base.SetBasePosition(basePosition);
 
             Center = BasePosition;
         }
 
-        public override Vector2 Position
+        public override Vector2f Position
         {
             set
             {
@@ -159,7 +160,7 @@ namespace BlazeraLib
             }
         }
 
-        public override Vector2 Dimension
+        public override Vector2f Dimension
         {
             get
             {

@@ -51,13 +51,13 @@ namespace BlazeraEditor
             Gui.AddWindow(ActionCreator.Instance);
             Gui.AddWindow(ConditionCreator.Instance);
 
-            Gui.AddKeyWindowBind(KeyCode.M, MapMan.Instance);
-            Gui.AddKeyWindowBind(KeyCode.G, MiscWidget.Instance);
-            Gui.AddKeyWindowBind(KeyCode.O, ObjectMan.Instance);
-            Gui.AddKeyWindowBind(KeyCode.T, TextureMan.Instance);
-            Gui.AddKeyWindowBind(KeyCode.H, MapHandler.Instance);
-            Gui.AddKeyWindowBind(KeyCode.I, TileMan.Instance);
-            Gui.AddKeyWindowBind(KeyCode.L, TileSetMan.Instance);
+            Gui.AddKeyWindowBind(Keyboard.Key.M, MapMan.Instance);
+            Gui.AddKeyWindowBind(Keyboard.Key.G, MiscWidget.Instance);
+            Gui.AddKeyWindowBind(Keyboard.Key.O, ObjectMan.Instance);
+            Gui.AddKeyWindowBind(Keyboard.Key.T, TextureMan.Instance);
+            Gui.AddKeyWindowBind(Keyboard.Key.H, MapHandler.Instance);
+            Gui.AddKeyWindowBind(Keyboard.Key.I, TileMan.Instance);
+            Gui.AddKeyWindowBind(Keyboard.Key.L, TileSetMan.Instance);
         }
 
         public void Run(Time dt)
@@ -105,7 +105,7 @@ namespace BlazeraEditor
             {
                 case EventType.KeyPressed:
 
-                    if (evt.Key.Code == KeyCode.Escape)
+                    if (evt.Key.Code == Keyboard.Key.Escape)
                     {
                         this.Window.Close();
                         return true;
@@ -115,7 +115,7 @@ namespace BlazeraEditor
             
                 case EventType.Resized:
 
-                    this.Gui.Dimension = new Vector2((float)this.Window.Width, (float)this.Window.Height);
+                    this.Gui.Dimension = new Vector2f((float)this.Window.Width, (float)this.Window.Height);
                     this.GuiView.Reset(new SFML.Graphics.FloatRect(0F, 0F, (float)this.Window.Width, (float)this.Window.Height));
                     this.GuiView.Viewport = new SFML.Graphics.FloatRect(0F, 0F, 1F, 1F);
 

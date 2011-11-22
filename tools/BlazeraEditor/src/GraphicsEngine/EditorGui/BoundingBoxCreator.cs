@@ -237,7 +237,7 @@ namespace BlazeraEditor
         {
             CurrentEditedEventButton = (Button)sender;
 
-            if (e.Button == SFML.Window.MouseButton.Right)
+            if (e.Button == SFML.Window.Mouse.Button.Right)
             {
                 CallConfirmationDialogBox(new String[] { ConfirmationDialogBox.Instance.GetDeletionStr("Event", CurrentEditedEventButton.Text) }, OnEventRemoveConfirmation);
 

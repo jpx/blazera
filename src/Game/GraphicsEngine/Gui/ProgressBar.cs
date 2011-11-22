@@ -1,4 +1,5 @@
 ﻿using SFML.Graphics;
+using SFML.Window;
 
 namespace BlazeraLib
 {
@@ -34,7 +35,7 @@ namespace BlazeraLib
 
         #endregion
 
-        public ProgressBar(Vector2 dimension) :
+        public ProgressBar(Vector2f dimension) :
             base()
         {
             Bar = new ProgressBarShape(dimension);
@@ -79,7 +80,7 @@ namespace BlazeraLib
             Bar.Position = Position;
         }
 
-        public override Vector2 Dimension
+        public override Vector2f Dimension
         {
             get
             {

@@ -1,6 +1,7 @@
 using System;
 using System.Security;
 using System.Runtime.InteropServices;
+using SFML.Window;
 
 namespace SFML
 {
@@ -26,14 +27,14 @@ namespace SFML
 
             ////////////////////////////////////////////////////////////
             /// <summary>
-            /// Construct the sprite from a source image
+            /// Construct the sprite from a source texture
             /// </summary>
-            /// <param name="image">Source image to assign to the sprite</param>
+            /// <param name="texture">Source texture to assign to the sprite</param>
             ////////////////////////////////////////////////////////////
-            public Sprite(Image image) :
+            public Sprite(Texture texture) :
                 base(sfSprite_Create())
             {
-                Image = image;
+                Texture = texture;
             }
 
             ////////////////////////////////////////////////////////////
@@ -45,7 +46,7 @@ namespace SFML
             public Sprite(Sprite copy) :
                 base(sfSprite_Copy(copy.This))
             {
-                Image = copy.Image;
+                Texture = copy.Texture;
             }
 
             ////////////////////////////////////////////////////////////
@@ -53,9 +54,9 @@ namespace SFML
             /// Position of the object on screen
             /// </summary>
             ////////////////////////////////////////////////////////////
-            public override Vector2 Position
+            public override Vector2f Position
             {
-                get { return new Vector2(sfSprite_GetX(This), sfSprite_GetY(This)); }
+                get { return new Vector2f(sfSprite_GetX(This), sfSprite_GetY(This)); }
                 set { sfSprite_SetPosition(This, value.X, value.Y); }
             }
 
@@ -75,9 +76,9 @@ namespace SFML
             /// Vertical and horizontal scale of the object
             /// </summary>
             ////////////////////////////////////////////////////////////
-            public override Vector2 Scale
+            public override Vector2f Scale
             {
-                get { return new Vector2(sfSprite_GetScaleX(This), sfSprite_GetScaleY(This)); }
+                get { return new Vector2f(sfSprite_GetScaleX(This), sfSprite_GetScaleY(This)); }
                 set { sfSprite_SetScale(This, value.X, value.Y); }
             }
 
@@ -87,9 +88,9 @@ namespace SFML
             /// (center of translation, rotation and scale)
             /// </summary>
             ////////////////////////////////////////////////////////////
-            public override Vector2 Origin
+            public override Vector2f Origin
             {
-                get { return new Vector2(sfSprite_GetOriginX(This), sfSprite_GetOriginY(This)); }
+                get { return new Vector2f(sfSprite_GetOriginX(This), sfSprite_GetOriginY(This)); }
                 set { sfSprite_SetOrigin(This, value.X, value.Y); }
             }
 
@@ -123,9 +124,9 @@ namespace SFML
             /// <param name="point">Point to transform</param>
             /// <returns>Transformed point</returns>
             ////////////////////////////////////////////////////////////
-            public override Vector2 TransformToLocal(Vector2 point)
+            public override Vector2f TransformToLocal(Vector2f point)
             {
-                Vector2 Transformed;
+                Vector2f Transformed;
                 sfSprite_TransformToLocal(This, point.X, point.Y, out Transformed.X, out Transformed.Y);
 
                 return Transformed;
@@ -139,9 +140,9 @@ namespace SFML
             /// <param name="point">Point to transform</param>
             /// <returns>Transformed point</returns>
             ////////////////////////////////////////////////////////////
-            public override Vector2 TransformToGlobal(Vector2 point)
+            public override Vector2f TransformToGlobal(Vector2f point)
             {
-                Vector2 Transformed;
+                Vector2f Transformed;
                 sfSprite_TransformToGlobal(This, point.X, point.Y, out Transformed.X, out Transformed.Y);
 
                 return Transformed;
@@ -171,13 +172,13 @@ namespace SFML
 
             ////////////////////////////////////////////////////////////
             /// <summary>
-            /// Source images displayed by the sprite
+            /// Source texture displayed by the sprite
             /// </summary>
             ////////////////////////////////////////////////////////////
-            public Image Image
+            public Texture Texture
             {
-                get { return myImage; }
-                set { myImage = value; sfSprite_SetImage(This, value != null ? value.This : IntPtr.Zero, false); }
+                get { return myTexture; }
+                set { myTexture = value; sfSprite_SetTexture(This, value != null ? value.This : IntPtr.Zero, false); }
             }
 
             ////////////////////////////////////////////////////////////
@@ -215,20 +216,6 @@ namespace SFML
 
             ////////////////////////////////////////////////////////////
             /// <summary>
-            /// Get the color of a given pixel in the sprite
-            /// (point is in local coordinates)
-            /// </summary>
-            /// <param name="x">X coordinate of the pixel to get</param>
-            /// <param name="y">Y coordinate of the pixel to get</param>
-            /// <returns>Color of pixel (x, y)</returns>
-            ////////////////////////////////////////////////////////////
-            public Color GetPixel(uint x, uint y)
-            {
-                return sfSprite_GetPixel(This, x, y);
-            }
-
-            ////////////////////////////////////////////////////////////
-            /// <summary>
             /// Provide a string describing the object
             /// </summary>
             /// <returns>String description of the object</returns>
@@ -245,7 +232,7 @@ namespace SFML
                        " Width(" + Width + ")" +
                        " Height(" + Height + ")" +
                        " SubRect(" + SubRect + ")" +
-                       " Image(" + Image + ")";
+                       " Texture(" + Texture + ")";
             }
 
             ////////////////////////////////////////////////////////////
@@ -265,17 +252,17 @@ namespace SFML
 
             ////////////////////////////////////////////////////////////
             /// <summary>
-            /// Render the object into the given render image
+            /// Render the object into the given render texture
             /// </summary>
-            /// <param name="target">Target render image</param>
+            /// <param name="target">Target render texture</param>
             /// <param name="shader">Shader to apply</param>
             ////////////////////////////////////////////////////////////
-            internal override void Render(RenderImage target, Shader shader)
+            internal override void Render(RenderTexture target, Shader shader)
             {
                 if (shader == null)
-                    sfRenderImage_DrawSprite(target.This, This);
+                    sfRenderTexture_DrawSprite(target.This, This);
                 else
-                    sfRenderImage_DrawSpriteWithShader(target.This, This, shader.This);
+                    sfRenderTexture_DrawSpriteWithShader(target.This, This, shader.This);
             }
 
             ////////////////////////////////////////////////////////////
@@ -289,7 +276,7 @@ namespace SFML
                 sfSprite_Destroy(This);
             }
 
-            private Image myImage = null;
+            private Texture myTexture = null;
 
             #region Imports
             [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
@@ -347,10 +334,10 @@ namespace SFML
             static extern BlendMode sfSprite_GetBlendMode(IntPtr This);
 
             [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-            static extern Vector2 sfSprite_TransformToLocal(IntPtr This, float PointX, float PointY, out float X, out float Y);
+            static extern Vector2f sfSprite_TransformToLocal(IntPtr This, float PointX, float PointY, out float X, out float Y);
 
             [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-            static extern Vector2 sfSprite_TransformToGlobal(IntPtr This, float PointX, float PointY, out float X, out float Y);
+            static extern Vector2f sfSprite_TransformToGlobal(IntPtr This, float PointX, float PointY, out float X, out float Y);
 
             [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfRenderWindow_DrawSprite(IntPtr This, IntPtr Sprite);
@@ -359,10 +346,10 @@ namespace SFML
             static extern void sfRenderWindow_DrawSpriteWithShader(IntPtr This, IntPtr Sprite, IntPtr Shader);
 
             [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-            static extern void sfRenderImage_DrawSprite(IntPtr This, IntPtr Sprite);
+            static extern void sfRenderTexture_DrawSprite(IntPtr This, IntPtr Sprite);
 
             [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-            static extern void sfRenderImage_DrawSpriteWithShader(IntPtr This, IntPtr Sprite, IntPtr Shader);
+            static extern void sfRenderTexture_DrawSpriteWithShader(IntPtr This, IntPtr Sprite, IntPtr Shader);
 
             [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfSprite_Resize(IntPtr This, float Width, float Height);
@@ -374,7 +361,7 @@ namespace SFML
             static extern float sfSprite_GetHeight(IntPtr This);
 
             [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-            static extern void sfSprite_SetImage(IntPtr This, IntPtr Image, bool AdjustToNewSize);
+            static extern void sfSprite_SetTexture(IntPtr This, IntPtr Texture, bool AdjustToNewSize);
 
             [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfSprite_SetSubRect(IntPtr This, IntRect Rect);
@@ -387,9 +374,6 @@ namespace SFML
 
             [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfSprite_FlipY(IntPtr This, bool Flipped);
-
-            [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-            static extern Color sfSprite_GetPixel(IntPtr This, uint X, uint Y);
             #endregion
         }
     }

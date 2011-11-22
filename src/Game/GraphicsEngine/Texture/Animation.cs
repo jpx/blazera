@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using SFML.Graphics;
+using SFML.Window;
 
 namespace BlazeraLib
 {
@@ -93,7 +94,7 @@ namespace BlazeraLib
             Sw.InitObject();
             base.ToScript();
 
-            Sw.WriteProperty("BasePoint", "Vector2(" + BasePoint.X.ToString() + ", " + BasePoint.Y.ToString() + ")");
+            Sw.WriteProperty("BasePoint", "Vector2f(" + BasePoint.X.ToString() + ", " + BasePoint.Y.ToString() + ")");
             Sw.WriteProperty("ComparisonPointYType", "ComparisonPointYType." + ComparisonPointYType.ToString());
 
             Sw.WriteProperty("StopFrame", StopFrame.ToString());
@@ -168,7 +169,7 @@ namespace BlazeraLib
             return Frames[CurrentFrame];
         }
 
-        public override Vector2 Position
+        public override Vector2f Position
         {
             set
             {
@@ -179,7 +180,7 @@ namespace BlazeraLib
             }
         }
 
-        public override Vector2 Dimension
+        public override Vector2f Dimension
         {
             get { return GetCurrentFrame().Dimension; }
         }

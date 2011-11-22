@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using SFML.Graphics;
+using SFML.Window;
 
 namespace BlazeraLib
 {
@@ -36,7 +37,7 @@ namespace BlazeraLib
         #endregion
 
         public CellShape(CellSelectionType type, uint size) :
-            base(new Vector2(size, size), CellSelectionTypeColor[type], false, Color.Black)
+            base(new Vector2f(size, size), CellSelectionTypeColor[type], false, Color.Black)
         {
 
         }

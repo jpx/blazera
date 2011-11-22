@@ -27,7 +27,7 @@ namespace BlazeraEditor
         PictureBox CurrentPicture;
 
         Boolean DragIsActive = false;
-        Vector2 DragPoint;
+        Vector2f DragPoint;
 
         public Boolean TextureLocalRectMode = false;
 
@@ -51,7 +51,7 @@ namespace BlazeraEditor
         public void ChangeMode(EMode mode, float size)
         {
             Mode = mode;
-            BackgroundDimension = new Vector2(size, size);
+            BackgroundDimension = new Vector2f(size, size);
 
             TextureLocalRectMode = false;
 
@@ -70,7 +70,7 @@ namespace BlazeraEditor
                     if (!BackgroundContainsMouse())
                         break;
 
-                    if (evt.MouseButton.Button != MouseButton.Right)
+                    if (evt.MouseButton.Button != Mouse.Button.Right)
                         return true;
 
                     if (Mode != EMode.Scroll)
@@ -82,7 +82,7 @@ namespace BlazeraEditor
                     if (!BackgroundContainsMouse())
                         break;
 
-                    InitDrag(GetLocalFromGlobal(new Vector2(evt.MouseButton.X, evt.MouseButton.Y)));
+                    InitDrag(GetLocalFromGlobal(new Vector2f(evt.MouseButton.X, evt.MouseButton.Y)));
 
                     return true;
 
@@ -91,7 +91,7 @@ namespace BlazeraEditor
                     if (!BackgroundContainsMouse())
                         break;
 
-                    if (evt.MouseButton.Button != MouseButton.Right)
+                    if (evt.MouseButton.Button != Mouse.Button.Right)
                         return CallScreenClicked(new MouseButtonEventArgs(evt.MouseButton));
 
                     if (Mode != EMode.Scroll)
@@ -115,7 +115,7 @@ namespace BlazeraEditor
                         break;
                     }
 
-                    Drag(GetLocalFromGlobal(new Vector2(evt.MouseMove.X, evt.MouseMove.Y)));
+                    Drag(GetLocalFromGlobal(new Vector2f(evt.MouseMove.X, evt.MouseMove.Y)));
 
                     return true;
             }
@@ -138,7 +138,7 @@ namespace BlazeraEditor
             return true;
         }
 
-        public void SetCurrentPicture(Texture picture)
+        public void SetCurrentPicture(BlazeraLib.Texture picture)
         {
             if (CurrentPicture == null)
             {
@@ -194,7 +194,7 @@ namespace BlazeraEditor
                 bottom);
         }
 
-        void InitDrag(Vector2 point)
+        void InitDrag(Vector2f point)
         {
             DragPoint = point;
             DragIsActive = true;
@@ -205,15 +205,15 @@ namespace BlazeraEditor
             DragIsActive = false;
         }
 
-        void Drag(Vector2 point)
+        void Drag(Vector2f point)
         {
-            Vector2 areaDimension = GetAreaDimension();
+            Vector2f areaDimension = GetAreaDimension();
 
             if (CurrentPicture.Texture.ImageDimension.X <= areaDimension.X &&
                 CurrentPicture.Texture.ImageDimension.Y <= areaDimension.Y)
                 return;
 
-            Vector2 offset = DragPoint - point;
+            Vector2f offset = DragPoint - point;
             DragPoint = point;
 
             BlazeraLib.IntRect currentImageSubRect = CurrentPicture.Texture.ImageSubRect;
@@ -262,23 +262,23 @@ namespace BlazeraEditor
             CurrentPicture.Center = Center;
         }
 
-        public Vector2 GetGlobalFromLocalTexturePoint(Vector2 point)
+        public Vector2f GetGlobalFromLocalTexturePoint(Vector2f point)
         {
             if (CurrentPicture == null || Mode == EMode.Normal || TextureLocalRectMode)
                 return point;
 
-            return new Vector2(CurrentPicture.Texture.ImageSubRect.Left, CurrentPicture.Texture.ImageSubRect.Top) + point;
+            return new Vector2f(CurrentPicture.Texture.ImageSubRect.Left, CurrentPicture.Texture.ImageSubRect.Top) + point;
         }
 
-        public Vector2 GetLocalFromGlobalTexturePoint(Vector2 point)
+        public Vector2f GetLocalFromGlobalTexturePoint(Vector2f point)
         {
             if (CurrentPicture == null || Mode == EMode.Normal || TextureLocalRectMode)
                 return point;
 
-            return point - new Vector2(CurrentPicture.Texture.ImageSubRect.Left, CurrentPicture.Texture.ImageSubRect.Top);
+            return point - new Vector2f(CurrentPicture.Texture.ImageSubRect.Left, CurrentPicture.Texture.ImageSubRect.Top);
         }
 
-        Vector2 GetAreaDimension()
+        Vector2f GetAreaDimension()
         {
             return BackgroundDimension * PICTURE_SCALE_FACTOR;
         }

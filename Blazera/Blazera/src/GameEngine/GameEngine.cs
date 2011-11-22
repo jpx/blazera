@@ -26,7 +26,7 @@ namespace Blazera
             ScriptEngine.Instance.Load_Assembly("Blazera");
             ScriptEngine.Instance.Import_Type(typeof(PlayerHdl));
 
-            ImageManager.Instance.Init();
+            TextureManager.Instance.Init();
             SoundManager.Instance.Init();
         }
 

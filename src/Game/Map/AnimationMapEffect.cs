@@ -1,4 +1,5 @@
 ﻿using SFML.Graphics;
+using SFML.Window;
 
 namespace BlazeraLib
 {
@@ -59,14 +60,14 @@ namespace BlazeraLib
             CallOnStopping();
         }
 
-        public override void SetBasePosition(Vector2 basePosition)
+        public override void SetBasePosition(Vector2f basePosition)
         {
             base.SetBasePosition(basePosition);
 
             Position = BasePosition;
         }
 
-        public override Vector2 Position
+        public override Vector2f Position
         {
             get
             {
@@ -77,7 +78,7 @@ namespace BlazeraLib
             }
             set
             {
-                Vector2 offset = value - Position;
+                Vector2f offset = value - Position;
 
                 base.Position = value;
 
@@ -88,7 +89,7 @@ namespace BlazeraLib
             }
         }
 
-        public override Vector2 Dimension
+        public override Vector2f Dimension
         {
             get
             {

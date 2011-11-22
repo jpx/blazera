@@ -16,7 +16,7 @@ namespace BlazeraLib
             base()
         {
             Background = new PictureBox(new Texture(BACKGROUND_TEXTURE));
-            BackgroundDimension = new Vector2(BACKGROUND_DIMENSION, BACKGROUND_DIMENSION);
+            BackgroundDimension = new Vector2f(BACKGROUND_DIMENSION, BACKGROUND_DIMENSION);
         }
 
         public override void Refresh()

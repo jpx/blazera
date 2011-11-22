@@ -7,9 +7,9 @@ using SFML.Graphics;
 
 namespace BlazeraLib
 {
-    public class ImageManager
+    public class TextureManager
     {
-        private ImageManager()
+        private TextureManager()
         {
 
         }
@@ -19,14 +19,14 @@ namespace BlazeraLib
             this.Init(GameDatas.IMAGES_DEFAULT_PATH);
         }
 
-        private static ImageManager _instance;
-        public static ImageManager Instance
+        private static TextureManager _instance;
+        public static TextureManager Instance
         {
             get
             {
                 if (_instance == null)
                 {
-                    ImageManager.Instance = new ImageManager();
+                    TextureManager.Instance = new TextureManager();
                 }
 
                 return _instance;
@@ -37,48 +37,47 @@ namespace BlazeraLib
             }
         }
 
-        public void Init(String imagesPath)
+        public void Init(String texturePath)
         {
-            this.Images = new Dictionary<String, Image>();
-            this.ImagesPath = imagesPath;
+            this.Textures = new Dictionary<String, SFML.Graphics.Texture>();
+            this.TexturesPath = texturePath;
         }
 
-        public Image GetImage(String imagePath)
+        public SFML.Graphics.Texture GetTexture(String texturePath)
         {
-            if (this.Images.ContainsKey(imagePath))
-                return this.Images[imagePath];
+            if (this.Textures.ContainsKey(texturePath))
+                return this.Textures[texturePath];
 
-            Image tmp = null;
+            SFML.Graphics.Texture tmp = null;
 
             try
             {
-                tmp = new Image(this.ImagesPath + imagePath);
+                tmp = new SFML.Graphics.Texture(this.TexturesPath + texturePath);
             }
             catch
             {
-                Log.Clerr("Failed to load image : " + this.ImagesPath + imagePath);
+                Log.Clerr("Failed to load image : " + this.TexturesPath + texturePath);
 
                 return null;
             }
 
-            tmp.Smooth = false;
-            this.Images.Add(imagePath, tmp);
+            this.Textures.Add(texturePath, tmp);
             return tmp;
         }
 
-        public void DeleteImage(String imagePath)
+        public void DeleteTexture(String texturePath)
         {
-            if (this.Images.ContainsKey(imagePath))
-                this.Images.Remove(imagePath);
+            if (this.Textures.ContainsKey(texturePath))
+                this.Textures.Remove(texturePath);
         }
 
-        private Dictionary<String, Image> Images
+        private Dictionary<String, SFML.Graphics.Texture> Textures
         {
             get;
             set;
         }
 
-        private String ImagesPath
+        private String TexturesPath
         {
             get;
             set;

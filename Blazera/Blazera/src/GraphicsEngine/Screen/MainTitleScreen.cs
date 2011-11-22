@@ -18,7 +18,7 @@ namespace Blazera
             //this.Menu.Background.Texture.SetAlpha(64);
             this.Menu.Selector = new PictureBox(Create.Texture("MenuSl_Main"));
 
-            this.Menu.Dimension = new Vector2(500.0f, 500.0f);
+            this.Menu.Dimension = new Vector2f(500.0f, 500.0f);
             this.Menu.Position = this.GuiView.Center - this.Menu.Dimension / 2;
 
 
@@ -70,20 +70,20 @@ namespace Blazera
         private void InitParticle()
         {
             pe.Texture = Create.Texture("Particle_drop");
-            pe.Acceleration = new Vector2(0f, 100f);
-            pe.AlphaLimit = new Vector2(0.5f, 0.5f);
-            pe.Angle = new Vector2(0f, 360f);
+            pe.Acceleration = new Vector2f(0f, 100f);
+            pe.AlphaLimit = new Vector2f(0.5f, 0.5f);
+            pe.Angle = new Vector2f(0f, 360f);
             pe.Color = Color.Blue;
             pe.MinDColor = new Color(0, 0, 0);
             pe.MaxDColor = new Color(0, 0, 0);
-            pe.DurationTime = new Vector2(1f, 4f);
+            pe.DurationTime = new Vector2f(1f, 4f);
             pe.Position = this.GameView.Center;
             pe.Quantity = new Vector2I(1000, 1000);
-            pe.Rotation = new Vector2(-90f, 90f);
-            pe.MinScale = new Vector2(1f, 1f);
-            pe.MaxScale = new Vector2(1f, 1f);
+            pe.Rotation = new Vector2f(-90f, 90f);
+            pe.MinScale = new Vector2f(1f, 1f);
+            pe.MaxScale = new Vector2f(1f, 1f);
 
-            pe.Velocity = new Vector2(100f, 100f);
+            pe.Velocity = new Vector2f(100f, 100f);
 
             pe.InitParticles();
         }
@@ -133,7 +133,7 @@ namespace Blazera
 
                     switch (evt.Key.Code)
                     {
-                        case KeyCode.Return:
+                        case Keyboard.Key.Return:
 
                             this.NextScreen = ScreenType.GameScreen;
 

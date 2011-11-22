@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using SFML.Graphics;
+using SFML.Window;
 
 namespace BlazeraLib
 {
@@ -12,17 +13,16 @@ namespace BlazeraLib
         public Texture() :
             base()
         {
-            this.IsVisible = true;
+            IsVisible = true;
         }
 
         public Texture(Texture copy) :
             base(copy)
         {
-            this.IsVisible = true;
-            this.ImagePath = copy.ImagePath;
-            this.ImageSubRect = copy.ImageSubRect;
-            this.ColorMask = copy.ColorMask;
-            this.Color = copy.Color;
+            IsVisible = true;
+            ImagePath = copy.ImagePath;
+            ImageSubRect = copy.ImageSubRect;
+            Color = copy.Color;
         }
 
         public Texture(Texture copy, IntRect imageSubRect) :
@@ -73,12 +73,6 @@ namespace BlazeraLib
                                           (Byte)(a * (255D / 100D)));
         }
 
-        private Image Image
-        {
-            get;
-            set;
-        }
-
         public Sprite Sprite
         {
             get;
@@ -92,10 +86,9 @@ namespace BlazeraLib
             set
             {
                 _imagePath = value;
-                if (this.ImagePath != null)
+                if (ImagePath != null)
                 {
-                    this.Image = ImageManager.Instance.GetImage(this.ImagePath);
-                    this.Sprite = new Sprite(this.Image);
+                    Sprite = new Sprite(TextureManager.Instance.GetTexture(ImagePath));
                     ImageSubRect = null;
                 }
             }
@@ -128,23 +121,23 @@ namespace BlazeraLib
                     right = ImageSubRect.Right;
                     bottom = ImageSubRect.Bottom;
 
-                    if (left > Image.Width)
-                        left = (Int32)Image.Width;
+                    if (left > Sprite.Texture.Width)
+                        left = (Int32)Sprite.Texture.Width;
                     if (left < 0)
                         left = 0;
 
-                    if (top > Image.Height)
-                        top = (Int32)Image.Height;
+                    if (top > Sprite.Texture.Height)
+                        top = (Int32)Sprite.Texture.Height;
                     if (top < 0)
                         top = 0;
 
-                    if (right > Image.Width)
-                        right = (Int32)Image.Width;
+                    if (right > Sprite.Texture.Width)
+                        right = (Int32)Sprite.Texture.Width;
                     if (right < left)
                         right = left;
 
-                    if (bottom > Image.Height)
-                        bottom = (Int32)Image.Height;
+                    if (bottom > Sprite.Texture.Height)
+                        bottom = (Int32)Sprite.Texture.Height;
                     if (bottom < top)
                         bottom = top;
                 }
@@ -152,8 +145,8 @@ namespace BlazeraLib
                 {
                     left = 0;
                     top = 0;
-                    right = (Int32)Image.Width;
-                    bottom = (Int32)Image.Height;
+                    right = (Int32)Sprite.Texture.Width;
+                    bottom = (Int32)Sprite.Texture.Height;
                 }
 
                 _imageSubRect = new IntRect(
@@ -166,18 +159,7 @@ namespace BlazeraLib
             }
         }
 
-        private Color _colorMask;
-        public Color ColorMask
-        {
-            get { return _colorMask; }
-            set
-            {
-                _colorMask = value;
-                this.Image.CreateMaskFromColor(this.ColorMask);
-            }
-        }
-
-        public override Vector2 Position
+        public override Vector2f Position
         {
             get
             {
@@ -190,15 +172,15 @@ namespace BlazeraLib
                 Int32 xAdd = value.X - .5F < (float)(Int32)value.X ? 0 : 1;
                 Int32 yAdd = value.Y - .5F < (float)(Int32)value.Y ? 0 : 1;
 
-                this.Sprite.Position += new Vector2(xAdd, yAdd);*/
+                this.Sprite.Position += new Vector2f(xAdd, yAdd);*/
             }
         }
 
-        public override Vector2 Dimension
+        public override Vector2f Dimension
         {
             get
             {
-                return new Vector2(this.Sprite.Width,
+                return new Vector2f(this.Sprite.Width,
                                    this.Sprite.Height);
             }
             set
@@ -208,12 +190,12 @@ namespace BlazeraLib
             }
         }
 
-        public Vector2 ImageDimension
+        public Vector2f ImageDimension
         {
             get
             {
-                return new Vector2(this.Image.Width,
-                                   this.Image.Height);
+                return new Vector2f(this.Sprite.Texture.Width,
+                                    this.Sprite.Texture.Height);
             }
         }
 
@@ -230,31 +212,5 @@ namespace BlazeraLib
         }
 
         public ScriptWriter Sw { get; set; }
-
-        public Color GetPixel(UInt32 x, UInt32 y)
-        {
-            return Image.GetPixel(x, y);
-        }
-
-        public void SetPixel(UInt32 x, UInt32 y, Color color)
-        {
-            this.Image.SetPixel(x, y, color);
-        }
-
-        public UInt32 GetWidth(UInt32 y)
-        {
-            UInt32 space = 0;
-            float x = 0;
-
-            while (this.GetPixel((UInt32)x++, y).A == 0)
-                space++;
-
-            x = this.Dimension.X - 1F;
-
-            while (this.GetPixel((UInt32)x--, y).A == 0)
-                space++;
-
-            return (UInt32)(this.Dimension.X - space);
-        }
     }
 }

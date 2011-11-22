@@ -105,7 +105,7 @@ namespace BlazeraLib
             // GameEngine init
             ScriptEngine.Instance.Init("ProgramDatas");
 
-            ImageManager.Instance.Init();
+            TextureManager.Instance.Init();
             SoundManager.Instance.Init();
 
             // GraphicsEngine init
@@ -150,7 +150,7 @@ namespace BlazeraLib
 
                 CallOnRunning();
 
-                Gui.Update(GameTime.GetDt());
+                Gui.Update(/*GameTime.GetDt()*/new Time(Window.GetFrameTime() / 1000D));
                 Gui.Draw(Window);
 
                 while (WindowEvents.EventHappened())
@@ -228,7 +228,7 @@ namespace BlazeraLib
         /// </summary>
         /// <param name="window">Window to add</param>
         /// <param name="key">Shorcut key to show and hide the given window</param>
-        public void AddWindow(WindowedWidget window, KeyCode key)
+        public void AddWindow(WindowedWidget window, Keyboard.Key key)
         {
             Gui.AddWindow(window, true);
             Gui.AddKeyWindowBind(key, window);

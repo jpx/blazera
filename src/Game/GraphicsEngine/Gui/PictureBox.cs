@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using SFML.Graphics;
+using SFML.Window;
 
 namespace BlazeraLib
 {
@@ -33,12 +34,12 @@ namespace BlazeraLib
             this.Texture.Dimension = this.Dimension;
 
             this.Texture.Position = this.GetGlobalFromLocal(
-                new Vector2(
+                new Vector2f(
                     0F,
                     0F));
         }
 
-        public override Vector2 Dimension
+        public override Vector2f Dimension
         {
             get
             {
@@ -69,7 +70,7 @@ namespace BlazeraLib
 
                 this.Dimension = this.Texture.Dimension;
 
-                Texture.Position = GetGlobalFromLocal(new Vector2());
+                Texture.Position = GetGlobalFromLocal(new Vector2f());
             }
         }
 

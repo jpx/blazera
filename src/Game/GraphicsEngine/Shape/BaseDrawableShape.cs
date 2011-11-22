@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using SFML.Graphics;
+using SFML.Window;
 
 namespace BlazeraLib
 {
@@ -112,7 +113,7 @@ namespace BlazeraLib
             ShadowOffset = shadowOffset;
         }
 
-        public override Vector2 Position
+        public override Vector2f Position
         {
             set
             {
@@ -127,36 +128,36 @@ namespace BlazeraLib
                     Effects[ShapeEffect.Shade].Position = Position + GetPositionOffset();
 
                 if (Effects[ShapeEffect.Shadow] != null)
-                    Effects[ShapeEffect.Shadow].Position = Position + new Vector2(ShadowOffset, ShadowOffset) + GetPositionOffset();
+                    Effects[ShapeEffect.Shadow].Position = Position + new Vector2f(ShadowOffset, ShadowOffset) + GetPositionOffset();
             }
         }
 
-        public override Vector2 Dimension
+        public override Vector2f Dimension
         {
             get { return base.Dimension + OutlineStructureDimension() + ShadowStructureDimension(); }
         }
 
-        Vector2 ShadowStructureDimension()
+        Vector2f ShadowStructureDimension()
         {
-            return Effects[ShapeEffect.Shadow] != null ? new Vector2(ShadowOffset, ShadowOffset) : new Vector2();
+            return Effects[ShapeEffect.Shadow] != null ? new Vector2f(ShadowOffset, ShadowOffset) : new Vector2f();
         }
 
-        Vector2 OutlineStructureDimension()
+        Vector2f OutlineStructureDimension()
         {
-            return new Vector2(OutlineThickness * 2F, OutlineThickness * 2F);
+            return new Vector2f(OutlineThickness * 2F, OutlineThickness * 2F);
         }
 
-        public Vector2 GetPositionOffset()
+        public Vector2f GetPositionOffset()
         {
-            return new Vector2(OutlineThickness, OutlineThickness);
+            return new Vector2f(OutlineThickness, OutlineThickness);
         }
 
-        protected void AddPoint(Vector2 position)
+        protected void AddPoint(Vector2f position)
         {
             BaseShape.AddPoint(position, Color, OutlineColor);
         }
 
-        protected void AddShadePoint(Vector2 position, bool effectBegin = true)
+        protected void AddShadePoint(Vector2f position, bool effectBegin = true)
         {
             if (Effects[ShapeEffect.Shade] == null)
                 return;
@@ -164,7 +165,7 @@ namespace BlazeraLib
             Effects[ShapeEffect.Shade].AddPoint(position, effectBegin ? EFFECT_BEGIN_COLOR : EFFECT_END_COLOR);
         }
 
-        protected void AddShadowPoint(Vector2 position)
+        protected void AddShadowPoint(Vector2f position)
         {
             if (Effects[ShapeEffect.Shadow] == null)
                 return;

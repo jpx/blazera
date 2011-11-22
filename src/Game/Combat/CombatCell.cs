@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using SFML.Graphics;
+using SFML.Window;
 
 namespace BlazeraLib
 {
@@ -85,14 +86,14 @@ namespace BlazeraLib
             return IsWithinArea(this, area, centerCellPosition);
         }
 
-        public static Vector2 GetPositionFromCellPosition(Vector2I cellPosition)
+        public static Vector2f GetPositionFromCellPosition(Vector2I cellPosition)
         {
             return cellPosition.ToVector2() * CombatMap.CELL_SIZE;
         }
 
-        public static Vector2 GetCenterFromCellPosition(Vector2I cellPosition)
+        public static Vector2f GetCenterFromCellPosition(Vector2I cellPosition)
         {
-            return (cellPosition.ToVector2() + new Vector2(.5F, .5F)) * CombatMap.CELL_SIZE;
+            return (cellPosition.ToVector2() + new Vector2f(.5F, .5F)) * CombatMap.CELL_SIZE;
         }
 
         public static int GetDistanceBetween(CombatCell cell1, CombatCell cell2)

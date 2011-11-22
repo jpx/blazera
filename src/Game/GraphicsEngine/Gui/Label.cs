@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using SFML.Graphics;
+using SFML.Window;
 
 namespace BlazeraLib
 {
@@ -69,7 +70,7 @@ namespace BlazeraLib
         public Label(String text = null, ESize size = DEFAULT_TEXT_SIZE) :
             base()
         {
-            this.Text2D = new Text(text, GameDatas.DEFAULT_FONT, this.GetSizeFromESize(size));
+            this.Text2D = new Text(text == null ? "" : text, GameDatas.DEFAULT_FONT, this.GetSizeFromESize(size));
             this.Text2D.Color = DEFAULT_COLOR;
         }
 
@@ -96,7 +97,7 @@ namespace BlazeraLib
                 _text2D = value;
 
                 if (this.Text2D != null)
-                    this.Dimension = new Vector2(
+                    this.Dimension = new Vector2f(
                         this.Text2D.GetRect().Width,
                         this.Text2D.GetRect().Height);
             }
@@ -146,19 +147,19 @@ namespace BlazeraLib
                 return;
 
             this.Text2D.Position = Vector2I.FromVector2(this.GetGlobalFromLocal(
-                         new Vector2(
+                         new Vector2f(
                              0F,
                              0F))).ToVector2();
         }
 
-        public override Vector2 Dimension
+        public override Vector2f Dimension
         {
             get
             {
                 if (this.Text2D == null)
                     return base.Dimension;
 
-                return new Vector2(
+                return new Vector2f(
                     this.Text2D.GetRect().Width,
                     this.Text2D.GetRect().Height);
             }
@@ -166,12 +167,12 @@ namespace BlazeraLib
 
         public UInt32 Size
         {
-            get { return this.Text2D.Size; }
+            get { return this.Text2D.CharacterSize; }
         }
 
         public void SetSize(ESize size)
         {
-            this.Text2D.Size = this.GetSizeFromESize(size);
+            this.Text2D.CharacterSize = this.GetSizeFromESize(size);
         }
 
         public String Text
@@ -227,7 +228,7 @@ namespace BlazeraLib
             set { this.Text2D.Font = value; }
         }
 
-        public Vector2 Scale
+        public Vector2f Scale
         {
             get { return Text2D.Scale; }
             set { Text2D.Scale = value; }
@@ -327,21 +328,21 @@ namespace BlazeraLib
 
             for (Int32 count = 0; count < Texts.Length; ++count)
             {
-                Texts[count].Position = GetGlobalFromLocal(new Vector2(, ));
+                Texts[count].Position = GetGlobalFromLocal(new Vector2f(, ));
             }
         }
 
-        public override Vector2 Dimension
+        public override Vector2f Dimension
         {
             get
             {
                 if (Texts == null)
                     return base.Dimension;
 
-                Vector2 dimension = new Vector2();
+                Vector2f dimension = new Vector2f();
 
                 foreach (Text text2D in Texts)
-                    dimension = new Vector2(dimension.X + text2D.GetRect().Width, Math.Max(dimension.Y, text2D.GetRect().Height));
+                    dimension = new Vector2f(dimension.X + text2D.GetRect().Width, Math.Max(dimension.Y, text2D.GetRect().Height));
 
                 return dimension;
             }

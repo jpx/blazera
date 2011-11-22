@@ -1,4 +1,5 @@
 ﻿using SFML.Graphics;
+using SFML.Window;
 
 namespace BlazeraLib
 {
@@ -46,12 +47,12 @@ namespace BlazeraLib
 
             for (uint y = 0; y < Height + 1; ++y)
             {
-                Lines[y] = Shape.Line(new Vector2(0F, y * Scale), new Vector2(Dimension.X, y * Scale), LineThickness, Color);
+                Lines[y] = Shape.Line(new Vector2f(0F, y * Scale), new Vector2f(Dimension.X, y * Scale), LineThickness, Color);
             }
 
             for (uint x = 0; x < Width + 1; ++x)
             {
-                Lines[Height + 1 + x] = Shape.Line(new Vector2(x * Scale, 0F), new Vector2(x * Scale, Dimension.Y), LineThickness, Color);
+                Lines[Height + 1 + x] = Shape.Line(new Vector2f(x * Scale, 0F), new Vector2f(x * Scale, Dimension.Y), LineThickness, Color);
             }
         }
 
@@ -64,17 +65,17 @@ namespace BlazeraLib
                 window.Draw(Lines[count]);
         }
 
-        public override Vector2 Dimension
+        public override Vector2f Dimension
         {
             get
             {
-                return new Vector2(
+                return new Vector2f(
                     Scale * Width,
                     Scale * Height);
             }
         }
 
-        public void Move(Vector2 offset)
+        public void Move(Vector2f offset)
         {
             for (uint count = 0; count < Lines.Length; ++count)
                 Lines[count].Position += offset;

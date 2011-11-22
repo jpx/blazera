@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using BlazeraLib;
 using SFML.Graphics;
+using SFML.Window;
 
 namespace BlazeraEditor
 {
@@ -31,7 +32,7 @@ namespace BlazeraEditor
 
         LabeledTextBox NameTextBox = new LabeledTextBox("Name", LabeledWidget.EMode.Right, TextBox.EInputType.AlphaNumeric, true);
         HAutoSizeBox PointBox = new HAutoSizeBox(false, "Coordinates");
-        Button PointButton = new Button(PointCreator.Instance.PointToString(new Vector2()), Button.EMode.LabelEffect, true);
+        Button PointButton = new Button(PointCreator.Instance.PointToString(new Vector2f()), Button.EMode.LabelEffect, true);
         LabeledDownList DirectionDownList = new LabeledDownList("Direction", 8);
         CheckBox DefaultCheckBox = new CheckBox("Default", LabeledWidget.EMode.Right, false, true);
 
@@ -40,7 +41,7 @@ namespace BlazeraEditor
         Button CancelButton = new Button("Cancel");
         #endregion
 
-        Vector2 CurrentPoint;
+        Vector2f CurrentPoint;
 
         private WarpPointCreator() :
             base("Warp point creator")
@@ -85,13 +86,13 @@ namespace BlazeraEditor
         {
             SetFocusedWindow(PointCreator.Instance, new OpeningInfo(true, new Dictionary<String, Object>
             {
-                {"Point", new Vector2(CurrentPoint.X, CurrentPoint.Y) }
+                {"Point", new Vector2f(CurrentPoint.X, CurrentPoint.Y) }
             }), OnPointCreatorValidated);
         }
 
         void OnPointCreatorValidated(WindowedWidget sender, ValidateEventArgs e)
         {
-            CurrentPoint = new Vector2(e.GetArg<Int32>("X"), e.GetArg<Int32>("Y"));
+            CurrentPoint = new Vector2f(e.GetArg<Int32>("X"), e.GetArg<Int32>("Y"));
             PointButton.Text = PointCreator.Instance.PointToString(CurrentPoint);
         }
 
@@ -116,7 +117,7 @@ namespace BlazeraEditor
         {
             base.Reset();
 
-            CurrentPoint = new Vector2();
+            CurrentPoint = new Vector2f();
             PointButton.Text = PointCreator.Instance.PointToString(CurrentPoint);
         }
 
@@ -128,7 +129,7 @@ namespace BlazeraEditor
                 return;
 
             NameTextBox.TextBox.Reset(openingInfo.GetArg<String>("Name"));
-            CurrentPoint = openingInfo.GetArg<Vector2>("Point");
+            CurrentPoint = openingInfo.GetArg<Vector2f>("Point");
             PointButton.Text = PointCreator.Instance.PointToString(CurrentPoint);
             DirectionDownList.DownList.SetCurrent(openingInfo.GetArg<Direction>("Direction").ToString());
             DefaultCheckBox.SetIsChecked(openingInfo.GetArg<Boolean>("Default"));

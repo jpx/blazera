@@ -99,7 +99,7 @@ namespace BlazeraLib
             {
                 case EventType.MouseButtonPressed:
 
-                    if (evt.MouseButton.Button == MouseButton.Right)
+                    if (evt.MouseButton.Button == Mouse.Button.Right)
                     {
                         Empty();
 
@@ -109,7 +109,7 @@ namespace BlazeraLib
                         return true;
                     }
 
-                    if (evt.MouseButton.Button != MouseButton.Left)
+                    if (evt.MouseButton.Button != Mouse.Button.Left)
                         break;
 
                     if (!MapBox.MapContainsMouse())
@@ -117,7 +117,7 @@ namespace BlazeraLib
 
                     Init();
 
-                    Vector2 clickPaintPoint = GetLocalMouseCenter();
+                    Vector2f clickPaintPoint = GetLocalMouseCenter();
                     if (!CanPaint(clickPaintPoint))
                         break;
 
@@ -125,7 +125,7 @@ namespace BlazeraLib
 
                 case EventType.MouseButtonReleased:
 
-                    if (evt.MouseButton.Button != MouseButton.Left)
+                    if (evt.MouseButton.Button != Mouse.Button.Left)
                         break;
 
                     End();
@@ -143,7 +143,7 @@ namespace BlazeraLib
                         break;
                     }
 
-                    Vector2 movePaintPoint = GetLocalMouseCenter();
+                    Vector2f movePaintPoint = GetLocalMouseCenter();
                     Boolean canPaint = CanPaint(movePaintPoint);
 
                     ShowCursor();
@@ -162,7 +162,7 @@ namespace BlazeraLib
 
                     switch (evt.Key.Code)
                     {
-                        case KeyCode.P:
+                        case Keyboard.Key.P:
 
                             Mode = EMode.Pot;
 
@@ -175,7 +175,7 @@ namespace BlazeraLib
 
                     switch (evt.Key.Code)
                     {
-                        case KeyCode.P:
+                        case Keyboard.Key.P:
 
                             Mode = EMode.Normal;
 
@@ -195,17 +195,17 @@ namespace BlazeraLib
             Cursor.Center = GetLockedPosition(((EditorBaseWidget)Root).GetMousePosition());
         }
 
-        Vector2 GetLockedPosition(Vector2 point)
+        Vector2f GetLockedPosition(Vector2f point)
         {
             if (LockValue < 2)
                 return point;
 
-            return new Vector2(
+            return new Vector2f(
                 ((UInt32)point.X) / LockValue * LockValue,
                 ((UInt32)point.Y) / LockValue * LockValue);
         }
 
-        Vector2 GetLocalMouseCenter()
+        Vector2f GetLocalMouseCenter()
         {
             return GetLockedPosition(MapBox.GetMapLocalFromGlobal(((EditorBaseWidget)Root).GetMousePosition()));
         }
@@ -230,11 +230,11 @@ namespace BlazeraLib
             return Cursor.Texture.Type == EMPTY_CURSOR_TEXTURE.Type;
         }
 
-        protected virtual Boolean CanPaint(Vector2 point)
+        protected virtual Boolean CanPaint(Vector2f point)
         {
             return true;
         }
 
-        protected abstract Boolean Paint(Vector2 point);
+        protected abstract Boolean Paint(Vector2f point);
     }
 }

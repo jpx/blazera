@@ -25,7 +25,7 @@ namespace SFML
             /// <param name="title">Title of the window</param>
             ////////////////////////////////////////////////////////////
             public RenderWindow(VideoMode mode, string title) :
-                this(mode, title, Styles.Default, new ContextSettings(24, 8))
+                this(mode, title, Styles.Default, new ContextSettings(0, 0))
             {
             }
 
@@ -38,7 +38,7 @@ namespace SFML
             /// <param name="style">Window style (Resize | Close by default)</param>
             ////////////////////////////////////////////////////////////
             public RenderWindow(VideoMode mode, string title, Styles style) :
-                this(mode, title, style, new ContextSettings(24, 8))
+                this(mode, title, style, new ContextSettings(0, 0))
             {
             }
 
@@ -64,7 +64,7 @@ namespace SFML
             /// <param name="handle">Platform-specific handle of the control</param>
             ////////////////////////////////////////////////////////////
             public RenderWindow(IntPtr handle) :
-                this(handle, new ContextSettings(24, 8))
+                this(handle, new ContextSettings(0, 0))
             {
             }
 
@@ -170,18 +170,6 @@ namespace SFML
 
             ////////////////////////////////////////////////////////////
             /// <summary>
-            /// Change the position of the mouse cursor
-            /// </summary>
-            /// <param name="x">Left coordinate of the cursor, relative to the window</param>
-            /// <param name="y">Top coordinate of the cursor, relative to the window</param>
-            ////////////////////////////////////////////////////////////
-            public override void SetCursorPosition(uint x, uint y)
-            {
-                sfRenderWindow_SetCursorPosition(This, x, y);
-            }
-
-            ////////////////////////////////////////////////////////////
-            /// <summary>
             /// Change the position of the window on screen.
             /// Only works for top-level windows
             /// </summary>
@@ -203,6 +191,17 @@ namespace SFML
             public override void SetSize(uint width, uint height)
             {
                 sfRenderWindow_SetSize(This, width, height);
+            }
+
+            ////////////////////////////////////////////////////////////
+            /// <summary>
+            /// Change the title of the window
+            /// </summary>
+            /// <param name="title">New title</param>
+            ////////////////////////////////////////////////////////////
+            public override void SetTitle(string title)
+            {
+                sfRenderWindow_SetTitle(This, title);
             }
 
             ////////////////////////////////////////////////////////////
@@ -277,7 +276,7 @@ namespace SFML
             /// </summary>
             /// <returns>Time elapsed, in seconds</returns>
             ////////////////////////////////////////////////////////////
-            public override float GetFrameTime()
+            public override uint GetFrameTime()
             {
                 return sfRenderWindow_GetFrameTime(This);
             }
@@ -358,7 +357,7 @@ namespace SFML
             /// <returns>Converted point</returns>
             ///
             ////////////////////////////////////////////////////////////
-            public Vector2 ConvertCoords(uint x, uint y)
+            public Vector2f ConvertCoords(uint x, uint y)
             {
                 return ConvertCoords(x, y, GetView());
             }
@@ -374,9 +373,9 @@ namespace SFML
             /// <returns>Converted point</returns>
             ///
             ////////////////////////////////////////////////////////////
-            public Vector2 ConvertCoords(uint x, uint y, View view)
+            public Vector2f ConvertCoords(uint x, uint y, View view)
             {
-                Vector2 point;
+                Vector2f point;
                 sfRenderWindow_ConvertCoords(This, x, y, out point.X, out point.Y, view.This);
 
                 return point;
@@ -448,6 +447,16 @@ namespace SFML
 
             ////////////////////////////////////////////////////////////
             /// <summary>
+            /// Capture the current contents of the window into an image
+            /// </summary>
+            ////////////////////////////////////////////////////////////
+            public Image Capture()
+            {
+                return new Image(sfRenderWindow_Capture(This));
+            }
+
+            ////////////////////////////////////////////////////////////
+            /// <summary>
             /// Provide a string describing the object
             /// </summary>
             /// <returns>String description of the object</returns>
@@ -469,9 +478,9 @@ namespace SFML
             /// <param name="eventToFill">Variable to fill with the raw pointer to the event structure</param>
             /// <returns>True if there was an event, false otherwise</returns>
             ////////////////////////////////////////////////////////////
-            protected override bool GetEvent(out Event eventToFill)
+            protected override bool PollEvent(out Event eventToFill)
             {
-                return sfRenderWindow_GetEvent(This, out eventToFill);
+                return sfRenderWindow_PollEvent(This, out eventToFill);
             }
 
             ////////////////////////////////////////////////////////////
@@ -507,7 +516,6 @@ namespace SFML
             ////////////////////////////////////////////////////////////
             private void Initialize()
             {
-                myInput       = new Input(sfRenderWindow_GetInput(This));
                 myDefaultView = new View(sfRenderWindow_GetDefaultView(This));
                 GC.SuppressFinalize(myDefaultView);
             }
@@ -525,16 +533,13 @@ namespace SFML
             static extern void sfRenderWindow_Destroy(IntPtr This);
 
             [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-            static extern IntPtr sfRenderWindow_GetInput(IntPtr This);
-
-            [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern bool sfRenderWindow_IsOpened(IntPtr This);
 
             [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfRenderWindow_Close(IntPtr This);
 
             [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-            static extern bool sfRenderWindow_GetEvent(IntPtr This, out Event Evt);
+            static extern bool sfRenderWindow_PollEvent(IntPtr This, out Event Evt);
             
             [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern bool sfRenderWindow_WaitEvent(IntPtr This, out Event Evt);
@@ -561,13 +566,13 @@ namespace SFML
             static extern void sfRenderWindow_ShowMouseCursor(IntPtr This, bool Show);
 
             [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-            static extern void sfRenderWindow_SetCursorPosition(IntPtr This, uint X, uint Y);
-
-            [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfRenderWindow_SetPosition(IntPtr This, int X, int Y);
 
             [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfRenderWindow_SetSize(IntPtr This, uint Width, uint Height);
+
+            [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+            static extern void sfRenderWindow_SetTitle(IntPtr This, string title);
 
             [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfRenderWindow_Show(IntPtr This, bool Show);
@@ -591,7 +596,7 @@ namespace SFML
             static extern void sfRenderWindow_SetFramerateLimit(IntPtr This, uint Limit);
 
             [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-            static extern float sfRenderWindow_GetFrameTime(IntPtr This);
+            static extern uint sfRenderWindow_GetFrameTime(IntPtr This);
 
             [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfRenderWindow_SetJoystickThreshold(IntPtr This, float Threshold);
@@ -613,6 +618,9 @@ namespace SFML
 
             [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern IntPtr sfRenderWindow_GetSystemHandle(IntPtr This);
+
+            [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+            static extern IntPtr sfRenderWindow_Capture(IntPtr This);
 
             #endregion
         }

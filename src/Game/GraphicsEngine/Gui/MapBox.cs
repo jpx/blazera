@@ -9,7 +9,7 @@ namespace BlazeraLib
 {
     public class MapBox : Widget
     {
-        Vector2 Size;
+        Vector2f Size;
         float Margins;
 
         VScrollBar VScrollBar;
@@ -18,7 +18,7 @@ namespace BlazeraLib
         public Map Map { get; private set; }
 
         GameBaseWidget GameRoot;
-        Vector2 ViewMove;
+        Vector2f ViewMove;
 
         List<WorldObject> ObjectToDraw = new List<WorldObject>();
         List<Widget> WidgetToDraw = new List<Widget>();
@@ -27,7 +27,7 @@ namespace BlazeraLib
 
         public event ClickEventHandler MapClicked;
         
-        public MapBox(Vector2 size) :
+        public MapBox(Vector2f size) :
             base()
         {
             Margins = Border.GetBoxBorderWidth();
@@ -43,7 +43,7 @@ namespace BlazeraLib
         {
             GameRoot = new GameBaseWidget(window, new View(new SFML.Graphics.FloatRect(0F, 0F, Size.X, Size.Y)), new View(new SFML.Graphics.FloatRect(0F, 0F, Size.X, Size.Y)));
             GameRoot.IsPositionLinked = false;
-            GameRoot.Dimension = new Vector2(Size.X, Size.Y);
+            GameRoot.Dimension = new Vector2f(Size.X, Size.Y);
             AddWidget(GameRoot);
         }
         
@@ -68,7 +68,7 @@ namespace BlazeraLib
 
             GameRoot.MoveGameView(ViewMove);
 
-            ViewMove = new Vector2();
+            ViewMove = new Vector2f();
 
             Inputs.Instance.UpdateState();
         }
@@ -114,7 +114,7 @@ namespace BlazeraLib
             {
                 case EventType.MouseButtonPressed:
 
-                    if (evt.MouseButton.Button != MouseButton.Left)
+                    if (evt.MouseButton.Button != Mouse.Button.Left)
                         break;
 
                     if (!MapContainsMouse())
@@ -124,7 +124,7 @@ namespace BlazeraLib
                         break;
                     
                     MouseButtonEvent e = new MouseButtonEvent();
-                    Vector2 ePoint = GetMapLocalFromGlobal(new Vector2(evt.MouseButton.X, evt.MouseButton.Y));
+                    Vector2f ePoint = GetMapLocalFromGlobal(new Vector2f(evt.MouseButton.X, evt.MouseButton.Y));
                     e.X = (Int32)ePoint.X;
                     e.Y = (Int32)ePoint.Y;
 
@@ -143,7 +143,7 @@ namespace BlazeraLib
                 #region player moves
                 case EventType.KeyPressed:
 
-                    if (Root.Window.Input.IsKeyDown(KeyCode.LControl))
+                    if (Keyboard.IsKeyPressed(Keyboard.Key.LControl))
                         break;
 
                     if (Inputs.IsGameInput(InputType.Misc, evt))
@@ -219,19 +219,19 @@ namespace BlazeraLib
 
         public override void Refresh()
         {
-            VScrollBar.Dimension = new Vector2(
+            VScrollBar.Dimension = new Vector2f(
                 VScrollBar.Dimension.X,
                 Size.Y);
 
-            VScrollBar.Position = GetGlobalFromLocal(new Vector2(
+            VScrollBar.Position = GetGlobalFromLocal(new Vector2f(
                 Size.X + Margins,
                 0F));
 
-            HScrollBar.Dimension = new Vector2(
+            HScrollBar.Dimension = new Vector2f(
                 Size.X,
                 HScrollBar.Dimension.Y);
 
-            HScrollBar.Position = GetGlobalFromLocal(new Vector2(
+            HScrollBar.Position = GetGlobalFromLocal(new Vector2f(
                 0F,
                 Size.Y + Margins));
 
@@ -246,7 +246,7 @@ namespace BlazeraLib
             if (GameRoot.MapView == null || Root == null)
                 return;
 
-            Vector2 viewPos = GetGlobalFromLocal(new Vector2());
+            Vector2f viewPos = GetGlobalFromLocal(new Vector2f());
             GameRoot.MapView.Viewport = new SFML.Graphics.FloatRect(
                 viewPos.X / Root.Window.Width,
                 viewPos.Y / Root.Window.Height,
@@ -256,7 +256,7 @@ namespace BlazeraLib
             GameRoot.GuiView.Viewport = GameRoot.MapView.Viewport;
         }
 
-        public override Vector2 Dimension
+        public override Vector2f Dimension
         {
             get
             {
@@ -264,7 +264,7 @@ namespace BlazeraLib
                     HScrollBar == null)
                     return base.Dimension;
 
-                return Size + new Vector2(VScrollBar.Dimension.X + Margins, HScrollBar.Dimension.Y + Margins);
+                return Size + new Vector2f(VScrollBar.Dimension.X + Margins, HScrollBar.Dimension.Y + Margins);
             }
         }
 
@@ -279,20 +279,23 @@ namespace BlazeraLib
         }
 
         const float VIEW_MOVE_MINOR_LIMIT = .5F;
-        Vector2 GetViewMove(Time dt, Player player)
+        const float VIEW_MOVE_TRIGGER_LIMIT = 20F;
+        Vector2f GetViewMove(Time dt, Player player)
         {
             float moveX = 0.0f;
             float moveY = 0.0f;
 
             if (player == null)
             {
-                return new Vector2(moveX, moveY);
+                return new Vector2f(moveX, moveY);
             }
 
-            Vector2 p = player.Center;
+            Vector2f p = player.Center;
 
-            moveX = player.Velocity * (p.X - GameRoot.MapView.Center.X) / 50f * GameDatas.WINDOW_WIDTH / GameDatas.WINDOW_HEIGHT * (float)dt.Value;
-            moveY = player.Velocity * (p.Y - GameRoot.MapView.Center.Y) / 50f * GameDatas.WINDOW_HEIGHT / GameDatas.WINDOW_WIDTH * (float)dt.Value;
+            if (Math.Abs(p.X - GameRoot.MapView.Center.X) > VIEW_MOVE_TRIGGER_LIMIT * (GameDatas.WINDOW_HEIGHT / GameDatas.WINDOW_WIDTH))
+                moveX = player.Velocity * (p.X - GameRoot.MapView.Center.X) / 50f * GameDatas.WINDOW_WIDTH / GameDatas.WINDOW_HEIGHT * (float)dt.Value;
+            if (Math.Abs(p.Y - GameRoot.MapView.Center.Y) > VIEW_MOVE_TRIGGER_LIMIT * (GameDatas.WINDOW_WIDTH / GameDatas.WINDOW_HEIGHT))
+                moveY = player.Velocity * (p.Y - GameRoot.MapView.Center.Y) / 50f * GameDatas.WINDOW_HEIGHT / GameDatas.WINDOW_WIDTH * (float)dt.Value;
 
             /*if (Math.Abs(moveX) < VIEW_MOVE_MINOR_LIMIT)
                 moveX = p.X - Gui.MapView.Center.X;
@@ -302,29 +305,29 @@ namespace BlazeraLib
 
             if (GameRoot.MapView.Center.X - GameRoot.MapView.Size.X / 2 + moveX < 0F)
             {
-                GameRoot.MapView.Center = new Vector2(0F, GameRoot.MapView.Center.Y) + new Vector2(GameRoot.MapView.Size.X / 2F, 0F);
+                GameRoot.MapView.Center = new Vector2f(0F, GameRoot.MapView.Center.Y) + new Vector2f(GameRoot.MapView.Size.X / 2F, 0F);
                 moveX = 0.0f;
             }
 
             if (GameRoot.MapView.Center.X - GameRoot.MapView.Size.X / 2 + GameRoot.MapView.Size.X + moveX >= Map.Dimension.X)
             {
-                GameRoot.MapView.Center = new Vector2(Map.Dimension.X, GameRoot.MapView.Center.Y) - new Vector2(GameRoot.MapView.Size.X / 2F, 0F);
+                GameRoot.MapView.Center = new Vector2f(Map.Dimension.X, GameRoot.MapView.Center.Y) - new Vector2f(GameRoot.MapView.Size.X / 2F, 0F);
                 moveX = 0.0f;
             }
 
             if (GameRoot.MapView.Center.Y - GameRoot.MapView.Size.Y / 2 + moveY < 0F)
             {
-                GameRoot.MapView.Center = new Vector2(GameRoot.MapView.Center.X, 0F) + new Vector2(0F, GameRoot.MapView.Size.Y / 2F);
+                GameRoot.MapView.Center = new Vector2f(GameRoot.MapView.Center.X, 0F) + new Vector2f(0F, GameRoot.MapView.Size.Y / 2F);
                 moveY = 0.0f;
             }
 
             if (GameRoot.MapView.Center.Y - GameRoot.MapView.Size.Y / 2 + GameRoot.MapView.Size.Y + moveY >= Map.Dimension.Y)
             {
-                GameRoot.MapView.Center = new Vector2(GameRoot.MapView.Center.X, Map.Dimension.Y) - new Vector2(0F, GameRoot.MapView.Size.Y / 2F); ;
+                GameRoot.MapView.Center = new Vector2f(GameRoot.MapView.Center.X, Map.Dimension.Y) - new Vector2f(0F, GameRoot.MapView.Size.Y / 2F); ;
                 moveY = 0.0f;
             }
 
-            return new Vector2(moveX, moveY);
+            return new Vector2f(moveX, moveY);
         }
 
         public void UpdateLockedViewMove(Time dt, Player player)
@@ -337,12 +340,12 @@ namespace BlazeraLib
             float xMove = HScrollBar.CursorPosition * GameDatas.TILE_SIZE - (GameRoot.MapView.Center.X - GameRoot.MapView.Size.X / 2F);
             float yMove = VScrollBar.CursorPosition * GameDatas.TILE_SIZE - (GameRoot.MapView.Center.Y - GameRoot.MapView.Size.Y / 2F);
 
-            ViewMove = new Vector2(xMove, yMove);
+            ViewMove = new Vector2f(xMove, yMove);
         }
 
         public Boolean MapContainsMouse()
         {
-            Vector2 mousePos = GetLocalFromGlobal(((EditorBaseWidget)Root).GetMousePosition());
+            Vector2f mousePos = GetLocalFromGlobal(((EditorBaseWidget)Root).GetMousePosition());
 
             return !(
                 mousePos.X < 0F ||
@@ -351,7 +354,7 @@ namespace BlazeraLib
                 mousePos.Y >= Size.Y);
         }
 
-        public Vector2 GetMapLocalFromGlobal(Vector2 point)
+        public Vector2f GetMapLocalFromGlobal(Vector2f point)
         {
             if (Map == null)
                 return point;

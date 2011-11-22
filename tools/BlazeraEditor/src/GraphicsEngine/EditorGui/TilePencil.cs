@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using BlazeraLib;
 using SFML.Graphics;
+using SFML.Window;
 
 namespace BlazeraEditor
 {
@@ -26,7 +27,7 @@ namespace BlazeraEditor
 
         #endregion
 
-        static readonly Texture ICON_TEXTURE = Create.Texture("Tile_TileSet11_22");
+        static readonly BlazeraLib.Texture ICON_TEXTURE = Create.Texture("Tile_TileSet11_22");
 
         Tile CurrentTile;
         UInt32 CurrentLayer;
@@ -42,7 +43,7 @@ namespace BlazeraEditor
         public void SetCurrentTile(Tile currentTile)
         {
             CurrentTile = currentTile;
-            SetCursorTexture(new Texture(CurrentTile.Texture));
+            SetCursorTexture(new BlazeraLib.Texture(CurrentTile.Texture));
         }
 
         public void SetCurrentLayer(UInt32 currentLayer)
@@ -57,7 +58,7 @@ namespace BlazeraEditor
             CurrentTile = null;
         }
 
-        protected override Boolean CanPaint(Vector2 point)
+        protected override Boolean CanPaint(Vector2f point)
         {
             if (CurrentTile == null)
                 return false;
@@ -65,7 +66,7 @@ namespace BlazeraEditor
             return base.CanPaint(point);
         }
 
-        protected override Boolean Paint(Vector2 point)
+        protected override Boolean Paint(Vector2f point)
         {
             Int32 x = (Int32)point.X / GameDatas.TILE_SIZE;
             Int32 y = (Int32)point.Y / GameDatas.TILE_SIZE;

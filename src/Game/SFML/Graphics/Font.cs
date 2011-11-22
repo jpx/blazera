@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.IO;
+using SFML.Window;
 
 namespace SFML
 {
@@ -51,24 +52,16 @@ namespace SFML
 
             ////////////////////////////////////////////////////////////
             /// <summary>
-            /// Construct the font from a file in a stream
+            /// Construct the font from a custom stream
             /// </summary>
-            /// <param name="stream">Stream containing the file contents</param>
+            /// <param name="stream">Source stream to read from</param>
             /// <exception cref="LoadingFailedException" />
             ////////////////////////////////////////////////////////////
             public Font(Stream stream) :
                 base(IntPtr.Zero)
             {
-                unsafe
-                {
-                    stream.Position = 0;
-                    byte[] StreamData = new byte[stream.Length];
-                    uint Read = (uint)stream.Read(StreamData, 0, StreamData.Length);
-                    fixed (byte* dataPtr = StreamData)
-                    {
-                        SetThis(sfFont_CreateFromMemory((char*)dataPtr, Read));
-                    }
-                }
+                myStream = new StreamAdaptor(stream);
+                SetThis(sfFont_CreateFromStream(myStream.InputStreamPtr));
 
                 if (This == IntPtr.Zero)
                     throw new LoadingFailedException("font");
@@ -127,15 +120,15 @@ namespace SFML
 
             ////////////////////////////////////////////////////////////
             /// <summary>
-            /// Get the image containing the glyphs of a given size
+            /// Get the texture containing the glyphs of a given size
             /// </summary>
             /// <param name="characterSize">Character size</param>
-            /// <returns>Image storing the glyphs for the given size</returns>
+            /// <returns>Texture storing the glyphs for the given size</returns>
             ////////////////////////////////////////////////////////////
-            public Image GetImage(uint characterSize)
+            public Texture GetTexture(uint characterSize)
             {
-                myImages[characterSize] = new Image(sfFont_GetImage(This, characterSize));
-                return myImages[characterSize];
+                myTextures[characterSize] = new Texture(sfFont_GetTexture(This, characterSize));
+                return myTextures[characterSize];
             }
 
             ////////////////////////////////////////////////////////////
@@ -182,8 +175,11 @@ namespace SFML
 
                     if (disposing)
                     {
-                        foreach (Image image in myImages.Values)
-                            image.Dispose();
+                        foreach (Texture texture in myTextures.Values)
+                            texture.Dispose();
+
+                        if (myStream != null)
+                            myStream.Dispose();
                     }
 
                     if (!disposing)
@@ -202,7 +198,8 @@ namespace SFML
             {
             }
 
-            private Dictionary<uint, Image> myImages = new Dictionary<uint, Image>();
+            private Dictionary<uint, Texture> myTextures = new Dictionary<uint, Texture>();
+            private StreamAdaptor myStream = null;
             private static Font ourDefaultFont = null;
 
             #region Imports
@@ -210,7 +207,7 @@ namespace SFML
             static extern IntPtr sfFont_CreateFromFile(string Filename);
 
             [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-            unsafe static extern IntPtr sfFont_CreateFromMemory(char* Data, uint SizeInBytes);
+            static extern IntPtr sfFont_CreateFromStream(IntPtr stream);
 
             [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern IntPtr sfFont_Copy(IntPtr Font);
@@ -228,7 +225,7 @@ namespace SFML
             static extern int sfFont_GetLineSpacing(IntPtr This, uint characterSize);
 
             [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-            static extern IntPtr sfFont_GetImage(IntPtr This, uint characterSize);
+            static extern IntPtr sfFont_GetTexture(IntPtr This, uint characterSize);
 
             [DllImport("csfml-graphics-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern IntPtr sfFont_GetDefaultFont();

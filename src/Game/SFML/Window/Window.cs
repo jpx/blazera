@@ -50,7 +50,7 @@ namespace SFML
             /// <param name="title">Title of the window</param>
             ////////////////////////////////////////////////////////////
             public Window(VideoMode mode, string title) :
-                this(mode, title, Styles.Default, new ContextSettings(24, 8))
+                this(mode, title, Styles.Default, new ContextSettings(0, 0))
             {
             }
 
@@ -63,7 +63,7 @@ namespace SFML
             /// <param name="style">Window style (Resize | Close by default)</param>
             ////////////////////////////////////////////////////////////
             public Window(VideoMode mode, string title, Styles style) :
-                this(mode, title, style, new ContextSettings(24, 8))
+                this(mode, title, style, new ContextSettings(0, 0))
             {
             }
 
@@ -79,7 +79,6 @@ namespace SFML
             public Window(VideoMode mode, string title, Styles style, ContextSettings settings) :
                 base(sfWindow_Create(mode, title, style, ref settings))
             {
-                myInput = new Input(sfWindow_GetInput(This));
             }
 
             ////////////////////////////////////////////////////////////
@@ -89,7 +88,7 @@ namespace SFML
             /// <param name="handle">Platform-specific handle of the control</param>
             ////////////////////////////////////////////////////////////
             public Window(IntPtr handle) :
-                this(handle, new ContextSettings(24, 8))
+                this(handle, new ContextSettings(0, 0))
             {
             }
 
@@ -103,17 +102,6 @@ namespace SFML
             public Window(IntPtr Handle, ContextSettings settings) :
                 base(sfWindow_CreateFromHandle(Handle, ref settings))
             {
-                myInput = new Input(sfWindow_GetInput(This));
-            }
-
-            ////////////////////////////////////////////////////////////
-            /// <summary>
-            /// Input manager of the window
-            /// </summary>
-            ////////////////////////////////////////////////////////////
-            public Input Input
-            {
-                get {return myInput;}
             }
 
             ////////////////////////////////////////////////////////////
@@ -205,18 +193,6 @@ namespace SFML
 
             ////////////////////////////////////////////////////////////
             /// <summary>
-            /// Change the position of the mouse cursor
-            /// </summary>
-            /// <param name="x">Left coordinate of the cursor, relative to the window</param>
-            /// <param name="y">Top coordinate of the cursor, relative to the window</param>
-            ////////////////////////////////////////////////////////////
-            public virtual void SetCursorPosition(uint x, uint y)
-            {
-                sfWindow_SetCursorPosition(This, x, y);
-            }
-
-            ////////////////////////////////////////////////////////////
-            /// <summary>
             /// Change the position of the window on screen.
             /// Only works for top-level windows
             /// </summary>
@@ -238,6 +214,17 @@ namespace SFML
             public virtual void SetSize(uint width, uint height)
             {
                 sfWindow_SetSize(This, width, height);
+            }
+
+            ////////////////////////////////////////////////////////////
+            /// <summary>
+            /// Change the title of the window
+            /// </summary>
+            /// <param name="title">New title</param>
+            ////////////////////////////////////////////////////////////
+            public virtual void SetTitle(string title)
+            {
+                sfWindow_SetTitle(This, title);
             }
 
             ////////////////////////////////////////////////////////////
@@ -322,9 +309,9 @@ namespace SFML
             /// <summary>
             /// Get time elapsed since last frame
             /// </summary>
-            /// <returns>Time elapsed, in seconds</returns>
+            /// <returns>Time elapsed, in milliseconds</returns>
             ////////////////////////////////////////////////////////////
-            public virtual float GetFrameTime()
+            public virtual uint GetFrameTime()
             {
                 return sfWindow_GetFrameTime(This);
             }
@@ -372,7 +359,7 @@ namespace SFML
             public void DispatchEvents()
             {
                 Event e;
-                while (GetEvent(out e))
+                while (PollEvent(out e))
                     CallEventHandler(e);
             }
 
@@ -410,9 +397,9 @@ namespace SFML
             /// <param name="eventToFill">Variable to fill with the raw pointer to the event structure</param>
             /// <returns>True if there was an event, false otherwise</returns>
             ////////////////////////////////////////////////////////////
-            protected virtual bool GetEvent(out Event eventToFill)
+            protected virtual bool PollEvent(out Event eventToFill)
             {
-                return sfWindow_GetEvent(This, out eventToFill);
+                return sfWindow_PollEvent(This, out eventToFill);
             }
 
             ////////////////////////////////////////////////////////////
@@ -458,19 +445,29 @@ namespace SFML
                             GainedFocus(this, EventArgs.Empty);
                         break;
 
-                    case EventType.JoyButtonPressed :
-                        if (JoyButtonPressed != null)
-                            JoyButtonPressed(this, new JoyButtonEventArgs(e.JoyButton));
+                    case EventType.JoystickButtonPressed:
+                        if (JoystickButtonPressed != null)
+                            JoystickButtonPressed(this, new JoystickButtonEventArgs(e.JoystickButton));
                         break;
 
-                    case EventType.JoyButtonReleased :
-                        if (JoyButtonReleased != null)
-                            JoyButtonReleased(this, new JoyButtonEventArgs(e.JoyButton));
+                    case EventType.JoystickButtonReleased :
+                        if (JoystickButtonReleased != null)
+                            JoystickButtonReleased(this, new JoystickButtonEventArgs(e.JoystickButton));
                         break;
 
-                    case EventType.JoyMoved :
-                        if (JoyMoved != null)
-                            JoyMoved(this, new JoyMoveEventArgs(e.JoyMove));
+                    case EventType.JoystickMoved :
+                        if (JoystickMoved != null)
+                            JoystickMoved(this, new JoystickMoveEventArgs(e.JoystickMove));
+                        break;
+
+                    case EventType.JoystickConnected:
+                        if (JoystickConnected != null)
+                            JoystickConnected(this, new JoystickConnectEventArgs(e.JoystickConnect));
+                        break;
+
+                    case EventType.JoystickDisconnected:
+                        if (JoystickDisconnected != null)
+                            JoystickDisconnected(this, new JoystickConnectEventArgs(e.JoystickConnect));
                         break;
 
                     case EventType.KeyPressed :
@@ -569,16 +566,20 @@ namespace SFML
             /// <summary>Event handler for the MouseLeft event</summary>
             public event EventHandler MouseLeft = null;
 
-            /// <summary>Event handler for the JoyButtonPressed event</summary>
-            public event EventHandler<JoyButtonEventArgs> JoyButtonPressed = null;
+            /// <summary>Event handler for the JoystickButtonPressed event</summary>
+            public event EventHandler<JoystickButtonEventArgs> JoystickButtonPressed = null;
 
-            /// <summary>Event handler for the JoyButtonReleased event</summary>
-            public event EventHandler<JoyButtonEventArgs> JoyButtonReleased = null;
+            /// <summary>Event handler for the JoystickButtonReleased event</summary>
+            public event EventHandler<JoystickButtonEventArgs> JoystickButtonReleased = null;
 
-            /// <summary>Event handler for the JoyMoved event</summary>
-            public event EventHandler<JoyMoveEventArgs> JoyMoved = null;
+            /// <summary>Event handler for the JoystickMoved event</summary>
+            public event EventHandler<JoystickMoveEventArgs> JoystickMoved = null;
 
-            protected Input myInput = null;
+            /// <summary>Event handler for the JoystickConnected event</summary>
+            public event EventHandler<JoystickConnectEventArgs> JoystickConnected = null;
+
+            /// <summary>Event handler for the JoystickDisconnected event</summary>
+            public event EventHandler<JoystickConnectEventArgs> JoystickDisconnected = null;
 
             #region Imports
             [DllImport("csfml-window-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
@@ -591,16 +592,13 @@ namespace SFML
             static extern void sfWindow_Destroy(IntPtr This);
 
             [DllImport("csfml-window-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-            static extern IntPtr sfWindow_GetInput(IntPtr This);
-
-            [DllImport("csfml-window-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern bool sfWindow_IsOpened(IntPtr This);
 
             [DllImport("csfml-window-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfWindow_Close(IntPtr This);
 
             [DllImport("csfml-window-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-            static extern bool sfWindow_GetEvent(IntPtr This, out Event Evt);
+            static extern bool sfWindow_PollEvent(IntPtr This, out Event Evt);
 
             [DllImport("csfml-window-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern bool sfWindow_WaitEvent(IntPtr This, out Event Evt);
@@ -624,13 +622,13 @@ namespace SFML
             static extern void sfWindow_ShowMouseCursor(IntPtr This, bool Show);
 
             [DllImport("csfml-window-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-            static extern void sfWindow_SetCursorPosition(IntPtr This, uint X, uint Y);
-
-            [DllImport("csfml-window-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfWindow_SetPosition(IntPtr This, int X, int Y);
             
             [DllImport("csfml-window-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfWindow_SetSize(IntPtr This, uint Width, uint Height);
+
+            [DllImport("csfml-window-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
+            static extern void sfWindow_SetTitle(IntPtr This, string title);
 
             [DllImport("csfml-window-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfWindow_Show(IntPtr This, bool Show);
@@ -648,7 +646,7 @@ namespace SFML
             static extern void sfWindow_SetFramerateLimit(IntPtr This, uint Limit);
 
             [DllImport("csfml-window-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-            static extern float sfWindow_GetFrameTime(IntPtr This);
+            static extern uint sfWindow_GetFrameTime(IntPtr This);
 
             [DllImport("csfml-window-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern void sfWindow_SetJoystickThreshold(IntPtr This, float Threshold);

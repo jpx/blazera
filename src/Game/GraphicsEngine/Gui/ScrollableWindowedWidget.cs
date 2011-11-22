@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using SFML.Graphics;
+using SFML.Window;
 
 namespace BlazeraLib
 {
@@ -41,31 +42,31 @@ namespace BlazeraLib
 
         private void UpdateScrollBars()
         {
-            this.VScrollBar.Dimension = new Vector2(
+            this.VScrollBar.Dimension = new Vector2f(
                 this.VScrollBar.Dimension.X,
                 this.Dimension.Y + this.Margins);
 
-            this.VScrollBar.Position = this.GetGlobalFromLocal(new Vector2(
+            this.VScrollBar.Position = this.GetGlobalFromLocal(new Vector2f(
                 this.Dimension.X + this.Margins,
                 0F));
 
-            this.HScrollBar.Dimension = new Vector2(
+            this.HScrollBar.Dimension = new Vector2f(
                 this.Dimension.X + this.Margins,
                 this.HScrollBar.Dimension.Y);
 
-            this.HScrollBar.Position = this.GetGlobalFromLocal(new Vector2(
+            this.HScrollBar.Position = this.GetGlobalFromLocal(new Vector2f(
                 0F,
                 this.Dimension.Y + this.Margins));
         }
 
-        protected override Vector2 GetBasePosition()
+        protected override Vector2f GetBasePosition()
         {
             return base.GetBasePosition();
         }
 
-        protected override Vector2 GetStructureDimension()
+        protected override Vector2f GetStructureDimension()
         {
-            return base.GetStructureDimension() + new Vector2(this.VScrollBar.Dimension.X + this.Margins, this.HScrollBar.Dimension.Y + this.Margins);
+            return base.GetStructureDimension() + new Vector2f(this.VScrollBar.Dimension.X + this.Margins, this.HScrollBar.Dimension.Y + this.Margins);
         }
 
         protected VScrollBar VScrollBar { get; set; }

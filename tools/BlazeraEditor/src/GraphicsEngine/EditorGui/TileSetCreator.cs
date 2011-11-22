@@ -49,7 +49,7 @@ namespace BlazeraEditor
         #endregion
 
         Boolean TextureMode;
-        Texture CurrentTileSetTexture;
+        BlazeraLib.Texture CurrentTileSetTexture;
 
         List<Tile> CurrentTileList = new List<Tile>();
 
@@ -136,7 +136,7 @@ namespace BlazeraEditor
             {
                 for (Int32 x = 0; x < width; ++x)
                 {
-                    Texture tileTexture = new Texture(CurrentTileSetTexture);
+                    BlazeraLib.Texture tileTexture = new BlazeraLib.Texture(CurrentTileSetTexture);
                     tileTexture.ImageSubRect = new BlazeraLib.IntRect(
                         x * GameDatas.TILE_SIZE,
                         y * GameDatas.TILE_SIZE,
@@ -168,7 +168,7 @@ namespace BlazeraEditor
         {
             CurrentEditedTileContainer = (TileContainer)sender;
 
-            if (e.Button == MouseButton.Right)
+            if (e.Button == Mouse.Button.Right)
             {
                 CallConfirmationDialogBox(new String[] { ConfirmationDialogBox.Instance.GetDeletionStr("Tile", CurrentEditedTileContainer.GetCurrentTileType()) }, RemoveTile);
 
@@ -185,7 +185,7 @@ namespace BlazeraEditor
         {
             CurrentEditedTileContainer = (TileContainer)sender;
 
-            if (e.Button != MouseButton.Right)
+            if (e.Button != Mouse.Button.Right)
                 return;
 
             CallConfirmationDialogBox(new String[] { ConfirmationDialogBox.Instance.GetDeletionStr("Tile", CurrentEditedTileContainer.GetCurrentTileType()) }, RemoveTile);
@@ -215,7 +215,7 @@ namespace BlazeraEditor
 
         void OnTextureManValidated(WindowedWidget sender, ValidateEventArgs e)
         {
-            CurrentTileSetTexture = e.GetArg<Texture>("Texture");
+            CurrentTileSetTexture = e.GetArg<BlazeraLib.Texture>("Texture");
             TextureButton.Text = CurrentTileSetTexture.Type;
         }
 

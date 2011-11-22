@@ -35,7 +35,7 @@ namespace BlazeraLib
             Effects = new List<MapEffect>();
         }
 
-        public void AddEffect(MapEffect effect, SFML.Graphics.Vector2 position)
+        public void AddEffect(MapEffect effect, SFML.Window.Vector2f position)
         {
             effect.SetBasePosition(position);
             NewEffects.Enqueue(effect);

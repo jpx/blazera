@@ -20,6 +20,14 @@ namespace BlazeraServer
             DynamicObjects = new DynamicObjectDictionary();
         }
 
+        public SMap(SMap copy) :
+            base(copy)
+        {
+            Handler = new MapHandler(this);
+
+            DynamicObjects = new DynamicObjectDictionary();
+        }
+
         public SMap(Map copy) :
             base(copy)
         {
@@ -31,7 +39,12 @@ namespace BlazeraServer
         public override void AddObject(WorldObject wObj)
         {
             if (wObj is DynamicWorldObject)
+            {
+                if (DynamicObjects == null)
+                    DynamicObjects = new DynamicObjectDictionary();
+
                 DynamicObjects.Add((DynamicWorldObject)wObj);
+            }
 
             base.AddObject(wObj);
         }

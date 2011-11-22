@@ -1,4 +1,5 @@
 ﻿using SFML.Graphics;
+using SFML.Window;
 
 namespace BlazeraLib
 {
@@ -18,7 +19,7 @@ namespace BlazeraLib
 
         #endregion
 
-        public ProgressBarShape(Vector2 dimension) :
+        public ProgressBarShape(Vector2f dimension) :
             base(dimension, Color.White, true, Color.Blue, DEFAULT_OUTLINE_THICKNESS, true, true, 4F)
         {
             Reset();
@@ -28,12 +29,12 @@ namespace BlazeraLib
         {
             ProgressValue = progressValue;
             
-            InnerBar = new RectangleShape(new Vector2((float)(ProgressValue / 100D * GetInnerDimension().X), GetInnerDimension().Y), Color.Green, false, Color.Black);
+            InnerBar = new RectangleShape(new Vector2f((float)(ProgressValue / 100D * GetInnerDimension().X), GetInnerDimension().Y), Color.Green, false, Color.Black);
 
             InnerBar.Position = Position + GetPositionOffset();
         }
 
-        Vector2 GetInnerDimension()
+        Vector2f GetInnerDimension()
         {
             return Dimension;
         }
@@ -48,7 +49,7 @@ namespace BlazeraLib
             InnerBar.Draw(window);
         }
 
-        public override Vector2 Position
+        public override Vector2f Position
         {
             set
             {

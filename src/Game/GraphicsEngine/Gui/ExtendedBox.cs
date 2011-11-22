@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using SFML.Graphics;
+using SFML.Window;
 
 namespace BlazeraLib
 {
@@ -171,7 +172,7 @@ namespace BlazeraLib
             }
         }
 
-        public override Vector2 Dimension
+        public override Vector2f Dimension
         {
             get
             {
@@ -463,7 +464,7 @@ namespace BlazeraLib
             return items;
         }
 
-        public override Vector2 Dimension
+        public override Vector2f Dimension
         {
             get
             {
@@ -748,7 +749,7 @@ namespace BlazeraLib
             return items;
         }
 
-        public override Vector2 Dimension
+        public override Vector2f Dimension
         {
             get
             {

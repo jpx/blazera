@@ -84,7 +84,7 @@ namespace BlazeraEditor
         {
             ++FpsCount;
             
-            UInt32 fps = (UInt32)(1F / this.Root.Window.GetFrameTime());
+            UInt32 fps = (UInt32)(1F / (this.Root.Window.GetFrameTime() / 1000D));
 
             TotalFps += fps;
 

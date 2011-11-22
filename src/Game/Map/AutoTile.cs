@@ -164,7 +164,7 @@ namespace BlazeraLib
         IDrawable GetNewTexture(AutoTile.PartType partType, Vector2I position, float xOffset = 0F, float yOffset = 0F)
         {
             IDrawable texture = GetNewTexture(partType);
-            texture.Position = (position.ToVector2() + new SFML.Graphics.Vector2(xOffset, yOffset)) * GameDatas.TILE_SIZE;
+            texture.Position = (position.ToVector2() + new SFML.Window.Vector2f(xOffset, yOffset)) * GameDatas.TILE_SIZE;
             return texture;
         }
 

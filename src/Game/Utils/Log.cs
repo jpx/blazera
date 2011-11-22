@@ -32,6 +32,13 @@ namespace BlazeraLib
             Console.WriteLine(objName + " : " + obj);
         }
 
+        public static void Cldebug(object obj)
+        {
+#if DEBUG
+            Cl(obj);
+#endif
+        }
+
         public static void C(object obj, ConsoleColor color)
         {
             Console.ForegroundColor = color;
@@ -51,6 +58,20 @@ namespace BlazeraLib
             Console.ForegroundColor = color;
             Log.Cl(obj, objName);
             Console.ResetColor();
+        }
+
+        public static void Cldebug(object obj, string objName, ConsoleColor color)
+        {
+#if DEBUG
+            Cl(obj, objName, color);
+#endif
+        }
+
+        public static void Cldebug(object obj, ConsoleColor color)
+        {
+#if DEBUG
+            Cl(obj, color);
+#endif
         }
 
         public static void Clear()

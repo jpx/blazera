@@ -57,7 +57,7 @@ namespace Blazera
             this.Window.DispatchEvents();
             this.Window.Clear();
 
-            Time trueDt = new Time(Window.GetFrameTime());
+            Time trueDt = new Time(Window.GetFrameTime() / 1000D);
             this.Screens.Current = this.Screens.GetCurrent().Run(trueDt);
 
             this.Window.Display();

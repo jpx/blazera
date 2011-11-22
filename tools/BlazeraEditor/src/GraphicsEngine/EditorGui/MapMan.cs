@@ -311,7 +311,7 @@ namespace BlazeraEditor
             CurrentWarpPoint = WarpPoints[CurrentWarpPointButton];
 
             // clique droit --> suppression
-            if (e.Button == MouseButton.Right)
+            if (e.Button == Mouse.Button.Right)
             {
                 WarpPointToRemove = CurrentWarpPoint;
 

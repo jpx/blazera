@@ -58,11 +58,11 @@ namespace BlazeraLib
             Import_Type(typeof(BlazeraLib.State));
             Import_Type(typeof(BlazeraLib.MovingState));
             Import_Type(typeof(BlazeraLib.NPC));
-            Import_Type(typeof(SFML.Graphics.Vector2));
+            Import_Type("Vector2", "SFML.Window.Vector2f");
             Import_Type(typeof(SFML.Graphics.Color));
             Import_Type(typeof(BlazeraLib.IntRect));
             Import_Type(typeof(SFML.Window.Styles));
-            Import_Type(typeof(SFML.Window.KeyCode));
+            Import_Type(typeof(SFML.Window.Keyboard.Key));
             Import_Type(typeof(BlazeraLib.Log));
             Import_Type(typeof(BlazeraLib.SoundManager));
             Import_Type(typeof(BlazeraLib.ComparisonPointYType));
@@ -168,9 +168,9 @@ namespace BlazeraLib
             return (Styles)ScriptEngine.Instance.Lua[propertyName];
         }
 
-        public static KeyCode GetKeyCode(String propertyName)
+        public static Keyboard.Key GetKeyCode(String propertyName)
         {
-            return (KeyCode)ScriptEngine.Instance.Lua[propertyName];
+            return (Keyboard.Key)ScriptEngine.Instance.Lua[propertyName];
         }
 
         public static List<T> GetList<T>(string propertyName)

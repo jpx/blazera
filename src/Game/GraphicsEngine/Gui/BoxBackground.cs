@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using SFML.Graphics;
+using SFML.Window;
 
 namespace BlazeraLib
 {
@@ -20,7 +21,7 @@ namespace BlazeraLib
 
         private float Margins { get; set; }
 
-        public BoxBackground(Vector2 dimension, String name = null, Boolean noBackgroundMode = true) :
+        public BoxBackground(Vector2f dimension, String name = null, Boolean noBackgroundMode = true) :
             base()
         {
             this.Dimension = dimension;
@@ -38,7 +39,7 @@ namespace BlazeraLib
 
                 this.TopBorderHeight = this.Label.Dimension.Y + this.Margins * 4F;
 
-                this.TopBorder = new Border(new Vector2(this.Label.Dimension.X + this.Margins * 4F, this.TopBorderHeight), Border.EMode.Box, noBackgroundMode);
+                this.TopBorder = new Border(new Vector2f(this.Label.Dimension.X + this.Margins * 4F, this.TopBorderHeight), Border.EMode.Box, noBackgroundMode);
                 this.Label.Position = this.GetGlobalFromLocal(this.TopBorder.Dimension / 2F - this.Label.Dimension / 2F);
             }
             
@@ -58,7 +59,7 @@ namespace BlazeraLib
             if (this.TopBorder != null)
             {
                 if (RefreshInfo.IsDimensionRefreshed)
-                    this.TopBorder.Resize(new Vector2(
+                    this.TopBorder.Resize(new Vector2f(
                             (this.Label.Dimension.X + this.Margins * 4F) / this.TopBorder.Dimension.X,
                             this.TopBorderHeight / this.TopBorder.Dimension.Y));
 
@@ -68,7 +69,7 @@ namespace BlazeraLib
             }
 
             if (RefreshInfo.IsDimensionRefreshed)
-                this.BottomBorder.Resize(new Vector2(
+                this.BottomBorder.Resize(new Vector2f(
                     this.Dimension.X / this.BottomBorder.Dimension.X,
                     this.Dimension.Y / this.BottomBorder.Dimension.Y));
 
@@ -102,7 +103,7 @@ namespace BlazeraLib
             }
         }
 
-        public override Vector2 Dimension
+        public override Vector2f Dimension
         {
             set
             {
@@ -112,7 +113,7 @@ namespace BlazeraLib
                     return;
                 }
 
-                base.Dimension = new Vector2(
+                base.Dimension = new Vector2f(
                     Math.Max(TopBorder.Dimension.X, value.X),
                     value.Y);
             }

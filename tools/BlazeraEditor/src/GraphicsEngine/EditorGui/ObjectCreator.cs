@@ -159,7 +159,7 @@ namespace BlazeraEditor
         void BBButton_Clicked(object sender, SFML.Window.MouseButtonEventArgs e)
         {
             CurrentEditedBBBButton = (Button)sender;
-            if (e.Button == SFML.Window.MouseButton.Right)
+            if (e.Button == SFML.Window.Mouse.Button.Right)
             {
                 CallConfirmationDialogBox(new String[] { ConfirmationDialogBox.Instance.GetDeletionStr("BBoundingBox", ((Button)sender).Text) }, RemoveBBB);
                 return;

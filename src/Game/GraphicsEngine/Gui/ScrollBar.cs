@@ -138,10 +138,10 @@ namespace BlazeraLib
             base()
         {
             this.Background = new PictureBox(Create.Texture("VScrollBar_Background"));
-            this.BackgroundDimension = new Vector2(this.BackgroundDimension.X * ScrollBar.BACKGROUND_RESIZE_FACTOR, this.BackgroundDimension.Y);
+            this.BackgroundDimension = new Vector2f(this.BackgroundDimension.X * ScrollBar.BACKGROUND_RESIZE_FACTOR, this.BackgroundDimension.Y);
 
             this.ScrollCursor = new PictureBox(Create.Texture("VScrollBar_Cursor"));
-            this.ScrollCursor.Dimension = new Vector2(this.ScrollCursor.Dimension.X * ScrollBar.CURSOR_RESIZE_FACTOR, this.ScrollCursor.Dimension.Y * ScrollBar.CURSOR_RESIZE_FACTOR);
+            this.ScrollCursor.Dimension = new Vector2f(this.ScrollCursor.Dimension.X * ScrollBar.CURSOR_RESIZE_FACTOR, this.ScrollCursor.Dimension.Y * ScrollBar.CURSOR_RESIZE_FACTOR);
             this.AddWidget(this.ScrollCursor);
 
             this.RefreshCursor();
@@ -164,7 +164,7 @@ namespace BlazeraLib
             {
                 case EventType.MouseWheelMoved:
                     if (this.Parent.BackgroundContainsMouse() &&
-                        this.Root.Window.Input.GetMouseY() < this.Parent.Center.Y + this.Parent.BackgroundDimension.Y * (this.MouseWheelVZone - .5f))
+                        Mouse.GetPosition(Root.Window).Y < this.Parent.Center.Y + this.Parent.BackgroundDimension.Y * (this.MouseWheelVZone - .5f))
                     {
                         this.Scroll(-(Int32)(evt.MouseWheel.Delta * this.ScaleValue));
 
@@ -174,11 +174,11 @@ namespace BlazeraLib
                     break;
 
                 case EventType.MouseButtonPressed:
-                    if (evt.MouseButton.Button == MouseButton.Left &&
+                    if (evt.MouseButton.Button == Mouse.Button.Left &&
                         this.ScrollCursor.ContainsMouse())
                     {
                         this.IsDragged = true;
-                        this.DraggingPoint = this.Root.Window.Input.GetMouseY() - this.ScrollCursor.Position.Y;
+                        this.DraggingPoint = Mouse.GetPosition(Root.Window).Y - this.ScrollCursor.Position.Y;
 
                         return true;
                     }
@@ -186,7 +186,7 @@ namespace BlazeraLib
                     break;
 
                 case EventType.MouseButtonReleased:
-                    if (this.IsDragged && evt.MouseButton.Button == MouseButton.Left)
+                    if (this.IsDragged && evt.MouseButton.Button == Mouse.Button.Left)
                     {
                         this.IsDragged = false;
 
@@ -213,7 +213,7 @@ namespace BlazeraLib
         {
             base.RefreshCursor();
 
-            this.ScrollCursor.Position = this.GetGlobalFromLocal(new Vector2(
+            this.ScrollCursor.Position = this.GetGlobalFromLocal(new Vector2f(
                 this.Halfsize.X - this.ScrollCursor.Halfsize.X,
                 CURSOR_MARGINS + this.CursorPosition * (this.Dimension.Y - this.ScrollCursor.Dimension.Y - CURSOR_MARGINS * 2F) / (this.TotalValue - this.DisplayedValue)));
         }
@@ -225,10 +225,10 @@ namespace BlazeraLib
             base()
         {
             this.Background = new PictureBox(Create.Texture("HScrollBar_Background"));
-            this.BackgroundDimension = new Vector2(this.BackgroundDimension.X, this.BackgroundDimension.Y * ScrollBar.BACKGROUND_RESIZE_FACTOR);
+            this.BackgroundDimension = new Vector2f(this.BackgroundDimension.X, this.BackgroundDimension.Y * ScrollBar.BACKGROUND_RESIZE_FACTOR);
 
             this.ScrollCursor = new PictureBox(Create.Texture("HScrollBar_Cursor"));
-            this.ScrollCursor.Dimension = new Vector2(this.ScrollCursor.Dimension.X * ScrollBar.CURSOR_RESIZE_FACTOR, this.ScrollCursor.Dimension.Y * ScrollBar.CURSOR_RESIZE_FACTOR);
+            this.ScrollCursor.Dimension = new Vector2f(this.ScrollCursor.Dimension.X * ScrollBar.CURSOR_RESIZE_FACTOR, this.ScrollCursor.Dimension.Y * ScrollBar.CURSOR_RESIZE_FACTOR);
             this.AddWidget(this.ScrollCursor);
 
             this.RefreshCursor();
@@ -245,7 +245,7 @@ namespace BlazeraLib
             {
                 case EventType.MouseWheelMoved:
                     if (this.Parent.ContainsMouse() &&
-                        this.Root.Window.Input.GetMouseY() > this.Parent.Center.Y - this.Parent.Dimension.Y * ((1F - this.MouseWheelVZone) - .5f))
+                        Mouse.GetPosition(Root.Window).Y > this.Parent.Center.Y - this.Parent.Dimension.Y * ((1F - this.MouseWheelVZone) - .5f))
                     {
                         this.Scroll(-(Int32)(evt.MouseWheel.Delta * this.ScaleValue));
 
@@ -255,11 +255,11 @@ namespace BlazeraLib
                     break;
 
                 case EventType.MouseButtonPressed:
-                    if (evt.MouseButton.Button == MouseButton.Left &&
+                    if (evt.MouseButton.Button == Mouse.Button.Left &&
                         this.ScrollCursor.ContainsMouse())
                     {
                         this.IsDragged = true;
-                        this.DraggingPoint = this.Root.Window.Input.GetMouseX() - this.ScrollCursor.Position.X;
+                        this.DraggingPoint = Mouse.GetPosition(Root.Window).X - this.ScrollCursor.Position.X;
 
                         return true;
                     }
@@ -267,7 +267,7 @@ namespace BlazeraLib
                     break;
 
                 case EventType.MouseButtonReleased:
-                    if (this.IsDragged && evt.MouseButton.Button == MouseButton.Left)
+                    if (this.IsDragged && evt.MouseButton.Button == Mouse.Button.Left)
                     {
                         this.IsDragged = false;
 
@@ -294,7 +294,7 @@ namespace BlazeraLib
         {
             base.RefreshCursor();
 
-            this.ScrollCursor.Position = this.GetGlobalFromLocal(new Vector2(
+            this.ScrollCursor.Position = this.GetGlobalFromLocal(new Vector2f(
                 CURSOR_MARGINS + this.CursorPosition * (this.Dimension.X - this.ScrollCursor.Dimension.X - CURSOR_MARGINS * 2F) / (this.TotalValue - this.DisplayedValue),
                 this.Halfsize.Y - this.ScrollCursor.Halfsize.Y));
         }

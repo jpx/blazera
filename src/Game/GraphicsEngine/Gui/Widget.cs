@@ -29,10 +29,10 @@ namespace BlazeraLib
             Root = this;
             Window = window;
 
-            Dimension = new Vector2(GameDatas.WINDOW_WIDTH, GameDatas.WINDOW_HEIGHT);
+            Dimension = new Vector2f(GameDatas.WINDOW_WIDTH, GameDatas.WINDOW_HEIGHT);
         }
 
-        public Vector2 GetViewPos()
+        public Vector2f GetViewPos()
         {
             return this.GuiView.Center - this.GuiView.Size / 2F;
         }
@@ -69,7 +69,7 @@ namespace BlazeraLib
             FocusedWindow = null;
         }
 
-        private Dictionary<KeyCode, WindowedWidget> KeyWindowBinding = new Dictionary<KeyCode, WindowedWidget>();
+        private Dictionary<Keyboard.Key, WindowedWidget> KeyWindowBinding = new Dictionary<Keyboard.Key, WindowedWidget>();
 
         public EditorBaseWidget(RenderWindow window, View guiView) :
             base(window, guiView)
@@ -77,7 +77,7 @@ namespace BlazeraLib
             this.Windows = new List<WindowedWidget>();
         }
 
-        public void AddKeyWindowBind(KeyCode keyCode, WindowedWidget window)
+        public void AddKeyWindowBind(Keyboard.Key keyCode, WindowedWidget window)
         {
             if (!KeyWindowBinding.ContainsKey(keyCode))
                 KeyWindowBinding.Add(keyCode, window);
@@ -85,7 +85,7 @@ namespace BlazeraLib
                 KeyWindowBinding[keyCode] = window;
         }
 
-        bool SetCurrentWindowFromKey(KeyCode keyCode)
+        bool SetCurrentWindowFromKey(Keyboard.Key keyCode)
         {
             if (!KeyWindowBinding.ContainsKey(keyCode))
                 return false;
@@ -159,7 +159,7 @@ namespace BlazeraLib
             {
                 case EventType.MouseButtonPressed:
 
-                    if (evt.MouseButton.Button != MouseButton.Left)
+                    if (evt.MouseButton.Button != Mouse.Button.Left)
                         break;
 
                     if (FocusedWindow == null)
@@ -186,7 +186,7 @@ namespace BlazeraLib
 
                     switch (evt.Key.Code)
                     {
-                        case KeyCode.Tab:
+                        case Keyboard.Key.Tab:
 
                             WindowedWidget nextOpenedWindow = this.GetNextOpenedWindow(this.FocusedWindow);
 
@@ -309,11 +309,11 @@ namespace BlazeraLib
 
         
 
-        public Vector2 GetMousePosition()
+        public Vector2f GetMousePosition()
         {
-            return this.GetGlobalFromLocal(new Vector2(
-                this.Window.Input.GetMouseX(),
-                this.Window.Input.GetMouseY()));
+            return this.GetGlobalFromLocal(new Vector2f(
+                Mouse.GetPosition(Root.Window).X,
+                Mouse.GetPosition(Root.Window).Y));
         }
 
         public override void Refresh() { }
@@ -331,17 +331,17 @@ namespace BlazeraLib
         /// <summary>
         /// Move offset of the view
         /// </summary>
-        public Vector2 Offset { get; private set; }
+        public Vector2f Offset { get; private set; }
 
         /// <summary>
         /// Position of the view after moving
         /// </summary>
-        public Vector2 Position { get; private set; }
+        public Vector2f Position { get; private set; }
 
         /// <summary>
         /// Dimension of the view
         /// </summary>
-        public Vector2 Dimension { get; private set; }
+        public Vector2f Dimension { get; private set; }
 
         /// <summary>
         /// Creates game view info move with a given offset, view center and view size
@@ -349,7 +349,7 @@ namespace BlazeraLib
         /// <param name="offset">View move offset</param>
         /// <param name="viewCenter">View center after moving</param>
         /// <param name="viewSize">View dimension</param>
-        public GameViewEventArgs(Vector2 offset, Vector2 viewCenter, Vector2 viewSize)
+        public GameViewEventArgs(Vector2f offset, Vector2f viewCenter, Vector2f viewSize)
         {
             Offset = offset;
             Dimension = viewSize;
@@ -365,7 +365,7 @@ namespace BlazeraLib
         List<GameWidget> GameWidgets;
 
         public event GameViewEventHandler OnGameViewMove;
-        public Boolean CallOnGameViewMove(Vector2 offset) { if (OnGameViewMove == null) return false; OnGameViewMove(MapView, new GameViewEventArgs(offset, MapView.Center, MapView.Size)); return true; }
+        public Boolean CallOnGameViewMove(Vector2f offset) { if (OnGameViewMove == null) return false; OnGameViewMove(MapView, new GameViewEventArgs(offset, MapView.Center, MapView.Size)); return true; }
 
         public GameBaseWidget(RenderWindow window, View mapView, View gameGuiView) :
             base(window, gameGuiView)
@@ -376,7 +376,7 @@ namespace BlazeraLib
             OnGameViewMove += new GameViewEventHandler(GameBaseWidget_OnGameViewMove);
         }
 
-        public void MoveGameView(Vector2 offset)
+        public void MoveGameView(Vector2f offset)
         {
             MapView.Move(offset);
 
@@ -525,7 +525,7 @@ namespace BlazeraLib
 
             IsSealed = false;
 
-            this.Dimension = new Vector2(1F, 1F);
+            this.Dimension = new Vector2f(1F, 1F);
 
             this.RefreshInfo = new RefreshInfo();
 
@@ -796,7 +796,7 @@ namespace BlazeraLib
             return null;
         }
 
-        public Vector2 GetLocalFromGlobal(Vector2 point)
+        public Vector2f GetLocalFromGlobal(Vector2f point)
         {
             if (this.Root == null)
                 return point - GetBasePosition();
@@ -804,7 +804,7 @@ namespace BlazeraLib
             return point - GetBasePosition() - Root.GetViewPos();
         }
 
-        public Vector2 GetGlobalFromLocal(Vector2 point)
+        public Vector2f GetGlobalFromLocal(Vector2f point)
         {
             if (this.Root == null)
                 return point + GetBasePosition();
@@ -831,13 +831,13 @@ namespace BlazeraLib
             }
         }
 
-        private Vector2 _position;
-        public override Vector2 Position
+        private Vector2f _position;
+        public override Vector2f Position
         {
             get { return _position; }
             set
             {
-                Vector2 offset = value - this.Position;
+                Vector2f offset = value - this.Position;
 
                 _position = value;
 
@@ -849,8 +849,8 @@ namespace BlazeraLib
             }
         }
 
-        private Vector2 _dimension;
-        public override Vector2 Dimension
+        private Vector2f _dimension;
+        public override Vector2f Dimension
         {
             get
             {
@@ -867,9 +867,9 @@ namespace BlazeraLib
                     return;
                 }
 
-                Vector2 factor = new Vector2(1F, 1F);
+                Vector2f factor = new Vector2f(1F, 1F);
 
-                factor = new Vector2(
+                factor = new Vector2f(
                     value.X / this.Dimension.X,
                     value.Y / this.Dimension.Y);
 
@@ -877,7 +877,7 @@ namespace BlazeraLib
 
                 foreach (Widget widget in this.Items)
                     if (widget.IsDimensionLinked)
-                        widget.Dimension = new Vector2(
+                        widget.Dimension = new Vector2f(
                             widget.Dimension.X * factor.X,
                             widget.Dimension.Y * factor.Y);
 
@@ -888,12 +888,12 @@ namespace BlazeraLib
             }
         }
 
-        protected virtual Vector2 GetBasePosition()
+        protected virtual Vector2f GetBasePosition()
         {
             return this.Position;
         }
 
-        public virtual Vector2 BackgroundDimension
+        public virtual Vector2f BackgroundDimension
         {
             get
             {
@@ -915,30 +915,30 @@ namespace BlazeraLib
             }
         }
 
-        protected virtual Vector2 GetStructureDimension()
+        protected virtual Vector2f GetStructureDimension()
         {
-            return new Vector2(0F, 0F);
+            return new Vector2f(0F, 0F);
         }
 
         public float BackgroundRight
         {
             get { return this.Position.X + this.BackgroundDimension.X; }
-            set { this.Position = new Vector2(value - this.BackgroundDimension.X, this.Position.Y); }
+            set { this.Position = new Vector2f(value - this.BackgroundDimension.X, this.Position.Y); }
         }
 
         public float BackgroundBottom
         {
             get { return this.Position.Y + this.BackgroundDimension.Y; }
-            set { this.Position = new Vector2(this.Position.X, value - this.BackgroundDimension.Y); }
+            set { this.Position = new Vector2f(this.Position.X, value - this.BackgroundDimension.Y); }
         }
 
-        public Vector2 BackgroundHalfsize
+        public Vector2f BackgroundHalfsize
         {
             get { return this.BackgroundDimension / 2F; }
             set { this.BackgroundDimension = value * 2F; }
         }
 
-        public Vector2 BackgroundCenter
+        public Vector2f BackgroundCenter
         {
             get { return Position + BackgroundHalfsize; }
             set { Position = value - BackgroundHalfsize; }
@@ -950,7 +950,7 @@ namespace BlazeraLib
                 offset >= this.Halfsize.Y)
                 return false;
 
-            Vector2 basePosition = GetBasePosition();
+            Vector2f basePosition = GetBasePosition();
 
             return (x >= basePosition.X + offset &&
                     x < basePosition.X + Dimension.X - offset &&
@@ -992,7 +992,7 @@ namespace BlazeraLib
                 offset.VSum >= this.Halfsize.Y)
                 return false;
 
-            Vector2 basePosition = GetBasePosition();
+            Vector2f basePosition = GetBasePosition();
 
             return (x >= basePosition.X + offset.Left &&
                     x < basePosition.X + Dimension.X - offset.Right &&
@@ -1014,7 +1014,7 @@ namespace BlazeraLib
                 offset.VSum >= this.BackgroundHalfsize.Y)
                 return false;
 
-            Vector2 basePosition = GetBasePosition();
+            Vector2f basePosition = GetBasePosition();
 
             return (x >= Left + offset.Left &&
                     x < BackgroundRight - offset.Right &&
@@ -1255,14 +1255,14 @@ namespace BlazeraLib
 
     public class DimensionChangeEventArgs : ChangeEventArgs
     {
-        public Vector2 Scale { get; private set; }
-        public DimensionChangeEventArgs(Vector2 scale) : base(EType.Dimension) { this.Scale = scale; }
+        public Vector2f Scale { get; private set; }
+        public DimensionChangeEventArgs(Vector2f scale) : base(EType.Dimension) { this.Scale = scale; }
     }
 
     public class PositionChangeEventArgs : ChangeEventArgs
     {
-        public Vector2 Offset { get; private set; }
-        public PositionChangeEventArgs(Vector2 offset) : base(EType.Position) { this.Offset = offset; }
+        public Vector2f Offset { get; private set; }
+        public PositionChangeEventArgs(Vector2f offset) : base(EType.Position) { this.Offset = offset; }
     }
 
     public class WidgetAddedChangeEventArgs : ChangeEventArgs
@@ -1284,8 +1284,8 @@ namespace BlazeraLib
         public Boolean IsWidgetRefreshed { get; protected set; }
         public Boolean IsTextfreshed { get; protected set; }
 
-        public Vector2 DimensionScaleRefresh { get; set; }
-        public Vector2 PositionOffsetRefresh { get; set; }
+        public Vector2f DimensionScaleRefresh { get; set; }
+        public Vector2f PositionOffsetRefresh { get; set; }
         public Widget WidgetAddedRefresh { get; set; }
         public String TextChangeRefresh { get; set; }
         
@@ -1296,13 +1296,13 @@ namespace BlazeraLib
             this.IsWidgetRefreshed = false;
             this.IsTextfreshed = false;
 
-            this.DimensionScaleRefresh = new Vector2(1F, 1F);
-            this.PositionOffsetRefresh = new Vector2(0F, 0F);
+            this.DimensionScaleRefresh = new Vector2f(1F, 1F);
+            this.PositionOffsetRefresh = new Vector2f(0F, 0F);
             this.WidgetAddedRefresh = null;
             this.TextChangeRefresh = null;
         }
 
-        public void SetDimensionScaleRefresh(Vector2 dimensionScaleRefresh)
+        public void SetDimensionScaleRefresh(Vector2f dimensionScaleRefresh)
         {
             if (dimensionScaleRefresh.X == 1F &&
                 dimensionScaleRefresh.Y == 1F)
@@ -1312,7 +1312,7 @@ namespace BlazeraLib
             this.DimensionScaleRefresh = dimensionScaleRefresh;
         }
 
-        public void SetPositionOffsetRefresh(Vector2 positionOffsetRefresh)
+        public void SetPositionOffsetRefresh(Vector2f positionOffsetRefresh)
         {
             if (positionOffsetRefresh.X == 0F &&
                 positionOffsetRefresh.Y == 0F)

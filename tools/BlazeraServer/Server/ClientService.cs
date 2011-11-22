@@ -16,8 +16,6 @@ namespace BlazeraServer
 
         static int CurrentGuid = 0;
 
-        //SocketClient SocketClient;
-
         Socket SocketClient;
 
         NetworkStream Ns;
@@ -153,8 +151,8 @@ namespace BlazeraServer
             SendingPacket rspData = new SendingPacket(PacketType.SERVER_INFO_MAP_LOADING);
             // map info ==> to use guid system
             rspData.AddString(map);
-            // main player
-            rspData.AddDynamicObjectMapAdd(SPlayer);
+            // main player ==> added with all objects
+            // rspData.AddDynamicObjectMapAdd(SPlayer);
             // dynamic objects except main player
             rspData.AddCount(SWorld.Instance.GetMap(map).DynamicObjects.GetCount());
             foreach (DynamicWorldObject dObj in SWorld.Instance.GetMap(map).DynamicObjects)

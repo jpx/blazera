@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using BlazeraLib;
 using SFML.Graphics;
+using SFML.Window;
 
 namespace BlazeraEditor
 {
@@ -97,7 +98,7 @@ namespace BlazeraEditor
         }
         #endregion
 
-        public void SetMapDimension(Vector2 mapDimension)
+        public void SetMapDimension(Vector2f mapDimension)
         {
             XUpDownBox.ChangeValues(0, (Int32)mapDimension.X);
             YUpDownBox.ChangeValues(0, (Int32)mapDimension.Y);
@@ -105,10 +106,10 @@ namespace BlazeraEditor
 
         void SetValues(Int32 x, Int32 y)
         {
-            SetValues(new Vector2(x, y));
+            SetValues(new Vector2f(x, y));
         }
 
-        void SetValues(Vector2 point)
+        void SetValues(Vector2f point)
         {
             XUpDownBox.SetCurrentValue((Int32)point.X);
             YUpDownBox.SetCurrentValue((Int32)point.Y);
@@ -126,7 +127,7 @@ namespace BlazeraEditor
             };
         }
 
-        public String PointToString(Vector2 point)
+        public String PointToString(Vector2f point)
         {
             return "Point ( " + point.X.ToString() + ", " + point.Y.ToString() + " )";
         }
@@ -138,7 +139,7 @@ namespace BlazeraEditor
             if (openingInfo == null || !openingInfo.IsValid())
                 return;
 
-            SetValues(openingInfo.GetArg<Vector2>("Point"));
+            SetValues(openingInfo.GetArg<Vector2f>("Point"));
         }
     }
 }

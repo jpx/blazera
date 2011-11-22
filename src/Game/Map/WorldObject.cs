@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using SFML.Graphics;
+using SFML.Window;
 
 namespace BlazeraLib
 {
@@ -41,9 +42,9 @@ namespace BlazeraLib
 
     public class MoveEventArgs : EventArgs
     {
-        public Vector2 Move { get; private set; }
+        public Vector2f Move { get; private set; }
 
-        public MoveEventArgs(Vector2 move)
+        public MoveEventArgs(Vector2f move)
         {
             Move = move;
         }
@@ -65,7 +66,7 @@ namespace BlazeraLib
         public event MoveEventHandler OnMove;
         Boolean CallOnDirectionEnablement(Direction direction) { if (OnDirectionEnablement == null) return false; OnDirectionEnablement(this, new DirectionEventArgs(direction)); return true; }
         Boolean CallOnDirectionDisablement(Direction direction) { if (OnDirectionDisablement == null) return false; OnDirectionDisablement(this, new DirectionEventArgs(direction)); return true; }
-        Boolean CallOnMove(Vector2 move) { if (OnMove == null) return false; OnMove(this, new MoveEventArgs(move)); return true; }
+        Boolean CallOnMove(Vector2f move) { if (OnMove == null) return false; OnMove(this, new MoveEventArgs(move)); return true; }
 
         public DirectionInfo DirectionInfo { get; private set; }
 
@@ -87,8 +88,8 @@ namespace BlazeraLib
             foreach (EventBoundingBoxType BBT in Enum.GetValues(typeof(EventBoundingBoxType)))
                 this.EventBoundingBoxes[BBT] = new List<EBoundingBox>();
 
-            Position = new Vector2();
-            Dimension = new Vector2();
+            Position = new Vector2f();
+            Dimension = new Vector2f();
 
             DirectionInfo = new DirectionInfo(this);
 
@@ -143,9 +144,9 @@ namespace BlazeraLib
                 Skin = new Texture(copy.Skin);
             }
 
-            Position = new Vector2(copy.Position.X,
+            Position = new Vector2f(copy.Position.X,
                                    copy.Position.Y);
-            Dimension = new Vector2(copy.Dimension.X,
+            Dimension = new Vector2f(copy.Dimension.X,
                                     copy.Dimension.Y);
             Map = copy.Map;
 
@@ -235,25 +236,25 @@ namespace BlazeraLib
 
         public void Move(float x, float y)
         {
-            this.Move(new Vector2(x, y));
+            this.Move(new Vector2f(x, y));
         }
 
         public void MoveTo(float x, float y)
         {
-            this.MoveTo(new Vector2(x, y));
+            this.MoveTo(new Vector2f(x, y));
         }
 
-        public void Move(Vector2 move)
+        public void Move(Vector2f move)
         {
             this.MoveTo(this.Position + move);
         }
         
-        public void MoveTo(Vector2 point)
+        public void MoveTo(Vector2f point)
         {
             if (Map == null)
                 return;
 
-            Vector2 offset = point - Position;
+            Vector2f offset = point - Position;
 
             Map.Ground.RemoveObjectBoundingBoxes(this);
 
@@ -368,7 +369,7 @@ namespace BlazeraLib
             if (warpPoint == null)
                 warpPoint = map.DefaultWarpPoint;
 
-            Vector2 position = warpPoint.Point;
+            Vector2f position = warpPoint.Point;
 
             SetMap(map, position.X, position.Y);
 
@@ -384,7 +385,7 @@ namespace BlazeraLib
         public List<EBoundingBox> BodyBoundingBoxes { get; private set; }
         public Dictionary<EventBoundingBoxType, List<EBoundingBox>> EventBoundingBoxes { get; private set; }
 
-        public override Vector2 Position
+        public override Vector2f Position
         {
             set
             {
@@ -641,10 +642,10 @@ namespace BlazeraLib
             this.Directions = new Direction[2];
             this.GoalX = true;
             this.GoalY = true;
-            this.Path = new Queue<Vector2>();
+            this.Path = new Queue<Vector2f>();
         }
 
-        private void Init(Vector2 goal)
+        private void Init(Vector2f goal)
         {
             this.Goal = goal;
 
@@ -719,7 +720,7 @@ namespace BlazeraLib
                 {
                     this.GoalX = true;
                     this.Holder.DisableDirection(Direction.E);
-                    this.Holder.MoveTo(new Vector2(this.Goal.X, this.Holder.Position.Y)); //illegal
+                    this.Holder.MoveTo(new Vector2f(this.Goal.X, this.Holder.Position.Y)); //illegal
                 }
             }
             else
@@ -728,7 +729,7 @@ namespace BlazeraLib
                 {
                     this.GoalX = true;
                     this.Holder.DisableDirection(Direction.O);
-                    this.Holder.MoveTo(new Vector2(this.Goal.X, this.Holder.Position.Y));
+                    this.Holder.MoveTo(new Vector2f(this.Goal.X, this.Holder.Position.Y));
                 }
             }
 
@@ -738,7 +739,7 @@ namespace BlazeraLib
                 {
                     this.GoalY = true;
                     this.Holder.DisableDirection(Direction.S);
-                    this.Holder.MoveTo(new Vector2(this.Holder.Position.X, this.Goal.Y));
+                    this.Holder.MoveTo(new Vector2f(this.Holder.Position.X, this.Goal.Y));
                 }
             }
             else
@@ -747,19 +748,19 @@ namespace BlazeraLib
                 {
                     this.GoalY = true;
                     this.Holder.DisableDirection(Direction.N);
-                    this.Holder.MoveTo(new Vector2(this.Holder.Position.X, this.Goal.Y));
+                    this.Holder.MoveTo(new Vector2f(this.Holder.Position.X, this.Goal.Y));
                 }
             }
         }
 
-        public void AddPoint(Vector2 point)
+        public void AddPoint(Vector2f point)
         {
             this.Path.Enqueue(point);
         }
 
-        public void AddPath(List<Vector2> path)
+        public void AddPath(List<Vector2f> path)
         {
-            foreach (Vector2 point in path)
+            foreach (Vector2f point in path)
             {
                 this.AddPoint(point);
             }
@@ -767,7 +768,7 @@ namespace BlazeraLib
 
         public void AddPoint(Vector2I point)
         {
-            this.Path.Enqueue(new Vector2(point.X * GameDatas.TILE_SIZE, point.Y * GameDatas.TILE_SIZE));
+            this.Path.Enqueue(new Vector2f(point.X * GameDatas.TILE_SIZE, point.Y * GameDatas.TILE_SIZE));
         }
 
         public void AddPath(List<Vector2I> path)
@@ -793,7 +794,7 @@ namespace BlazeraLib
             set;
         }
         
-        private Vector2 Goal
+        private Vector2f Goal
         {
             get;
             set;
@@ -817,7 +818,7 @@ namespace BlazeraLib
             set;
         }
 
-        private Queue<Vector2> Path
+        private Queue<Vector2f> Path
         {
             get;
             set;

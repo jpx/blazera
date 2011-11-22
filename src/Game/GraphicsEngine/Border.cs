@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using SFML.Graphics;
+using SFML.Window;
 
 namespace BlazeraLib
 {
@@ -93,8 +94,8 @@ namespace BlazeraLib
         private Dictionary<BorderType, List<Sprite>> Borders { get; set; }
         private Dictionary<CornerType, Sprite> Corners { get; set; }
 
-        public Vector2 Position { get; protected set; }
-        public Vector2 Dimension { get; protected set; }
+        public Vector2f Position { get; protected set; }
+        public Vector2f Dimension { get; protected set; }
 
         private Texture Background { get; set; }
         private Boolean NoBackgroundMode { get; set; }
@@ -108,7 +109,7 @@ namespace BlazeraLib
         private Color Color { get; set; }
         double BackgroundAlphaFactor;
 
-        public Border(Vector2 dimension, EMode mode = EMode.Window, Boolean noBackgroundMode = false)
+        public Border(Vector2f dimension, EMode mode = EMode.Window, Boolean noBackgroundMode = false)
         {
             this.Dimension = dimension;
 
@@ -143,7 +144,7 @@ namespace BlazeraLib
                 this.Borders[borderType].Clear();
 
             if (!this.NoBackgroundMode)
-                this.Background.Dimension = new Vector2(
+                this.Background.Dimension = new Vector2f(
                     this.Dimension.X - this.GetBorderDimension(BorderType.Left).X * BACKGROUND_RESIZE_OFFSET_FACTOR,
                     this.Dimension.Y - this.GetBorderDimension(BorderType.Top).Y * BACKGROUND_RESIZE_OFFSET_FACTOR);
 
@@ -239,20 +240,20 @@ namespace BlazeraLib
             window.Draw(this.Corners[CornerType.BottomRight]);
         }
 
-        public void Resize(Vector2 scale)
+        public void Resize(Vector2f scale)
         {
             if (scale.X == 1F &&
                 scale.Y == 1F)
                 return;
 
-            this.Dimension = new Vector2(
+            this.Dimension = new Vector2f(
                 this.Dimension.X * scale.X,
                 this.Dimension.Y * scale.Y);
 
             this.Build();
         }
 
-        public void Move(Vector2 move)
+        public void Move(Vector2f move)
         {
             if (move.X == 0F &&
                 move.Y == 0F)
@@ -323,15 +324,15 @@ namespace BlazeraLib
             return Textures[EMode.Box][BorderType.Left].Dimension.X;
         }
 
-        private Vector2 GetScaleFactor()
+        private Vector2f GetScaleFactor()
         {
-            Vector2 topLeftCorner = this.GetCornerDimension(CornerType.TopLeft);
-            Vector2 bottomLeftCorner = this.GetCornerDimension(CornerType.BottomLeft);
+            Vector2f topLeftCorner = this.GetCornerDimension(CornerType.TopLeft);
+            Vector2f bottomLeftCorner = this.GetCornerDimension(CornerType.BottomLeft);
             float minLeftCornerWidth = Math.Min(topLeftCorner.X, bottomLeftCorner.X);
             float minLeftCornerHeight = Math.Min(topLeftCorner.Y, bottomLeftCorner.Y);
 
-            Vector2 topRightCorner = this.GetCornerDimension(CornerType.TopRight);
-            Vector2 bottomRightCorner = this.GetCornerDimension(CornerType.BottomRight);
+            Vector2f topRightCorner = this.GetCornerDimension(CornerType.TopRight);
+            Vector2f bottomRightCorner = this.GetCornerDimension(CornerType.BottomRight);
             float minRightCornerWidth = Math.Min(topRightCorner.X, bottomRightCorner.X);
             float minRightCornerHeight = Math.Min(topRightCorner.Y, bottomRightCorner.Y);
 
@@ -343,7 +344,7 @@ namespace BlazeraLib
             if (this.Dimension.Y < minLeftCornerHeight + minRightCornerHeight)
                 factor = Math.Min(factor, this.Dimension.Y / (minLeftCornerHeight + minRightCornerHeight));
 
-            return new Vector2(factor, factor);
+            return new Vector2f(factor, factor);
         }
 
         private void AddBorder(BorderType borderType)
@@ -361,27 +362,27 @@ namespace BlazeraLib
 
             //corner.Scale = this.GetScaleFactor();
 
-            corner.Origin = new Vector2(
+            corner.Origin = new Vector2f(
                 corner.Width / 2F,
                 corner.Height / 2F);
 
             switch (cornerType)
             {
-                case CornerType.TopLeft:        corner.Rotation = 270F; break;
+                case CornerType.TopLeft:        corner.Rotation = 90F; break;
                 case CornerType.TopRight:       corner.Rotation = 180F; break;
                 case CornerType.BottomLeft:     corner.Rotation = 0F;   break;
-                case CornerType.BottomRight:    corner.Rotation = 90F;  break;
+                case CornerType.BottomRight:    corner.Rotation = 270F;  break;
                 default:                                                break;
             }
 
             this.Corners[cornerType] = corner;
         }
 
-        private Vector2 GetDimension()
+        private Vector2f GetDimension()
         {
-            Vector2 dimension = new Vector2();
+            Vector2f dimension = new Vector2f();
 
-            dimension += new Vector2(
+            dimension += new Vector2f(
                 this.GetCorner().Dimension.X + this.GetCorner().Dimension.Y,
                 this.GetCorner().Dimension.X + this.GetCorner().Dimension.Y);
 
@@ -391,19 +392,19 @@ namespace BlazeraLib
             return dimension;
         }
 
-        private Vector2 GetCornerDimension(CornerType cornerType)
+        private Vector2f GetCornerDimension(CornerType cornerType)
         {
             switch (cornerType)
             {
-                case CornerType.TopLeft: return new Vector2(this.GetCorner().Dimension.Y, this.GetCorner().Dimension.X);
+                case CornerType.TopLeft: return new Vector2f(this.GetCorner().Dimension.Y, this.GetCorner().Dimension.X);
                 case CornerType.TopRight: return this.GetCorner().Dimension;
                 case CornerType.BottomLeft: return this.GetCorner().Dimension;
-                case CornerType.BottomRight: return new Vector2(this.GetCorner().Dimension.Y, this.GetCorner().Dimension.X);
+                case CornerType.BottomRight: return new Vector2f(this.GetCorner().Dimension.Y, this.GetCorner().Dimension.X);
                 default: return this.GetCorner().Dimension;
             }
         }
 
-        private Vector2 GetBorderDimension(BorderType borderType)
+        private Vector2f GetBorderDimension(BorderType borderType)
         {
             return GetBorder(borderType).Dimension;
         }
@@ -411,40 +412,40 @@ namespace BlazeraLib
         private void UpdatePosition()
         {
             if (!this.NoBackgroundMode)
-                this.Background.Position = new Vector2(
+                this.Background.Position = new Vector2f(
                     this.Position.X + this.Dimension.X / 2F - this.Background.Dimension.X / 2F,
                     this.Position.Y + this.Dimension.Y / 2F - this.Background.Dimension.Y / 2F);
 
-            this.Corners[CornerType.TopLeft].Position = new Vector2(
+            this.Corners[CornerType.TopLeft].Position = new Vector2f(
                 this.Position.X + this.GetCornerDimension(CornerType.TopLeft).X / 2F,
                 this.Position.Y + this.GetCornerDimension(CornerType.TopLeft).Y / 2F);
-            this.Corners[CornerType.TopRight].Position = new Vector2(
+            this.Corners[CornerType.TopRight].Position = new Vector2f(
                 this.Position.X + this.Dimension.X - this.GetCornerDimension(CornerType.TopLeft).X / 2F,
                 this.Position.Y + this.GetCornerDimension(CornerType.TopRight).Y / 2F);
-            this.Corners[CornerType.BottomLeft].Position = new Vector2(
+            this.Corners[CornerType.BottomLeft].Position = new Vector2f(
                 this.Position.X + this.GetCornerDimension(CornerType.BottomLeft).X / 2F,
                 this.Position.Y + this.Dimension.Y - this.GetCornerDimension(CornerType.BottomLeft).X / 2F);
-            this.Corners[CornerType.BottomRight].Position = new Vector2(
+            this.Corners[CornerType.BottomRight].Position = new Vector2f(
                 this.Position.X + this.Dimension.X - this.GetCornerDimension(CornerType.BottomRight).X / 2F,
                 this.Position.Y + this.Dimension.Y - this.GetCornerDimension(CornerType.BottomRight).Y / 2F);
 
             for (Int32 count = 0; count < this.Borders[BorderType.Left].Count; ++count)
-                this.Borders[BorderType.Left][count].Position = new Vector2(
+                this.Borders[BorderType.Left][count].Position = new Vector2f(
                     this.Position.X,
                     this.Position.Y + this.GetCornerDimension(CornerType.TopLeft).Y + count * this.GetBorderDimension(BorderType.Left).Y);
 
             for (Int32 count = 0; count < this.Borders[BorderType.Top].Count; ++count)
-                this.Borders[BorderType.Top][count].Position = new Vector2(
+                this.Borders[BorderType.Top][count].Position = new Vector2f(
                     this.Position.X + this.GetCornerDimension(CornerType.TopLeft).X + count * this.GetBorderDimension(BorderType.Top).X,
                     this.Position.Y);
 
             for (Int32 count = 0; count < this.Borders[BorderType.Right].Count; ++count)
-                this.Borders[BorderType.Right][count].Position = new Vector2(
+                this.Borders[BorderType.Right][count].Position = new Vector2f(
                     this.Position.X + this.Dimension.X - this.GetBorderDimension(BorderType.Right).X,
                     this.Position.Y + this.GetCornerDimension(CornerType.TopRight).Y + count * this.GetBorderDimension(BorderType.Right).Y);
 
             for (Int32 count = 0; count < this.Borders[BorderType.Bottom].Count; ++count)
-                this.Borders[BorderType.Bottom][count].Position = new Vector2(
+                this.Borders[BorderType.Bottom][count].Position = new Vector2f(
                     this.Position.X + this.GetCornerDimension(CornerType.BottomLeft).X + count * this.GetBorderDimension(BorderType.Bottom).X,
                     this.Position.Y + this.Dimension.Y - this.GetBorderDimension(BorderType.Bottom).Y);
         }

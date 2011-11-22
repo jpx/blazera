@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using SFML.Graphics;
+using SFML.Window;
 
 namespace BlazeraLib
 {
@@ -42,7 +43,7 @@ namespace BlazeraLib
             this.NoBackgroundMode = noBackgroundMode;
 
             if (!this.NoBackgroundMode)
-                this.Background = new BoxBackground(new Vector2(1F, 1F), name, backgroundNoBackgroundMode);
+                this.Background = new BoxBackground(new Vector2f(1F, 1F), name, backgroundNoBackgroundMode);
 
             this.Name = name;
 
@@ -80,7 +81,7 @@ namespace BlazeraLib
             }
         }
 
-        protected abstract Vector2 GetIPos(Int32 i);
+        protected abstract Vector2f GetIPos(Int32 i);
 
         protected float GetLevelOffset(Int32 i)
         {
@@ -97,31 +98,31 @@ namespace BlazeraLib
             base.Open(openingInfo);
         }
 
-        protected override Vector2 GetBasePosition()
+        protected override Vector2f GetBasePosition()
         {
             if (this.NoBackgroundMode)
                 return base.GetBasePosition();
 
             if (this.Name == null)
-                return base.GetBasePosition() + new Vector2(Border.GetBoxBorderWidth() * 2F, Border.GetBoxBorderWidth() * 2F);
+                return base.GetBasePosition() + new Vector2f(Border.GetBoxBorderWidth() * 2F, Border.GetBoxBorderWidth() * 2F);
 
-            return base.GetBasePosition() + new Vector2(Border.GetBoxBorderWidth() * 2F, ((BoxBackground)this.Background).TopBorderHeight + Border.GetBoxBorderWidth());
+            return base.GetBasePosition() + new Vector2f(Border.GetBoxBorderWidth() * 2F, ((BoxBackground)this.Background).TopBorderHeight + Border.GetBoxBorderWidth());
         }
 
-        protected override Vector2 GetStructureDimension()
+        protected override Vector2f GetStructureDimension()
         {
             if (this.NoBackgroundMode)
                 return base.GetStructureDimension();
 
             if (this.Name == null)
-                return base.GetStructureDimension() + new Vector2(Border.GetBoxBorderWidth() * 4F, Border.GetBoxBorderWidth() * 4F);
+                return base.GetStructureDimension() + new Vector2f(Border.GetBoxBorderWidth() * 4F, Border.GetBoxBorderWidth() * 4F);
 
-            return base.GetStructureDimension() + new Vector2(Border.GetBoxBorderWidth() * 4F, ((BoxBackground)this.Background).TopBorderHeight + Border.GetBoxBorderWidth() * 3F);
+            return base.GetStructureDimension() + new Vector2f(Border.GetBoxBorderWidth() * 4F, ((BoxBackground)this.Background).TopBorderHeight + Border.GetBoxBorderWidth() * 3F);
         }
 
         public abstract float GetAlignment(Widget widget);
 
-        public override Vector2 Dimension
+        public override Vector2f Dimension
         {
             /*get
             {
@@ -133,7 +134,7 @@ namespace BlazeraLib
 
                 if (Dimension.X == 0F ||
                     Dimension.Y == 0F)
-                    base.Dimension = new Vector2(10F, 10F);
+                    base.Dimension = new Vector2f(10F, 10F);
             }
         }
     }
@@ -198,7 +199,7 @@ namespace BlazeraLib
                 this.RemoveItem(toRemove.Dequeue());
         }
 
-        protected override Vector2 GetIPos(Int32 i)
+        protected override Vector2f GetIPos(Int32 i)
         {
             // Total height of items
             float totItemH = 0.0f;
@@ -215,7 +216,7 @@ namespace BlazeraLib
 
             float xAlignment = this.GetAlignment(this.Items[i]) + this.GetLevelOffset(i);
 
-            return new Vector2(xAlignment,
+            return new Vector2f(xAlignment,
                                curInternalPos);
         }
 
@@ -304,7 +305,7 @@ namespace BlazeraLib
                 this.RemoveItem(toRemove.Dequeue());
         }
 
-        protected override Vector2 GetIPos(Int32 i)
+        protected override Vector2f GetIPos(Int32 i)
         {
             // Total width of items
             float totItemW = 0.0f;
@@ -321,7 +322,7 @@ namespace BlazeraLib
 
             float yAlignment = this.GetAlignment(this.Items[i]) + this.GetLevelOffset(i);
 
-            return new Vector2(curInternalPos,
+            return new Vector2f(curInternalPos,
                                yAlignment);
         }
 

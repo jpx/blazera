@@ -82,9 +82,9 @@ namespace BlazeraLib
         {
             base.Update(dt);
 
-            Cursor.Center += new Vector2(
-                (((CellPosition.ToVector2() + new Vector2(.5F, 0F)) * (int)CombatMap.CELL_SIZE).X - Cursor.Center.X) / TRANSITION_VELOCITY * (float)dt.MS,
-                (((CellPosition.ToVector2() + new Vector2(0F, .5F)) * (int)CombatMap.CELL_SIZE).Y - Cursor.Center.Y) / TRANSITION_VELOCITY * (float)dt.MS);
+            Cursor.Center += new Vector2f(
+                (((CellPosition.ToVector2() + new Vector2f(.5F, 0F)) * (int)CombatMap.CELL_SIZE).X - Cursor.Center.X) / TRANSITION_VELOCITY * (float)dt.MS,
+                (((CellPosition.ToVector2() + new Vector2f(0F, .5F)) * (int)CombatMap.CELL_SIZE).Y - Cursor.Center.Y) / TRANSITION_VELOCITY * (float)dt.MS);
 
             if (!IsEnabled)
                 return;
@@ -156,12 +156,12 @@ namespace BlazeraLib
             Combat.Map.RemoveObjectToDraw(DrawOrder.Cursor, Cursor);
         }
 
-        public override Vector2 Position
+        public override Vector2f Position
         {
             get { return (CellPosition * (int)CombatMap.CELL_SIZE).ToVector2(); }
         }
 
-        public override Vector2 Dimension
+        public override Vector2f Dimension
         {
             get
             {

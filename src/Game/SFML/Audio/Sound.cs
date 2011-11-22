@@ -151,10 +151,10 @@ namespace SFML
 
             ////////////////////////////////////////////////////////////
             /// <summary>
-            /// Current playing position of the sound, in seconds
+            /// Current playing position of the sound, in milliseconds
             /// </summary>
             ////////////////////////////////////////////////////////////
-            public float PlayingOffset
+            public uint PlayingOffset
             {
                 get {return sfSound_GetPlayingOffset(This);}
                 set {sfSound_SetPlayingOffset(This, value);}
@@ -165,9 +165,9 @@ namespace SFML
             /// 3D position of the sound. Default value is (0, 0, 0)
             /// </summary>
             ////////////////////////////////////////////////////////////
-            public Vector3 Position
+            public Vector3f Position
             {
-                get {Vector3 v; sfSound_GetPosition(This, out v.X, out v.Y, out v.Z); return v;}
+                get {Vector3f v; sfSound_GetPosition(This, out v.X, out v.Y, out v.Z); return v;}
                 set {sfSound_SetPosition(This, value.X, value.Y, value.Z);}
             }
 
@@ -297,7 +297,7 @@ namespace SFML
             static extern void sfSound_SetAttenuation(IntPtr Sound, float Attenuation);
 
             [DllImport("csfml-audio-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-            static extern void sfSound_SetPlayingOffset(IntPtr Sound, float TimeOffset);
+            static extern void sfSound_SetPlayingOffset(IntPtr Sound, uint TimeOffset);
 
             [DllImport("csfml-audio-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
             static extern float sfSound_GetPitch(IntPtr Sound);
@@ -318,7 +318,7 @@ namespace SFML
             static extern float sfSound_GetAttenuation(IntPtr Sound);
 
             [DllImport("csfml-audio-2", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-            static extern float sfSound_GetPlayingOffset(IntPtr Sound);
+            static extern uint sfSound_GetPlayingOffset(IntPtr Sound);
             #endregion
         }
     }

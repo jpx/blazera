@@ -37,8 +37,8 @@ namespace BlazeraLib
 
         Boolean ConstantDrawing;
 
-        Vector2 OriginPoint;
-        Vector2 CurrentPoint;
+        Vector2f OriginPoint;
+        Vector2f CurrentPoint;
 
         public float MoveOffset;
         public Boolean MoveIsEnabled;
@@ -83,9 +83,9 @@ namespace BlazeraLib
             HolderOffset = holderOffset;
         }
 
-        Vector2 GetLocalHolderPos(Vector2 point)
+        Vector2f GetLocalHolderPos(Vector2f point)
         {
-            return new Vector2(HolderOffset.Left, HolderOffset.Top) + point;
+            return new Vector2f(HolderOffset.Left, HolderOffset.Top) + point;
         }
 
         public void SetColor(Color fillColor, Color outlineColor)
@@ -100,9 +100,9 @@ namespace BlazeraLib
                 window.Draw(SelectionShape);
         }
 
-        void MoveCurrentPointTo(Vector2 point)
+        void MoveCurrentPointTo(Vector2f point)
         {
-            Vector2 oldCurrentPoint = CurrentPoint;
+            Vector2f oldCurrentPoint = CurrentPoint;
 
             CurrentPoint = point;
 
@@ -110,8 +110,8 @@ namespace BlazeraLib
                 oldCurrentPoint.Y != CurrentPoint.Y)
                 AdjustPoints();
 
-            Vector2 originPoint = Holder.GetGlobalFromLocal(GetTopLeftPoint());
-            Vector2 endPoint = Holder.GetGlobalFromLocal(GetBottomRightPoint());
+            Vector2f originPoint = Holder.GetGlobalFromLocal(GetTopLeftPoint());
+            Vector2f endPoint = Holder.GetGlobalFromLocal(GetBottomRightPoint());
 
             SelectionShape = GetShape(originPoint.X, originPoint.Y, endPoint.X, endPoint.Y);
         }
@@ -154,25 +154,25 @@ namespace BlazeraLib
             {
                 case EventType.MouseButtonPressed:
 
-                    if (evt.MouseButton.Button != MouseButton.Left)
+                    if (evt.MouseButton.Button != Mouse.Button.Left)
                         break;
 
                     if (!HolderContains())
                         break;
 
-                    InitSelection(Holder.GetLocalFromGlobal(new Vector2(evt.MouseButton.X, evt.MouseButton.Y)));
+                    InitSelection(Holder.GetLocalFromGlobal(new Vector2f(evt.MouseButton.X, evt.MouseButton.Y)));
 
                     return true;
 
                 case EventType.MouseButtonReleased:
 
-                    if (evt.MouseButton.Button != MouseButton.Left)
+                    if (evt.MouseButton.Button != Mouse.Button.Left)
                         break;
 
                     if (!IsActive)
                         break;
 
-                    EndSelection(Holder.GetLocalFromGlobal(new Vector2(evt.MouseButton.X, evt.MouseButton.Y)));
+                    EndSelection(Holder.GetLocalFromGlobal(new Vector2f(evt.MouseButton.X, evt.MouseButton.Y)));
 
                     return true;
 
@@ -181,7 +181,7 @@ namespace BlazeraLib
                     if (!IsActive)
                         break;
 
-                    MoveCurrentPointTo(Holder.GetLocalFromGlobal(new Vector2(evt.MouseMove.X, evt.MouseMove.Y)));
+                    MoveCurrentPointTo(Holder.GetLocalFromGlobal(new Vector2f(evt.MouseMove.X, evt.MouseMove.Y)));
 
                     return true;
 
@@ -202,27 +202,27 @@ namespace BlazeraLib
 
                     switch (evt.Key.Code)
                     {
-                        case KeyCode.Left:
+                        case Keyboard.Key.Left:
 
-                            MoveSelection(new Vector2(-MoveOffset, 0F));
-
-                            return true;
-
-                        case KeyCode.Up:
-
-                            MoveSelection(new Vector2(0F, -MoveOffset));
+                            MoveSelection(new Vector2f(-MoveOffset, 0F));
 
                             return true;
 
-                        case KeyCode.Right:
+                        case Keyboard.Key.Up:
 
-                            MoveSelection(new Vector2(MoveOffset, 0F));
+                            MoveSelection(new Vector2f(0F, -MoveOffset));
 
                             return true;
 
-                        case KeyCode.Down:
+                        case Keyboard.Key.Right:
 
-                            MoveSelection(new Vector2(0F, MoveOffset));
+                            MoveSelection(new Vector2f(MoveOffset, 0F));
+
+                            return true;
+
+                        case Keyboard.Key.Down:
+
+                            MoveSelection(new Vector2f(0F, MoveOffset));
 
                             return true;
                     }
@@ -234,23 +234,23 @@ namespace BlazeraLib
             return base.OnEvent(evt);
         }
 
-        void InitSelection(Vector2 originPoint)
+        void InitSelection(Vector2f originPoint)
         {
             IsActive = true;
             OriginPoint = originPoint;
             MoveCurrentPointTo(OriginPoint);
         }
 
-        void EndSelection(Vector2 endPoint)
+        void EndSelection(Vector2f endPoint)
         {
             IsActive = false;
             MoveCurrentPointTo(endPoint);
         }
 
-        protected void MoveSelection(Vector2 offset)
+        protected void MoveSelection(Vector2f offset)
         {
-            Vector2 originPoint = GetTopLeftPoint();
-            Vector2 endPoint = GetBottomRightPoint();
+            Vector2f originPoint = GetTopLeftPoint();
+            Vector2f endPoint = GetBottomRightPoint();
 
             if (originPoint.X + offset.X < HolderOffset.Left ||
                 endPoint.X + offset.X >= Holder.BackgroundDimension.X - HolderOffset.Right)
@@ -264,9 +264,9 @@ namespace BlazeraLib
             MoveCurrentPointTo(CurrentPoint + offset);
         }
 
-        protected void MoveSelectionTo(Vector2 point)
+        protected void MoveSelectionTo(Vector2f point)
         {
-            Vector2 originPoint = GetTopLeftPoint();
+            Vector2f originPoint = GetTopLeftPoint();
 
             MoveSelection(point - originPoint);
         }
@@ -289,32 +289,32 @@ namespace BlazeraLib
 
         public void Resize(FloatRect rect)
         {
-            Vector2 originPoint = GetTopLeftPoint();
-            Vector2 endPoint = GetBottomRightPoint();
+            Vector2f originPoint = GetTopLeftPoint();
+            Vector2f endPoint = GetBottomRightPoint();
 
-            SetOriginPoint(originPoint + new Vector2(-rect.Left, -rect.Top));
-            SetEndPoint(endPoint + new Vector2(-rect.Right, -rect.Bottom));
+            SetOriginPoint(originPoint + new Vector2f(-rect.Left, -rect.Top));
+            SetEndPoint(endPoint + new Vector2f(-rect.Right, -rect.Bottom));
 
             MoveCurrentPointTo(CurrentPoint);
 
             AdjustPoints();
         }
 
-        Vector2 GetTopLeftPoint()
+        Vector2f GetTopLeftPoint()
         {
-            return new Vector2(
+            return new Vector2f(
                 OriginPoint.X < CurrentPoint.X ? OriginPoint.X : CurrentPoint.X,
                 OriginPoint.Y < CurrentPoint.Y ? OriginPoint.Y : CurrentPoint.Y);
         }
 
-        Vector2 GetBottomRightPoint()
+        Vector2f GetBottomRightPoint()
         {
-            return new Vector2(
+            return new Vector2f(
                 OriginPoint.X < CurrentPoint.X ? CurrentPoint.X : OriginPoint.X,
                 OriginPoint.Y < CurrentPoint.Y ? CurrentPoint.Y : OriginPoint.Y);
         }
 
-        void SetOriginPoint(Vector2 originPoint)
+        void SetOriginPoint(Vector2f originPoint)
         {
             if (OriginPoint.X < CurrentPoint.X)
                 OriginPoint.X = originPoint.X;
@@ -327,7 +327,7 @@ namespace BlazeraLib
                 CurrentPoint.Y = originPoint.Y;
         }
 
-        void SetEndPoint(Vector2 endPoint)
+        void SetEndPoint(Vector2f endPoint)
         {
             if (OriginPoint.X < CurrentPoint.X)
                 CurrentPoint.X = endPoint.X;
@@ -377,11 +377,11 @@ namespace BlazeraLib
 
         public FloatRect GetRect()
         {
-            Vector2 topLeftPoint = new Vector2(
+            Vector2f topLeftPoint = new Vector2f(
                 Math.Min(OriginPoint.X, CurrentPoint.X),
                 Math.Min(OriginPoint.Y, CurrentPoint.Y));
 
-            Vector2 bottomRightPoint = new Vector2(
+            Vector2f bottomRightPoint = new Vector2f(
                 Math.Max(OriginPoint.X, CurrentPoint.X),
                 Math.Max(OriginPoint.Y, CurrentPoint.Y));
 
@@ -398,8 +398,8 @@ namespace BlazeraLib
 
             FloatRect rect = GetRect();
 
-            Vector2 topLeftPoint = Holder.GetGlobalFromLocal(new Vector2(rect.Left, rect.Top));
-            Vector2 bottomRight = Holder.GetGlobalFromLocal(new Vector2(rect.Right, rect.Bottom));
+            Vector2f topLeftPoint = Holder.GetGlobalFromLocal(new Vector2f(rect.Left, rect.Top));
+            Vector2f bottomRight = Holder.GetGlobalFromLocal(new Vector2f(rect.Right, rect.Bottom));
 
             SelectionShape = GetShape(topLeftPoint.X, topLeftPoint.Y, bottomRight.X, bottomRight.Y);
         }
@@ -483,7 +483,7 @@ namespace BlazeraLib
             return Shape.Rectangle(CurrentRect.Rect, FillColor, OutlineThickness, OutlineColor);
         }
 
-        public void SetRect(Vector2 position, Vector2 size)
+        public void SetRect(Vector2f position, Vector2f size)
         {
             SetRect(new FloatRect(position.X, position.Y, position.X + size.X, position.Y + size.Y));
             /*
@@ -498,13 +498,13 @@ namespace BlazeraLib
 
         FloatRect GetLocalRect()
         {
-            Vector2 topLeft = Holder.GetLocalFromGlobal(new Vector2(CurrentRect.Left, CurrentRect.Top));
-            Vector2 bottomRight = Holder.GetLocalFromGlobal(new Vector2(CurrentRect.Right, CurrentRect.Bottom));
+            Vector2f topLeft = Holder.GetLocalFromGlobal(new Vector2f(CurrentRect.Left, CurrentRect.Top));
+            Vector2f bottomRight = Holder.GetLocalFromGlobal(new Vector2f(CurrentRect.Right, CurrentRect.Bottom));
 
             return new FloatRect(topLeft.X, topLeft.Y, bottomRight.X, bottomRight.Y);
         }
 
-        public FloatRect GetCurrentRectFromOrigin(Vector2 origin)
+        public FloatRect GetCurrentRectFromOrigin(Vector2f origin)
         {
             FloatRect localRect = GetLocalRect();
 
@@ -532,7 +532,7 @@ namespace BlazeraLib
 
         protected override Shape GetShape(float left, float top, float right, float bottom)
         {
-            CurrentCircle = new Circle(new Vector2(left, top), (float)Vector2I.GetDistanceBetween(new Vector2(left, top), new Vector2(right, bottom)));
+            CurrentCircle = new Circle(new Vector2f(left, top), (float)Vector2I.GetDistanceBetween(new Vector2f(left, top), new Vector2f(right, bottom)));
 
             return Shape.Circle(CurrentCircle.OriginPoint, CurrentCircle.Radius, FillColor, OutlineThickness, OutlineColor);
         }
@@ -540,15 +540,15 @@ namespace BlazeraLib
 
     public class Circle
     {
-        public Vector2 OriginPoint;
+        public Vector2f OriginPoint;
         public float Radius;
 
         public Circle() :
-            this(new Vector2(), 0F)
+            this(new Vector2f(), 0F)
         {
         }
 
-        public Circle(Vector2 originPoint, float radius)
+        public Circle(Vector2f originPoint, float radius)
         {
             OriginPoint = originPoint;
             Radius = radius;

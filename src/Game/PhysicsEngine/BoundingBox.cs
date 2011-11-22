@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using SFML.Graphics;
+using SFML.Window;
 
 namespace BlazeraLib
 {
@@ -54,7 +55,7 @@ namespace BlazeraLib
                      this.Bottom <= testBB.Top);
         }
 
-        public Boolean BoundingBoxTest(BoundingBox testBB, Vector2 offset)
+        public Boolean BoundingBoxTest(BoundingBox testBB, Vector2f offset)
         {
             if (!this.IsActive)
                 return false;
@@ -87,7 +88,7 @@ namespace BlazeraLib
                 BaseBottom);
         }
 
-        public IntRect GetNextTRect(Vector2 offset)
+        public IntRect GetNextTRect(Vector2f offset)
         {
             FloatRect nextTRect = new FloatRect(
                 Left + offset.X,

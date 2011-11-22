@@ -66,7 +66,7 @@ namespace BlazeraLib
         /// </summary>
         /// <param name="mapPoint">Map local point</param>
         /// <returns>Game gui local point that results from the conversion</returns>
-        protected Vector2 GetGuiPointFromMapPoint(Vector2 mapPoint)
+        protected Vector2f GetGuiPointFromMapPoint(Vector2f mapPoint)
         {
             if (GetRoot() == null)
                 return mapPoint;
@@ -79,7 +79,7 @@ namespace BlazeraLib
         /// </summary>
         /// <param name="guiPoint">Game gui local point</param>
         /// <returns>Map local point that results from the conversion</returns>
-        protected Vector2 GetMapPointFromGuiPoint(Vector2 guiPoint)
+        protected Vector2f GetMapPointFromGuiPoint(Vector2f guiPoint)
         {
             if (GetRoot() == null)
                 return guiPoint;
@@ -118,22 +118,22 @@ namespace BlazeraLib
 
                 case ELocation.MidLeft:
                     Left = GetRoot().Left;
-                    BackgroundCenter = new Vector2(BackgroundCenter.X, GetRoot().BackgroundCenter.Y);
+                    BackgroundCenter = new Vector2f(BackgroundCenter.X, GetRoot().BackgroundCenter.Y);
                     break;
 
                 case ELocation.MidTop:
                     Top = GetRoot().Top;
-                    BackgroundCenter = new Vector2(GetRoot().BackgroundCenter.X, BackgroundCenter.Y);
+                    BackgroundCenter = new Vector2f(GetRoot().BackgroundCenter.X, BackgroundCenter.Y);
                     break;
 
                 case ELocation.MidRight:
                     BackgroundRight = GetRoot().BackgroundRight;
-                    BackgroundCenter = new Vector2(BackgroundCenter.X, GetRoot().BackgroundCenter.Y);
+                    BackgroundCenter = new Vector2f(BackgroundCenter.X, GetRoot().BackgroundCenter.Y);
                     break;
 
                 case ELocation.MidBottom:
                     BackgroundBottom = GetRoot().BackgroundBottom;
-                    BackgroundCenter = new Vector2(GetRoot().BackgroundCenter.X, BackgroundCenter.Y);
+                    BackgroundCenter = new Vector2f(GetRoot().BackgroundCenter.X, BackgroundCenter.Y);
                     break;
             }
         }

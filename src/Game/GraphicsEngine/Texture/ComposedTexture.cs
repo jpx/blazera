@@ -1,5 +1,6 @@
 ﻿using System;
 using SFML.Graphics;
+using SFML.Window;
 
 namespace BlazeraLib
 {
@@ -71,25 +72,25 @@ namespace BlazeraLib
             switch (Pattern)
             {
                 case EPattern.Horizontal:
-                    Textures[1].Position = new Vector2(
+                    Textures[1].Position = new Vector2f(
                     Textures[0].Dimension.X,
                     0F);
                     break;
 
                 case EPattern.Vertical:
-                    Textures[1].Position = new Vector2(
+                    Textures[1].Position = new Vector2f(
                     0F,
                     Textures[0].Dimension.Y);
                     break;
 
                 case EPattern.Square:
-                    Textures[1].Position = new Vector2(
+                    Textures[1].Position = new Vector2f(
                         Textures[0].Dimension.X,
                         0F);
-                    Textures[2].Position = new Vector2(
+                    Textures[2].Position = new Vector2f(
                         0F,
                         Textures[0].Dimension.Y);
-                    Textures[3].Position = new Vector2(
+                    Textures[3].Position = new Vector2f(
                         Textures[2].Dimension.X,
                         Textures[1].Dimension.Y);
                     break;
@@ -109,12 +110,12 @@ namespace BlazeraLib
             return Textures[0];
         }
 
-        public override Vector2 Position
+        public override Vector2f Position
         {
             get { return GetBaseTexture().Position; }
             set
             {
-                Vector2 offset = value - GetBaseTexture().Position;
+                Vector2f offset = value - GetBaseTexture().Position;
 
                 foreach (Texture texture in Textures)
                     if (texture != null)
@@ -122,7 +123,7 @@ namespace BlazeraLib
             }
         }
 
-        public override Vector2 Dimension
+        public override Vector2f Dimension
         {
             get
             {
@@ -153,7 +154,7 @@ namespace BlazeraLib
                         break;
                 }
 
-                return new Vector2(xDimension, yDimension);
+                return new Vector2f(xDimension, yDimension);
             }
         }
     }

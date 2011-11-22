@@ -59,7 +59,7 @@ namespace BlazeraLib
 
         public override void Refresh()
         {
-            this.Label.Position = this.GetGlobalFromLocal(new Vector2(TEXT_HMARGINS, this.Halfsize.Y - this.Label.Size / 2));
+            this.Label.Position = this.GetGlobalFromLocal(new Vector2f(TEXT_HMARGINS, this.Halfsize.Y - this.Label.Size / 2));
         }
 
         public override void Update(Time dt)
@@ -78,8 +78,8 @@ namespace BlazeraLib
 
             if (evt.Type == EventType.MouseButtonPressed)
             {
-                if (this.Contains(this.Root.Window.Input.GetMouseX(),
-                                  this.Root.Window.Input.GetMouseY()))
+                if (this.Contains(Mouse.GetPosition(Root.Window).X,
+                                  Mouse.GetPosition(Root.Window).Y))
                 {
                     this.IsActive = true;
 
@@ -98,7 +98,7 @@ namespace BlazeraLib
 
             if (evt.Type == EventType.KeyPressed && this.IsActive)
             {
-                if (evt.Key.Code == KeyCode.Back)
+                if (evt.Key.Code == Keyboard.Key.Back)
                 {
                     this.RemoveLast();
 
@@ -107,14 +107,14 @@ namespace BlazeraLib
                     return true;
                 }
 
-                if (evt.Key.Code == KeyCode.Escape || evt.Key.Code == KeyCode.Return)
+                if (evt.Key.Code == Keyboard.Key.Escape || evt.Key.Code == Keyboard.Key.Return)
                 {
                     this.IsActive = false;
 
                     return true;
                 }
 
-                if (evt.Key.Code == KeyCode.Delete)
+                if (evt.Key.Code == Keyboard.Key.Delete)
                 {
                     this.Reset();
 

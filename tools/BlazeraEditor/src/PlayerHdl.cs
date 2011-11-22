@@ -82,13 +82,13 @@ namespace BlazeraEditor
                     if (b[h, w] == -1)
                     {
                         SFML.Graphics.Sprite spr = new SFML.Graphics.Sprite(new SFML.Graphics.Image(32, 32, new SFML.Graphics.Color(255, 0, 0, 255)));
-                        spr.Position = new SFML.Graphics.Vector2(w*32, h*32);
+                        spr.Position = new SFML.Window.Vector2f(w*32, h*32);
                         path.Add(spr);
                     }
                 }
             }
 
-            foreach (SFML.Graphics.Vector2 v in this.MainP.MovesInfo.Path)
+            foreach (SFML.Window.Vector2f v in this.MainP.MovesInfo.Path)
             {
                 SFML.Graphics.Sprite spr = new SFML.Graphics.Sprite(new SFML.Graphics.Image(32, 32, new SFML.Graphics.Color(255, 255, 255, 64)));
                 spr.Position = v;

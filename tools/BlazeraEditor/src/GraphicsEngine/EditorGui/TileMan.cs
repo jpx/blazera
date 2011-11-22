@@ -81,7 +81,7 @@ namespace BlazeraEditor
 
                     switch (evt.Key.Code)
                     {
-                        case KeyCode.Delete:
+                        case Keyboard.Key.Delete:
 
                             TileRemoveButton_Clicked(null, null);
 

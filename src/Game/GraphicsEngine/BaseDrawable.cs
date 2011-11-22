@@ -32,53 +32,53 @@
 
         public virtual SFML.Graphics.Color Color { get; set; }
 
-        SFML.Graphics.Vector2 _position;
-        public virtual SFML.Graphics.Vector2 Position
+        SFML.Window.Vector2f _position;
+        public virtual SFML.Window.Vector2f Position
         {
             get { return _position; }
             set { _position = value - BasePoint; }
         }
-        public virtual SFML.Graphics.Vector2 Dimension { get; set; }
+        public virtual SFML.Window.Vector2f Dimension { get; set; }
 
         public bool IsVisible { get; set; }
 
         public float Left
         {
             get { return Position.X; }
-            set { Position = new SFML.Graphics.Vector2(value, Position.Y); }
+            set { Position = new SFML.Window.Vector2f(value, Position.Y); }
         }
 
         public float Top
         {
             get { return Position.Y; }
-            set { Position = new SFML.Graphics.Vector2(Position.X, value); }
+            set { Position = new SFML.Window.Vector2f(Position.X, value); }
         }
 
         public float Right
         {
             get { return Position.X + Dimension.X; }
-            set { Position = new SFML.Graphics.Vector2(value - Dimension.X, Position.Y); }
+            set { Position = new SFML.Window.Vector2f(value - Dimension.X, Position.Y); }
         }
 
         public float Bottom
         {
             get { return Position.Y + Dimension.Y; }
-            set { Position = new SFML.Graphics.Vector2(Position.X, value - Dimension.Y); }
+            set { Position = new SFML.Window.Vector2f(Position.X, value - Dimension.Y); }
         }
 
-        public SFML.Graphics.Vector2 Halfsize
+        public SFML.Window.Vector2f Halfsize
         {
             get { return Dimension / 2F; }
             set { Dimension = value * 2F; }
         }
 
-        public SFML.Graphics.Vector2 Center
+        public SFML.Window.Vector2f Center
         {
             get { return Position + Halfsize; }
             set { Position = value - Halfsize; }
         }
 
-        public virtual SFML.Graphics.Vector2 BasePoint { get; set; }
+        public virtual SFML.Window.Vector2f BasePoint { get; set; }
 
         public ComparisonPointYType ComparisonPointYType { get; set; }
 

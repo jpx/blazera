@@ -127,7 +127,7 @@ namespace BlazeraServer
         }
 
         /// <summary>
-        /// Happens when the client is loading the map. Its main player is added the server map and sent to all clients.
+        /// Happens when the client is loading the map. Its main player is added to the server map and sent to all clients.
         /// </summary>
         /// <param name="rcvData">Received data from client</param>
         /// <returns>If the handling is successful</returns>
@@ -144,7 +144,7 @@ namespace BlazeraServer
             SPlayer.Guid = Guid;
             string map = GameDatas.INIT_MAP;
             SWorld.Instance.AddMap(map);
-            SPlayer.SetMap(SWorld.Instance.GetMap(map), null);
+            SPlayer.SetMap(SWorld.Instance.GetMap(map), RandomHelper.Get(40F, 400F), RandomHelper.Get(40F, 400F));
 
             SetRelay(SPlayer.Handler);
 

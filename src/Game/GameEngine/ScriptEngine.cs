@@ -92,11 +92,11 @@ namespace BlazeraLib
         }
 
         Timer timer = new Timer();
-        static int co = 0;
+      //  static int co = 0;
         public object[] DoScript(String scriptName)
         {
-            Log.Cl(co + " : " + scriptName + " " + timer.GetElapsedTime().Value.ToString(), ConsoleColor.Yellow);
-            co++;
+          //  Log.Cl(co + " : " + scriptName + " " + timer.GetElapsedTime().Value.ToString(), ConsoleColor.Yellow);
+          //  co++;
             try
             {
                 return this.Lua.DoFile(this.ScriptsPath + scriptName + ".lua");

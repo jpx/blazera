@@ -100,8 +100,22 @@ namespace Blazera
             return NextScreen;
         }
 
+        //bool init = false;
         private void UpdateMap(Time dt)
         {
+#if false
+            if (PlayerHdl.Vlad != null && !init)
+            {
+                init = true;
+
+                PlayerHeaderInfoPanel ip = new PlayerHeaderInfoPanel(PlayerHdl.Vlad);
+                PlayerHeaderInfoPanelBox p = new PlayerHeaderInfoPanelBox();
+                p.Build(new InfoPanelBox.BuildInfo(new Dictionary<string, object>() { { "Player", PlayerHdl.Vlad } }));
+                ip.AddBox(p);
+                Gui.AddGameWidget(ip);
+            }
+#endif
+
             if (GameSession.Instance.IsOnline())
             {
                 CWorld.Instance.Update(dt);

@@ -2,12 +2,12 @@ Map_combat_test = Map()
 Map_combat_test.Ground = Create:Ground("combat_test")
 
 -- PNJ Speech
-pnj = Create:NPC("Vlad")
-pnj:AddMessage("Salut a toi, jeune aventurier !")
-pnj:AddMessage("Tu me sembles un peu perdu ici.")
-pnj:AddMessage("D'un autre cote c'est normal, rien n'est encore fait ...")
+--pnj = Create:NPC("Vlad")
+--pnj:AddMessage("Salut a toi, jeune aventurier !")
+--pnj:AddMessage("Tu me sembles un peu perdu ici.")
+--pnj:AddMessage("D'un autre cote c'est normal, rien n'est encore fait ...")
 
-pnj:SetMap(Map_combat_test, 200, 300)
+--pnj:SetMap(Map_combat_test, 200, 300)
 
 
 

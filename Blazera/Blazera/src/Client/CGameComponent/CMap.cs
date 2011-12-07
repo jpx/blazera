@@ -28,6 +28,13 @@ namespace Blazera
             base.AddObject(wObj);
         }
 
+        /// <summary>
+        /// Adds dynamic object to the map.
+        /// /!\ Calls SetMap method of the object. /!\
+        /// </summary>
+        /// <param name="dObj"></param>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
         public void AddDynamicObject(DynamicWorldObject dObj, float x, float y)
         {
             DynamicObjects.Add(dObj);

@@ -98,8 +98,8 @@ namespace BlazeraLib
             DirectionStates = new Dictionary<Direction, Boolean>()
             {
                 { Direction.N, false },
-                { Direction.S, false },
                 { Direction.E, false },
+                { Direction.S, false },
                 { Direction.O, false }
             };
 
@@ -153,8 +153,8 @@ namespace BlazeraLib
             DirectionStates = new Dictionary<Direction, Boolean>()
             {
                 { Direction.N, false },
-                { Direction.S, false },
                 { Direction.E, false },
+                { Direction.S, false },
                 { Direction.O, false }
             };
 

@@ -18,11 +18,11 @@ namespace BlazeraServer
     {
         #region Constants
 
-        const int REFRESH_TIME = 50;
+        const int REFRESH_TIME = 25;
         const int WAIT_FOR_START_PERIOD = 1000;
         const int RECEPTION_CHECK_PERIOD = 10;
 
-        const bool PING_MODE = true;
+        const bool PING_MODE = false;
         const int PING_DELAY = 5;
 
         #endregion
@@ -61,6 +61,7 @@ namespace BlazeraServer
         {
             ScriptEngine.Instance.Init("GameDatas");
             TextureManager.Instance.Init();
+            GameTime.Instance.Init();
 
             IsKilled = false;
         }
@@ -92,8 +93,6 @@ namespace BlazeraServer
 
             ReceiveThread.Start();
             UpdateThread.Start();
-
-            GameTime.Instance.Init();
         }
 
         /// <summary>

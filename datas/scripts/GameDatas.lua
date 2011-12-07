@@ -26,7 +26,7 @@ KEY_RIGHT = 	{ Key.Right }
 KEY_DOWN = 	{ Key.Down }
 KEY_LEFT = 	{ Key.Left }
 KEY_ACTION = 	{ Key.Return }
-KEY_BACK = 	{ Key.Back, Key.Escape }
+KEY_BACK = 	{ Key.Back }
 KEY_MISC = 	{ Key.X }
 
 KEY_UP2 = 	{ Key.W }

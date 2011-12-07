@@ -85,14 +85,18 @@ namespace Blazera
             AddMap(rcvData.ReadString());
 
             int maxCount = rcvData.ReadCount();
-            //!\\ TODO : add all dynamic objects, causes exception on HandleObjectMove //!\\
             for (int count = 0; count < maxCount; ++count)
             {
-                if (count == 0)
+                DynamicWorldObject dObj = rcvData.ReadDynamicObjectMapAdd();
+
+                if (dObj.Guid == GameSession.Instance.GetGuid())
                 {
-                    PlayerHdl.Instance.Init(new CPlayer((Player)rcvData.ReadDynamicObjectMapAdd()));
+                    PlayerHdl.Instance.Init((Player)dObj);
                     PlayerHdl.Warp(CurrentMap);
+                    continue;
                 }
+
+                CurrentMap.AddDynamicObject(dObj, dObj.Position.X, dObj.Position.Y);
             }
              
             return true;
@@ -103,12 +107,19 @@ namespace Blazera
             DynamicWorldObject dObj = rcvData.ReadDynamicObjectMapAdd();
             dObj.SetMap(CurrentMap, dObj.Position.X, dObj.Position.Y);
             CurrentMap.AddDynamicObject(dObj, dObj.Position.X, dObj.Position.Y);
+
+            Log.Cldebug(dObj.Guid, "Added oject", System.ConsoleColor.Cyan);
+
             return true;
         }
 
         bool HandleMapObjectDeletion(ReceptionPacket rcvData)
         {
-            CurrentMap.RemoveObject(rcvData.ReadGuid());
+            int guid = rcvData.ReadGuid();
+
+            CurrentMap.RemoveObject(guid);
+
+            Log.Cldebug(guid, "Removed oject", System.ConsoleColor.Cyan);
 
             return true;
         }
@@ -116,6 +127,7 @@ namespace Blazera
         bool HandleObjectMove(ReceptionPacket rcvData)
         {
             DynamicWorldObject dObj = CurrentMap.GetObject(rcvData.ReadGuid());
+
             dObj.MoveTo(rcvData.ReadVector2());
             dObj.Direction = rcvData.ReadDirection();
             dObj.ResetDirectionStates(rcvData.ReadDirectionStates());

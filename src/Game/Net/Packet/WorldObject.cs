@@ -60,13 +60,9 @@
             return new System.Collections.Generic.Dictionary<Direction, bool>()
             {
                 { Direction.N, str[0] == '1' },
-                { Direction.NE, str[1] == '1' },
-                { Direction.E, str[2] == '1' },
-                { Direction.SE, str[3] == '1' },
-                { Direction.S, str[4] == '1' },
-                { Direction.SO, str[5] == '1' },
-                { Direction.O, str[6] == '1' },
-                { Direction.NO, str[7] == '1' }
+                { Direction.E, str[1] == '1' },
+                { Direction.S, str[2] == '1' },
+                { Direction.O, str[3] == '1' }
             };
         }
     }

@@ -30,7 +30,7 @@ namespace BlazeraServer
             {
                 SendingPacket data = new SendingPacket(PacketType.SERVER_INFO_MOVE);
                 data.AddObjectMove(this);
-                return Session.SendPacket(data, true, true);
+                return Session.SendPacket(data, true);
             }
             catch
             {
@@ -41,9 +41,6 @@ namespace BlazeraServer
         public override void Update(Time dt)
         {
             base.Update(dt);
-
-            if (Guid == 0)
-                Log.Cl("position ( " + Position.X.ToString() + " , " + Position.Y.ToString() + " )");
 
             Handler.RefreshReception();
         }

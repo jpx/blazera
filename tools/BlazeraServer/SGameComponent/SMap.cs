@@ -47,6 +47,36 @@ namespace BlazeraServer
             }
 
             base.AddObject(wObj);
+
+            PrintPlayersInfo();
+        }
+
+        public override void RemoveObject(WorldObject wObj)
+        {
+            if (wObj is DynamicWorldObject)
+                DynamicObjects.Remove((DynamicWorldObject)wObj);
+
+            base.RemoveObject(wObj);
+           
+            PrintPlayersInfo();
+        }
+
+        public void PrintPlayersInfo()
+        {
+            if (DynamicObjects == null)
+                return;
+
+            Log.Cldebug("#####", ConsoleColor.Cyan);
+
+            foreach (DynamicWorldObject dObj in DynamicObjects)
+            {
+                Log.C("# ", ConsoleColor.Cyan);
+                Log.C(dObj.Guid, ConsoleColor.Magenta);
+                Log.Cl(" #", ConsoleColor.Cyan);
+            }
+
+            Log.Cldebug("#####", ConsoleColor.Cyan);
+            Log.Cl();
         }
     }
 }

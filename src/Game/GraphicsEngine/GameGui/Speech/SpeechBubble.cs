@@ -13,6 +13,7 @@ namespace BlazeraLib
     public class SpeechBubble : GameWidget
     {
         #region Constants
+
         const float BUBBLE_MAX_WIDTH = 200F;
         const float BUBBLE_MAX_HEIGHT = 150F;
         const float DEFAULT_MARGINS = 5F;
@@ -28,9 +29,11 @@ namespace BlazeraLib
         const float DEFAULT_BUBBLE_TIP_POSITION = 50F;
         const float DEFAULT_BUBBLE_TIP_SIZE = 8F;
         const BorderType DEFAULT_BUBBLE_TIP_BORDERTYPE = BorderType.Bottom;
+
         #endregion
 
         #region Members
+
         float Margins;
 
         SpeechBubbleShape Bubble;
@@ -53,6 +56,7 @@ namespace BlazeraLib
         Boolean ActionKeyPlayingMode;
         Boolean IsLooping;
         Boolean IsPlaying;
+
         #endregion
 
         public event ClosingEventHandler OnClosing;

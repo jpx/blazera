@@ -1,4 +1,5 @@
-﻿using BlazeraLib;
+﻿using System;
+using BlazeraLib;
 
 namespace BlazeraServer
 {
@@ -17,9 +18,18 @@ namespace BlazeraServer
 
         public bool HandleDirectionEnabled(ReceptionPacket data)
         {
-            Player.EnableDirection(data.ReadDirection());
+            try
+            {
+                Player.EnableDirection(data.ReadDirection());
+            }
+            catch (Exception e)
+            {
+                Log.Clerr(e.Message);
 
-            return false;
+                throw new Exception("Failed to read Direction from packet.");
+            }
+
+            return true;
         }
 
         public bool HandleDirectionDisabled(ReceptionPacket data)

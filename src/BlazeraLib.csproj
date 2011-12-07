@@ -100,6 +100,8 @@
     <Compile Include="Game\GraphicsEngine\GameGui\IGameWidget.cs" />
     <Compile Include="Game\GraphicsEngine\GameGui\InfoPanel.cs" />
     <Compile Include="Game\GraphicsEngine\GameGui\InfoPanelBox.cs" />
+    <Compile Include="Game\GraphicsEngine\GameGui\Map\Player\PlayerHeaderInfoPanel.cs" />
+    <Compile Include="Game\GraphicsEngine\GameGui\Map\Player\PlayerHeaderInfoPanelBox.cs" />
     <Compile Include="Game\GraphicsEngine\GameGui\Menu\ExtendedMenu.cs" />
     <Compile Include="Game\GraphicsEngine\Gui\GridWidget.cs" />
     <Compile Include="Game\GraphicsEngine\Gui\ProgressBar.cs" />
@@ -272,6 +274,7 @@
     <Compile Include="Game\World.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

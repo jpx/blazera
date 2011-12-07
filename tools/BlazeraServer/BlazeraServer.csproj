@@ -50,6 +50,7 @@
     <Compile Include="Handler\MapHandler.cs" />
     <Compile Include="Loader\MapLoader.cs" />
     <Compile Include="Server\Pinger.cs" />
+    <Compile Include="Server\ServerPrompt.cs" />
     <Compile Include="SGameComponent\SMap.cs" />
     <Compile Include="Handler\PlayerHandler.cs" />
     <Compile Include="Program.cs" />

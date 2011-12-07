@@ -9,6 +9,8 @@ namespace BlazeraLib
 {
     public class GameDatas
     {
+        #region DifficultyLevel
+
         public enum DifficultyLevel
         {
             Easy,
@@ -36,6 +38,8 @@ namespace BlazeraLib
                 default: return DIFFICULTY_LEVEL_NORMAL_COEF;
             }
         }
+
+        #endregion DifficultyLevel
 
         public const float STEP_PIXEL_VALUE = 5F;
 

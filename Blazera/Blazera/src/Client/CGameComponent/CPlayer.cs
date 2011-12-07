@@ -46,7 +46,6 @@ namespace Blazera
             try
             {
                 SendingPacket data = new SendingPacket(PacketType.CLIENT_REQUEST_DIRECTION_ENABLED);
-                data.AddGuid(Guid);
                 data.AddDirection(direction);
                 return Session.SendPacket(data);
             }
@@ -61,7 +60,6 @@ namespace Blazera
             try
             {
                 SendingPacket data = new SendingPacket(PacketType.CLIENT_REQUEST_DIRECTION_DISABLED);
-                data.AddGuid(Guid);
                 data.AddDirection(direction);
                 return Session.SendPacket(data);
             }

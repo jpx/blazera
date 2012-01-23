@@ -55,9 +55,26 @@ namespace BlazeraLib
 
         public abstract void Update(Time dt);
 
-        public virtual void SetBasePosition(Vector2f basePosition)
+        public void SetBasePosition(Vector2f basePosition, int z)
         {
             BasePosition = basePosition;
+
+            Z = z;
+
+            SetBasePosition();
+        }
+
+        protected virtual void SetBasePosition()
+        {
+            Position = BasePosition;
+        }
+
+        public override int H
+        {
+            get
+            {
+                return 1 + (int)(Dimension.Y / GameData.TILE_SIZE);
+            }
         }
     }
 }

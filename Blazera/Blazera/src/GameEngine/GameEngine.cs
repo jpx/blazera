@@ -22,7 +22,7 @@ namespace Blazera
 
         public void Init()
         {
-            ScriptEngine.Instance.Init("GameDatas");
+            ScriptEngine.Instance.Init("GameData");
             ScriptEngine.Instance.Load_Assembly("Blazera");
             ScriptEngine.Instance.Import_Type(typeof(PlayerHdl));
 

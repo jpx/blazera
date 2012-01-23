@@ -9,24 +9,18 @@ namespace BlazeraLib
 {
     public class Cell
     {
-        const Int32 DEFAULT_ZDIMENSION = 1;
-        const Int32 DEFAULT_MINZ = 0;
-
         public Boolean IsBlocking { get; set; }
 
-        public Int32 ZDimension { get; private set; }
-
-        public Int32 MinZ { get; private set; }
-
-        Dictionary<Int32, List<BBoundingBox>> BBoundingBoxes;
-        Dictionary<Int32, List<EBoundingBox>> EBoundingBoxes;
+        List<BBoundingBox> BBoundingBoxes;
+        List<EBoundingBox> EBoundingBoxes;
         Dictionary<UInt32, Tile> TileLayers;
 
         public Cell()
         {
-            Init(DEFAULT_MINZ, DEFAULT_ZDIMENSION);
-
             IsBlocking = false;
+
+            BBoundingBoxes = new List<BBoundingBox>();
+            EBoundingBoxes = new List<EBoundingBox>();
 
             TileLayers = new Dictionary<UInt32, Tile>();
         }
@@ -36,30 +30,13 @@ namespace BlazeraLib
         {
             IsBlocking = copy.IsBlocking;
 
-            Init(copy.MinZ, copy.ZDimension);
+            BBoundingBoxes = new List<BBoundingBox>();
+            EBoundingBoxes = new List<EBoundingBox>();
 
             foreach (KeyValuePair<UInt32, Tile> tLayer in copy.TileLayers)
-                this.TileLayers.Add(tLayer.Key, new Tile(tLayer.Value));
+                TileLayers.Add(tLayer.Key, new Tile(tLayer.Value));
 
-            this.Position = copy.Position;
-        }
-
-        void Init(Int32 minZ, Int32 zDimension)
-        {
-            ZDimension = zDimension;
-
-            MinZ = minZ;
-
-            BBoundingBoxes = new Dictionary<Int32, List<BBoundingBox>>();
-
-            EBoundingBoxes = new Dictionary<Int32, List<EBoundingBox>>();
-
-            for (Int32 z = MinZ; z < ZDimension; ++z)
-            {
-                BBoundingBoxes[z] = new List<BBoundingBox>();
-
-                EBoundingBoxes[z] = new List<EBoundingBox>();
-            }
+            Position = copy.Position;
         }
 
         public void Update(Time dt)
@@ -67,7 +44,7 @@ namespace BlazeraLib
 
         }
 
-        public void Draw(RenderWindow window)
+        public void Draw(RenderTarget window)
         {
             foreach (Tile tile in TileLayers.Values)
                 tile.Draw(window);
@@ -117,34 +94,46 @@ namespace BlazeraLib
             return TileLayers.Keys.GetEnumerator();
         }
 
-        public void AddBoundingBox(Int32 z, BBoundingBox BB)
+        public void AddBoundingBox(BBoundingBox BB)
         {
-            BBoundingBoxes[z].Add(BB);
+            BBoundingBoxes.Add(BB);
         }
 
-        public void RemoveBoundingBox(Int32 z, BBoundingBox BB)
+        public void RemoveBoundingBox(BBoundingBox BB)
         {
-            BBoundingBoxes[z].Remove(BB);
+            BBoundingBoxes.Remove(BB);
         }
 
-        public void AddBoundingBox(Int32 z, EBoundingBox BB)
+        public void AddBoundingBox(EBoundingBox BB)
         {
-            EBoundingBoxes[z].Add(BB);
+            EBoundingBoxes.Add(BB);
         }
 
-        public void RemoveBoundingBox(Int32 z, EBoundingBox BB)
+        public void RemoveBoundingBox(EBoundingBox BB)
         {
-            EBoundingBoxes[z].Remove(BB);
+            EBoundingBoxes.Remove(BB);
         }
 
         public IEnumerator<BBoundingBox> GetBBoundingBoxesEnumerator(Int32 z)
         {
-            return this.BBoundingBoxes[z].GetEnumerator();
+            return BBoundingBoxes.FindAll((BB) =>
+            { 
+                if (BB.Z == z)
+                    return true;
+
+                return false;
+            }).GetEnumerator();
         }
 
         public IEnumerator<EBoundingBox> GetEBoundingBoxesEnumerator(Int32 z)
         {
-            return this.EBoundingBoxes[z].GetEnumerator();
+            return EBoundingBoxes.FindAll((BB) =>
+            {
+                if (BB.Z == z)
+                    return true;
+
+                return false;
+            }).GetEnumerator();
         }
     }
 }

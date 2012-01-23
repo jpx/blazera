@@ -16,8 +16,8 @@ namespace BlazeraLib
 
         public Login(String name, String password)
         {
-            this.Name = name;
-            this.Password = password;
+            Name = name;
+            Password = password;
         }
 
         private String _name;

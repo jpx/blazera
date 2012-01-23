@@ -35,9 +35,10 @@ namespace BlazeraLib
             Effects = new List<MapEffect>();
         }
 
-        public void AddEffect(MapEffect effect, SFML.Window.Vector2f position)
+        public void AddEffect(MapEffect effect, SFML.Window.Vector2f position, int z = BaseDrawable.DEFAULT_Z)
         {
-            effect.SetBasePosition(position);
+          //  position.Y -= z * GameData.TILE_SIZE;
+            effect.SetBasePosition(position, z);
             NewEffects.Enqueue(effect);
         }
 

@@ -45,36 +45,36 @@ namespace BlazeraLib
             ScaleValue = scaleValue;
             DefaultValue = defaultValue;
 
-            this.MainBox = new HAutoSizeBox(true, null, 0);
+            MainBox = new HAutoSizeBox(true, null, 0);
 
-            this.ButtonBox = new VAutoSizeBox(true, null, 0);
+            ButtonBox = new VAutoSizeBox(true, null, 0);
 
-            this.DownBtn = new Button(Create.Texture("Gui_DownButtonN"), Create.Texture("Gui_DownButtonO"));
-            this.DownBtn.Dimension *= BUTTON_RESIZE_FACTOR;
-            this.DownBtn.Clicked += new ClickEventHandler(DownBtn_Clicked);
-            this.AddWidget(this.DownBtn);
+            DownBtn = new Button(Create.Texture("Gui_DownButtonN"), Create.Texture("Gui_DownButtonO"));
+            DownBtn.Dimension *= BUTTON_RESIZE_FACTOR;
+            DownBtn.Clicked += new ClickEventHandler(DownBtn_Clicked);
+            AddWidget(DownBtn);
 
-            this.UpBtn = new Button(Create.Texture("Gui_UpButtonN"), Create.Texture("Gui_UpButtonO"));
-            this.UpBtn.Dimension *= BUTTON_RESIZE_FACTOR;
-            this.UpBtn.Clicked += new ClickEventHandler(UpBtn_Clicked);
+            UpBtn = new Button(Create.Texture("Gui_UpButtonN"), Create.Texture("Gui_UpButtonO"));
+            UpBtn.Dimension *= BUTTON_RESIZE_FACTOR;
+            UpBtn.Clicked += new ClickEventHandler(UpBtn_Clicked);
 
-            this.ButtonBox.AddItem(this.UpBtn);
-            this.ButtonBox.AddItem(this.DownBtn);
+            ButtonBox.AddItem(UpBtn);
+            ButtonBox.AddItem(DownBtn);
 
-            this.TextBox = new TextBox(BlazeraLib.TextBox.EInputType.Numeric);
+            TextBox = new TextBox(BlazeraLib.TextBox.EInputType.Numeric);
 
-            this.SetCurrentValue(GetDefaultValue());
-            this.TextBox.Dimension = new SFML.Window.Vector2f(40F, this.UpBtn.Dimension.Y + this.DownBtn.Dimension.Y);
+            SetCurrentValue(GetDefaultValue());
+            TextBox.Dimension = new SFML.Window.Vector2f(40F, UpBtn.Dimension.Y + DownBtn.Dimension.Y);
 
-            this.TextBox.TextAdded += new TextAddedEventHandler(TextBox_TextAdded);
-            this.AddWidget(this.TextBox);
+            TextBox.TextAdded += new TextAddedEventHandler(TextBox_TextAdded);
+            AddWidget(TextBox);
 
-            this.ValueIsModified = false;
+            ValueIsModified = false;
 
-            this.MainBox.AddItem(this.TextBox);
-            this.MainBox.AddItem(this.ButtonBox);
+            MainBox.AddItem(TextBox);
+            MainBox.AddItem(ButtonBox);
 
-            this.AddLabeledWidget(this.MainBox);
+            AddLabeledWidget(MainBox);
 
             GetLabelWidget().Clicked += new ClickEventHandler(UpDownBox_Clicked);
         }
@@ -93,10 +93,10 @@ namespace BlazeraLib
         {
             base.Update(dt);
 
-            if (this.ValueIsModified)
+            if (ValueIsModified)
             {
-                this.AdjustValue();
-                this.ValueIsModified = false;
+                AdjustValue();
+                ValueIsModified = false;
             }
         }
 
@@ -106,20 +106,20 @@ namespace BlazeraLib
             {
                 case SFML.Window.EventType.KeyPressed:
 
-                    if (!this.TextBox.IsActive)
+                    if (!TextBox.IsActive)
                         break;
 
                     switch (evt.Key.Code)
                     {
                         case SFML.Window.Keyboard.Key.Up:
 
-                            this.Up();
+                            Up();
 
                             return true;
 
                         case SFML.Window.Keyboard.Key.Down:
 
-                            this.Down();
+                            Down();
 
                             return true;
                     }
@@ -136,20 +136,20 @@ namespace BlazeraLib
             {
                 case SFML.Window.EventType.KeyPressed:
 
-                    if (!this.TextBox.IsActive)
+                    if (!TextBox.IsActive)
                         break;
 
                     switch (evt.Key.Code)
                     {
                         case SFML.Window.Keyboard.Key.Up:
 
-                            this.Up();
+                            Up();
 
                             return true;
 
                         case SFML.Window.Keyboard.Key.Down:
 
-                            this.Down();
+                            Down();
 
                             return true;
                     }
@@ -164,17 +164,17 @@ namespace BlazeraLib
 
         void TextBox_TextAdded(object sender, TextAddedEventArgs e)
         {
-            this.ValueIsModified = true;
+            ValueIsModified = true;
         }
 
         void DownBtn_Clicked(object sender, SFML.Window.MouseButtonEventArgs e)
         {
-            this.Down();
+            Down();
         }
 
         void UpBtn_Clicked(object sender, SFML.Window.MouseButtonEventArgs e)
         {
-            this.Up();
+            Up();
         }
 
         Int32 GetDefaultValue()
@@ -189,70 +189,70 @@ namespace BlazeraLib
 
         public Int32 GetCurrentValue()
         {
-            if (this.TextBox.Text == "")
-                this.TextBox.Add(GetDefaultValue().ToString());
+            if (TextBox.Text == "")
+                TextBox.Add(GetDefaultValue().ToString());
 
-            if (this.TextBox.Text == "-")
-                return Int32.Parse(this.TextBox.Text + (MinValue >= 0 ? this.MinValue.ToString() : MinValue.ToString().Substring(1, MinValue.ToString().Length - 1)));
+            if (TextBox.Text == "-")
+                return Int32.Parse(TextBox.Text + (MinValue >= 0 ? MinValue.ToString() : MinValue.ToString().Substring(1, MinValue.ToString().Length - 1)));
 
-            return Int32.Parse(this.TextBox.Text);
+            return Int32.Parse(TextBox.Text);
         }
 
         public void ChangeValues(Int32 minValue, Int32 maxValue)
         {
-            this.MinValue = minValue;
-            this.MaxValue = maxValue;
+            MinValue = minValue;
+            MaxValue = maxValue;
 
-            this.SetCurrentValue(GetDefaultValue());
+            SetCurrentValue(GetDefaultValue());
         }
 
         public void SetScaleValue(Int32 scaleValue)
         {
             ScaleValue = scaleValue;
 
-            this.SetCurrentValue(GetDefaultValue());
+            SetCurrentValue(GetDefaultValue());
         }
 
         public void SetCurrentValue(Int32 value)
         {
-            this.TextBox.Reset();
-            this.TextBox.Add(value.ToString());
+            TextBox.Reset();
+            TextBox.Add(value.ToString());
         }
 
         private void Up()
         {
-            if (this.GetCurrentValue() + this.ScaleValue > this.MaxValue)
+            if (GetCurrentValue() + ScaleValue > MaxValue)
                 return;
 
-            this.SetCurrentValue(this.GetCurrentValue() + this.ScaleValue);
+            SetCurrentValue(GetCurrentValue() + ScaleValue);
 
-            this.AdjustValue();
+            AdjustValue();
         }
 
         private void Down()
         {
-            if (this.GetCurrentValue() - this.ScaleValue < this.MinValue)
+            if (GetCurrentValue() - ScaleValue < MinValue)
                 return;
 
-            this.SetCurrentValue(this.GetCurrentValue() - this.ScaleValue);
+            SetCurrentValue(GetCurrentValue() - ScaleValue);
 
-            this.AdjustValue();
+            AdjustValue();
         }
 
         private void AdjustValue()
         {
-            if (this.GetCurrentValue() > this.MaxValue)
-                this.SetCurrentValue(this.MaxValue);
-            else if (this.GetCurrentValue() < this.MinValue)
-                this.SetCurrentValue(this.MinValue);
+            if (GetCurrentValue() > MaxValue)
+                SetCurrentValue(MaxValue);
+            else if (GetCurrentValue() < MinValue)
+                SetCurrentValue(MinValue);
 
-            if (this.ValueChanged != null)
-                this.ValueChanged(this, new ValueChangeEventArgs(this.GetCurrentValue()));
+            if (ValueChanged != null)
+                ValueChanged(this, new ValueChangeEventArgs(GetCurrentValue()));
         }
 
         public override void Reset()
         {
-            this.SetCurrentValue(GetDefaultValue());
+            SetCurrentValue(GetDefaultValue());
         }
 
         public event ValueChangeEventHandler ValueChanged;
@@ -266,7 +266,7 @@ namespace BlazeraLib
 
         public ValueChangeEventArgs(Int32 value)
         {
-            this.Value = value;
+            Value = value;
         }
     }
 }

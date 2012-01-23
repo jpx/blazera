@@ -7,11 +7,24 @@ using SFML.Window;
 
 namespace BlazeraLib
 {
+    //!\\ Obsolet ==> use MessageBox //!\\
     /// <summary>
     /// Dialog bubble that can be displayed on the game gui
     /// </summary>
     public class SpeechBubble : GameWidget
     {
+        #region EventHandlers
+
+        public delegate void ClosingEventHandler(SpeechBubble sender, ClosingEventArgs e);
+
+        public class ClosingEventArgs : EventArgs { }
+
+        public delegate void LaunchingEventHandler(SpeechBubble sender, LaunchingEventArgs e);
+
+        public class LaunchingEventArgs : EventArgs { }
+
+        #endregion EventHandlers
+
         #region Constants
 
         const float BUBBLE_MAX_WIDTH = 200F;
@@ -111,11 +124,11 @@ namespace BlazeraLib
 
         void SpeechBubble_OnLaunching(SpeechBubble sender, LaunchingEventArgs e)
         {
-            Speaker.TrySetState(State.Active);
+            Speaker.TrySetState("Speaking");
             if (Listeners.Count == 1)
-                Speaker.DirectionInfo.SetFacing(Listeners[0]);
+                Speaker.DirectionHandler.SetFacing(Listeners[0]);
             foreach (Personnage listener in Listeners)
-                listener.TrySetState(State.Active);
+                listener.TrySetState("Speaking");
         }
 
         void NextMessage()
@@ -404,7 +417,7 @@ namespace BlazeraLib
             return base.OnEvent(evt);
         }
 
-        public override void Draw(RenderWindow window)
+        public override void Draw(RenderTarget window)
         {
             if (Bubble != null)
                 Bubble.Draw(window);
@@ -420,7 +433,7 @@ namespace BlazeraLib
                 return;
 
             if (Speaker != null)
-                Position = GetGuiPointFromMapPoint(Speaker.Position + new Vector2f(Speaker.Halfsize.X, Bubble.TipBorderType == BorderType.Bottom ? 0F : Speaker.Dimension.Y)) -
+                Position = GetGuiPointFromMapPoint(Speaker.DrawingPosition + new Vector2f(Speaker.Halfsize.X, Bubble.TipBorderType == BorderType.Bottom ? 0F : Speaker.Dimension.Y)) -
                     (Bubble.GetTipExtremityPosition(true) + new Vector2f(0F, Bubble.TipBorderType == BorderType.Bottom ? DEFAULT_SPEAKER_OFFSET : -DEFAULT_SPEAKER_OFFSET));
 
             Bubble.SetPosition(Position, false);
@@ -464,26 +477,6 @@ namespace BlazeraLib
         Vector2f GetMaxDimension()
         {
             return new Vector2f(BUBBLE_MAX_WIDTH, BUBBLE_MAX_HEIGHT) - GetStructureDimension();
-        }
-    }
-
-    public delegate void ClosingEventHandler(SpeechBubble sender, ClosingEventArgs e);
-
-    public class ClosingEventArgs : EventArgs
-    {
-        public ClosingEventArgs()
-        {
-
-        }
-    }
-
-    public delegate void LaunchingEventHandler(SpeechBubble sender, LaunchingEventArgs e);
-
-    public class LaunchingEventArgs : EventArgs
-    {
-        public LaunchingEventArgs()
-        {
-
         }
     }
 }

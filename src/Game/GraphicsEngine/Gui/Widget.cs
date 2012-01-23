@@ -14,6 +14,8 @@ namespace BlazeraLib
         Horizontal
     }
 
+    public interface IWidget : IUpdateable, IDrawable, IEventHandler { }
+
     #region BaseWidget
 
     public abstract class BaseWidget : Widget
@@ -29,12 +31,12 @@ namespace BlazeraLib
             Root = this;
             Window = window;
 
-            Dimension = new Vector2f(GameDatas.WINDOW_WIDTH, GameDatas.WINDOW_HEIGHT);
+            Dimension = new Vector2f(GameData.WINDOW_WIDTH, GameData.WINDOW_HEIGHT);
         }
 
         public Vector2f GetViewPos()
         {
-            return this.GuiView.Center - this.GuiView.Size / 2F;
+            return GuiView.Center - GuiView.Size / 2F;
         }
     }
 
@@ -74,7 +76,7 @@ namespace BlazeraLib
         public EditorBaseWidget(RenderWindow window, View guiView) :
             base(window, guiView)
         {
-            this.Windows = new List<WindowedWidget>();
+            Windows = new List<WindowedWidget>();
         }
 
         public void AddKeyWindowBind(Keyboard.Key keyCode, WindowedWidget window)
@@ -92,16 +94,16 @@ namespace BlazeraLib
 
             WindowedWidget window = KeyWindowBinding[keyCode];
 
-            if (this.FocusedWindow != window &&
+            if (FocusedWindow != window &&
                 window.IsVisible)
             {
-                this.SetCurrentWindow(window);
+                SetCurrentWindow(window);
                 return true;
             }
 
             window.SwitchState();
             if (window.IsVisible)
-                this.SetCurrentWindow(window);
+                SetCurrentWindow(window);
 
             return true;
         }
@@ -109,34 +111,34 @@ namespace BlazeraLib
         private WindowedWidget GetNextOpenedWindow(WindowedWidget window)
         {
             if (window == null &&
-                this.TabWindowList.Count > 0)
-                return this.TabWindowList[0];
+                TabWindowList.Count > 0)
+                return TabWindowList[0];
 
             Int32 count = 0;
-            Int32 index = this.TabWindowList.IndexOf(window);
+            Int32 index = TabWindowList.IndexOf(window);
 
-            while (count < this.TabWindowList.Count)
+            while (count < TabWindowList.Count)
             {
-                if (index < this.TabWindowList.Count - 1)
+                if (index < TabWindowList.Count - 1)
                     ++index;
                 else
                     index = 0;
 
                 ++count;
 
-                if (this.TabWindowList[index].IsVisible)
-                    return this.TabWindowList[index];
+                if (TabWindowList[index].IsVisible)
+                    return TabWindowList[index];
             }
 
             return null;
         }
 
-        public override void Draw(RenderWindow window)
+        public override void Draw(RenderTarget window)
         {
-            if (this.Background != null)
-                this.Background.Draw(window);
+            if (Background != null)
+                Background.Draw(window);
 
-            foreach (Widget widget in this.DrawingWidgets)
+            foreach (Widget widget in DrawingWidgets)
             {
                 if (!widget.IsVisible)
                     continue;
@@ -165,7 +167,8 @@ namespace BlazeraLib
                     if (FocusedWindow == null)
                         break;
 
-                    FocusedWindow.BackgroundColor = Border.DEFAULT_AMBIENT_COLOR;
+                    FocusedWindow.SetFocused(false);
+                  //  FocusedWindow.BackgroundColor = Border.DEFAULT_AMBIENT_COLOR;
                     FocusedWindow.Closed -= new CloseEventHandler(FocusedWindow_Closed);
                     FocusedWindow = null;
 
@@ -181,19 +184,19 @@ namespace BlazeraLib
             {
                 case EventType.KeyPressed:
 
-                    if (this.SetCurrentWindowFromKey(evt.Key.Code))
+                    if (SetCurrentWindowFromKey(evt.Key.Code))
                         return true;
 
                     switch (evt.Key.Code)
                     {
                         case Keyboard.Key.Tab:
 
-                            WindowedWidget nextOpenedWindow = this.GetNextOpenedWindow(this.FocusedWindow);
+                            WindowedWidget nextOpenedWindow = GetNextOpenedWindow(FocusedWindow);
 
                             if (nextOpenedWindow == null)
                                 break;
 
-                            this.SetCurrentWindow(nextOpenedWindow);
+                            SetCurrentWindow(nextOpenedWindow);
 
                             return true;
                     }
@@ -206,18 +209,18 @@ namespace BlazeraLib
 
         public override Boolean HandleEvent(BlzEvent evt)
         {
-            if (!this.IsEnabled)
+            if (!IsEnabled)
                 return false;
 
             if (evt.GetType() == BlzEvent.EType.MouseMove)
             {
-                if (this.Focused != null)
+                if (Focused != null)
                 {
-                    this.Focused.HandleEvent(evt);
+                    Focused.HandleEvent(evt);
                     evt.IsHandled = true;
                 }
 
-                foreach (WindowedWidget window in this.Windows)
+                foreach (WindowedWidget window in Windows)
                     if (window.HandleEvent(evt))
                     {
                         evt.IsHandled = true;
@@ -240,40 +243,42 @@ namespace BlazeraLib
                 return OnPredominantEvent(evt) || OnEvent(evt);
             }
 
-            if (this.Focused != null)
+            if (Focused != null)
             {
-                this.Focused.HandleEvent(evt);
+                Focused.HandleEvent(evt);
                 return true;
             }
 
-            foreach (WindowedWidget window in this.Windows)
+            foreach (WindowedWidget window in Windows)
                 if (window.HandleEvent(evt))
                 {
-                    this.SetCurrentWindow(window);
+                    SetCurrentWindow(window);
                     return true;
                 }
 
-            return this.OnEvent(evt);
+            return OnEvent(evt);
         }
 
         public void SetCurrentWindow(WindowedWidget window)
         {
-            if (!this.RemoveWindow(window))
+            if (!RemoveWindow(window))
                 return;
 
-            if (this.FocusedWindow != null)
+            if (FocusedWindow != null)
             {
-                this.FocusedWindow.BackgroundColor = Border.DEFAULT_AMBIENT_COLOR;
+                FocusedWindow.SetFocused(false);
+               // FocusedWindow.BackgroundColor = Border.DEFAULT_AMBIENT_COLOR;
                 FocusedWindow.Closed -= new CloseEventHandler(FocusedWindow_Closed);
             }
 
-            this.FocusedWindow = window;
+            FocusedWindow = window;
 
-            this.AddFirst(window);
+            AddFirst(window);
             if (!window.GotFocusedWindow() ||
                 (window.GotFocusedWindow() && !window.GotFocusedWindow(true)))
-                window.BackgroundColor = WindowedWidget.FOCUSED_COLOR;
-            this.Windows.Insert(0, window);
+                window.SetFocused(true);
+              //  window.BackgroundColor = WindowedWidget.FOCUSED_COLOR;
+            Windows.Insert(0, window);
 
             DrawnWindows.Add(window, true);
         }
@@ -285,14 +290,15 @@ namespace BlazeraLib
 
         public void AddWindow(WindowedWidget window, Boolean opened = false)
         {
-            this.TabWindowList.Add(window);
+            TabWindowList.Add(window);
 
             DrawnWindows.Add(window, true);
 
-            window.BackgroundColor = Border.DEFAULT_AMBIENT_COLOR;
+            window.SetFocused(false);
+          //  window.BackgroundColor = Border.DEFAULT_AMBIENT_COLOR;
 
-            this.AddWidget(window);
-            this.Windows.Add(window);
+            AddWidget(window);
+            Windows.Add(window);
 
             if (opened)
                 window.Open();
@@ -300,18 +306,16 @@ namespace BlazeraLib
 
         public Boolean RemoveWindow(WindowedWidget window)
         {
-            if (!this.RemoveWidget(window))
+            if (!RemoveWidget(window))
                 return false;
             return
-                this.Windows.Remove(window) &&
+                Windows.Remove(window) &&
                 DrawnWindows.Remove(window);
         }
 
-        
-
         public Vector2f GetMousePosition()
         {
-            return this.GetGlobalFromLocal(new Vector2f(
+            return GetGlobalFromLocal(new Vector2f(
                 Mouse.GetPosition(Root.Window).X,
                 Mouse.GetPosition(Root.Window).Y));
         }
@@ -400,18 +404,17 @@ namespace BlazeraLib
 
         public override void Update(Time dt)
         {
-            base.Update(dt);
-
             while (!SpeechManager.Instance.IsEmpty())
             {
                 SpeechBubble currentSpeechBubble = SpeechManager.Instance.GetNext();
-                currentSpeechBubble.OnClosing += new ClosingEventHandler(currentSpeechBubble_OnClosing);
+                currentSpeechBubble.OnClosing += new SpeechBubble.ClosingEventHandler(currentSpeechBubble_OnClosing);
                 AddGameWidget(currentSpeechBubble);
                 currentSpeechBubble.LaunchSpeech();
             }
 
-            foreach (GameWidget gameWidget in GameWidgets)
-                gameWidget.Update(dt);
+            base.Update(dt);
+            //foreach (GameWidget gameWidget in GameWidgets)
+                //gameWidget.Update(dt);
         }
 
         void GameBaseWidget_OnGameViewMove(View view, GameViewEventArgs e)
@@ -421,25 +424,19 @@ namespace BlazeraLib
                     gameWidget.Refresh();
         }
 
-        void currentSpeechBubble_OnClosing(SpeechBubble sender, ClosingEventArgs e)
+        void currentSpeechBubble_OnClosing(SpeechBubble sender, SpeechBubble.ClosingEventArgs e)
         {
             RemoveGameWidget(sender);
         }
 
-        public override void Draw(RenderWindow window)
+       /* public override void Draw(RenderTarget window)
         {
-            window.SetView(GuiView);
-
-            base.Draw(window);
-
             for (int count = GameWidgets.Count - 1; count >= 0; --count)
                 if (GameWidgets[count].IsVisible)
                     GameWidgets[count].Draw(window);
+        }*/
 
-            window.SetView(window.DefaultView);
-        }
-
-        public override Boolean HandleEvent(BlzEvent evt)
+      /*  public override Boolean HandleEvent(BlzEvent evt)
         {
             foreach (GameWidget gameWidget in GameWidgets)
                 if (gameWidget.IsEnabled)
@@ -447,15 +444,7 @@ namespace BlazeraLib
                         return true;
 
             return OnEvent(evt);
-        }
-
-        public void SetFirst(GameWidget gameWidget)
-        {
-            if (!GameWidgets.Remove(gameWidget))
-                throw new Exception("Game widget is not in the collection.");
-
-            GameWidgets.Insert(0, gameWidget);
-        }
+        }*/
 
         public override BaseWidget Root
         {
@@ -465,7 +454,7 @@ namespace BlazeraLib
 
     #endregion
 
-    public abstract class Widget : BaseDrawable, IUpdateable
+    public abstract class Widget : BaseDrawable, IWidget
     {
         public String Name { get; set; }
 
@@ -483,20 +472,46 @@ namespace BlazeraLib
             {
                 _focused = value;
 
-                if (this.Focused == null &&
-                    this.Parent != null)
+                if (Focused == null &&
+                    Parent != null)
                 {
-                    this.Parent.Focused = null;
+                    Parent.Focused = null;
                     return;
                 }
 
-                if (this.Parent == null)
+                if (Parent == null)
                     return;
 
-                this.Parent.Focused = this;
+                Parent.Focused = this;
             }
         }
+        
+        public void SetFirst(Widget widget)
+        {
+            if (!RemoveWidget(widget))
+                return;
 
+            AddFirst(widget);
+        }
+
+        public void SetFirst()
+        {
+            if (Parent == null)
+                return;
+
+            Parent.SetFirst(this);
+        }
+
+        public void SetRootFirst()
+        {
+            SetFirst();
+
+            if (Parent == null)
+                return;
+
+            Parent.SetRootFirst();
+        }
+        
         public event ChangeEventHandler Changed;
         public event OpenEventHandler Opened;
         public event CloseEventHandler Closed;
@@ -513,25 +528,27 @@ namespace BlazeraLib
 
         public Widget()
         {
-            this.Widgets = new List<Widget>();
-            this.Items = new List<Widget>();
-            this.DrawingWidgets = new LinkedList<Widget>();
+            Widgets = new List<Widget>();
+            Items = new List<Widget>();
+            DrawingWidgets = new LinkedList<Widget>();
 
-            this.IsPositionLinked = true;
-            this.IsDimensionLinked = false;
+            IsPositionLinked = true;
+            IsDimensionLinked = false;
 
-            this.IsColorLinked = true;
-            this.IsBackgroundColorLinked = false;
+            IsColorLinked = true;
+            IsBackgroundColorLinked = false;
 
             IsSealed = false;
 
-            this.Dimension = new Vector2f(1F, 1F);
+            Dimension = new Vector2f(1F, 1F);
 
-            this.RefreshInfo = new RefreshInfo();
+            RefreshInfo = new RefreshInfo();
 
-            this.Changed += new ChangeEventHandler(Widget_Changed);
+            WidgetsToRemove = new Queue<Widget>();
 
-            this.Open();
+            Changed += new ChangeEventHandler(Widget_Changed);
+
+            Open();
         }
 
         Color OldBackgroundColor;
@@ -559,56 +576,75 @@ namespace BlazeraLib
             }
         }
 
+        public override object Clone()
+        {
+            throw new NotImplementedException();
+        }
+
         void Widget_Changed(object sender, ChangeEventArgs e)
         {
             switch (e.Type)
             {
-                case ChangeEventArgs.EType.Dimension: this.RefreshInfo.SetDimensionScaleRefresh(((DimensionChangeEventArgs)e).Scale); break;
-                case ChangeEventArgs.EType.Position: this.RefreshInfo.SetPositionOffsetRefresh(((PositionChangeEventArgs)e).Offset); break;
-                case ChangeEventArgs.EType.Widget: this.RefreshInfo.SetWidgetAddedRefresh(((WidgetAddedChangeEventArgs)e).Widget); break;
-                case ChangeEventArgs.EType.Text: this.RefreshInfo.SetTextChangeRefresh(((TextChangeEventArgs)e).Text); break;
+                case ChangeEventArgs.EType.Dimension: RefreshInfo.SetDimensionScaleRefresh(((DimensionChangeEventArgs)e).Scale); break;
+                case ChangeEventArgs.EType.Position: RefreshInfo.SetPositionOffsetRefresh(((PositionChangeEventArgs)e).Offset); break;
+                case ChangeEventArgs.EType.Widget: RefreshInfo.SetWidgetAddedRefresh(((WidgetAddedChangeEventArgs)e).Widget); break;
+                case ChangeEventArgs.EType.Text: RefreshInfo.SetTextChangeRefresh(((TextChangeEventArgs)e).Text); break;
             }
         }
 
         protected void CallChanged(ChangeEventArgs e)
         {
-            if (this.Changed != null)
-                this.Changed(this, e);
+            if (Changed != null)
+                Changed(this, e);
         }
 
         public virtual void Init()
         {
-            foreach (Widget widget in this.Widgets)
+            foreach (Widget widget in Widgets)
                 widget.Init();
 
-            this.Refresh();
+            Refresh();
 
-            if (this.Parent != null)
-                this.Parent.Refresh();
+            RefreshParent();
         }
 
+        Queue<Widget> WidgetsToRemove;
         public virtual void Update(Time dt)
         {
-            if (this.RefreshInfo.IsRefreshed)
+            while (WidgetsToRemove.Count > 0)
+                RemoveWidget(WidgetsToRemove.Dequeue());
+
+            if (RefreshInfo.IsRefreshed)
             {
-                this.Refresh();
+                Refresh();
 
-                if (this.Parent != null)
-                    this.Parent.Refresh();
+                RefreshParent();
 
-                this.RefreshInfo.Reset();
+                RefreshInfo.Reset();
             }
 
-            foreach (Widget widget in this.Widgets)
+            foreach (Widget widget in Widgets)
                 widget.Update(dt);
         }
 
-        public override void Draw(RenderWindow window)
+        const bool REFRESH_OPTI = false;
+        void RefreshParent()
         {
-            if (this.Background != null)
-                this.Background.Draw(window);
+            if (Parent == null)
+                return;
 
-            foreach (Widget widget in this.DrawingWidgets)
+            Parent.Refresh();
+
+            if (!REFRESH_OPTI)
+                Parent.RefreshParent();
+        }
+
+        public override void Draw(RenderTarget window)
+        {
+            if (Background != null)
+                Background.Draw(window);
+
+            foreach (Widget widget in DrawingWidgets)
                 if (widget.IsVisible)
                     widget.Draw(window);
         }
@@ -630,14 +666,14 @@ namespace BlazeraLib
 
             if (evt.GetType() == BlzEvent.EType.MouseMove)
             {
-                this.Focused.HandleEvent(evt);
+                Focused.HandleEvent(evt);
                 evt.IsHandled = true;
 
                 return false;
             }
 
-            this.Focused.HandleEvent(evt);
-            this.OnPredominantEvent(evt);
+            Focused.HandleEvent(evt);
+            OnPredominantEvent(evt);
 
             return true;
         }
@@ -646,14 +682,14 @@ namespace BlazeraLib
         {
             if (evt.GetType() == BlzEvent.EType.MouseMove)
             {
-                foreach (Widget widget in this.Items)
+                foreach (Widget widget in Items)
                     if (widget.HandleEvent(evt))
                         evt.IsHandled = true;
 
                 return false;
             }
 
-            foreach (Widget widget in this.Items)
+            foreach (Widget widget in Items)
                 if (widget.HandleEvent(evt))
                     return true;
 
@@ -678,7 +714,7 @@ namespace BlazeraLib
 
         public virtual Boolean HandleEvent(BlzEvent evt)
         {
-            if (!this.IsEnabled)
+            if (!IsEnabled)
                 return false;
 
             if (FocusedHandleEvent(evt))
@@ -704,15 +740,15 @@ namespace BlazeraLib
 
             widget.Changed += new ChangeEventHandler(Widget_Changed);
 
-            this.Widgets.Add(widget);
+            Widgets.Add(widget);
 
             if (addToEvent)
-                this.Items.Add(widget);
+                Items.Add(widget);
 
             if (addToDrawing)
-                this.DrawingWidgets.AddFirst(widget);
+                DrawingWidgets.AddFirst(widget);
 
-            this.CallChanged(new WidgetAddedChangeEventArgs(widget));
+            CallChanged(new WidgetAddedChangeEventArgs(widget));
         }
 
         public void InsertWidget(Int32 index, Widget widget, Boolean addToDrawing = true, Boolean addToEvent = true)
@@ -721,15 +757,15 @@ namespace BlazeraLib
 
             widget.Changed += new ChangeEventHandler(Widget_Changed);
 
-            this.Widgets.Insert(index, widget);
+            Widgets.Insert(index, widget);
 
             if (addToEvent)
-                this.Items.Insert(index, widget);
+                Items.Insert(index, widget);
 
             if (addToDrawing)
-                this.DrawingWidgets.ToList().Insert(DrawingWidgets.Count - 1 - index, widget);
+                DrawingWidgets.ToList().Insert(DrawingWidgets.Count - 1 - index, widget);
 
-            this.CallChanged(new WidgetAddedChangeEventArgs(widget));
+            CallChanged(new WidgetAddedChangeEventArgs(widget));
         }
 
         public void AddFirst(Widget widget, Boolean addToDrawing = true)
@@ -738,44 +774,49 @@ namespace BlazeraLib
 
             widget.Changed += new ChangeEventHandler(Widget_Changed);
 
-            this.Widgets.Insert(0, widget);
-            this.Items.Insert(0, widget);
+            Widgets.Insert(0, widget);
+            Items.Insert(0, widget);
 
             if (addToDrawing)
-                this.DrawingWidgets.AddLast(widget);
+                DrawingWidgets.AddLast(widget);
 
-            this.CallChanged(new WidgetAddedChangeEventArgs(widget));
+            CallChanged(new WidgetAddedChangeEventArgs(widget));
         }
 
         public void SetParent(Widget parent)
         {
-            this.Root = parent.Root;
+            Root = parent.Root;
 
-            this.Parent = parent;
+            Parent = parent;
+        }
+
+        public void AsyncRemoveWidget(Widget widget)
+        {
+            WidgetsToRemove.Enqueue(widget);
         }
 
         public Boolean RemoveWidget(Widget widget)
         {
-            if (this.Background != null &&
-                widget.Equals(this.Background))
+            if (Background != null &&
+                widget.Equals(Background))
             {
-                this.Background = null;
+                Background = null;
 
-                return this.Widgets.Remove(widget);
+                return Widgets.Remove(widget);
             }
 
-            this.CallChanged(new WidgetAddedChangeEventArgs(widget));
+            CallChanged(new WidgetAddedChangeEventArgs(widget));
 
-            this.DrawingWidgets.Remove(widget);
+            DrawingWidgets.Remove(widget);
 
             return
-                this.Widgets.Remove(widget) &&
-                this.Items.Remove(widget);
+                Widgets.Remove(widget) &&
+                Items.Remove(widget);
         }
 
         public Widget GetWidget(String name)
         {
-            foreach (Widget w in this.Widgets)
+            foreach (Widget w in Widgets)
                 if (w.Name == name)
                     return w;
 
@@ -796,17 +837,19 @@ namespace BlazeraLib
             return null;
         }
 
+        //!\\ TODO: set virtual and 'Root.GetViewPos' is redefined into the BaseWidget method
         public Vector2f GetLocalFromGlobal(Vector2f point)
         {
-            if (this.Root == null)
+            if (Root == null)
                 return point - GetBasePosition();
 
             return point - GetBasePosition() - Root.GetViewPos();
         }
 
+        //!\\ TODO: cf GetLocalFromGlobal
         public Vector2f GetGlobalFromLocal(Vector2f point)
         {
-            if (this.Root == null)
+            if (Root == null)
                 return point + GetBasePosition();
 
             return Root.GetViewPos() + point + GetBasePosition();
@@ -820,14 +863,14 @@ namespace BlazeraLib
             {
                 _background = value;
 
-                if (this.Background == null)
+                if (Background == null)
                     return;
 
-                this.Background.SetParent(this);
+                Background.SetParent(this);
 
-                this.Dimension = this.BackgroundDimension;
+                Dimension = BackgroundDimension;
 
-                this.Widgets.Add(this.Background);
+                Widgets.Add(Background);
             }
         }
 
@@ -837,15 +880,15 @@ namespace BlazeraLib
             get { return _position; }
             set
             {
-                Vector2f offset = value - this.Position;
+                Vector2f offset = value - Position;
 
                 _position = value;
 
-                foreach (Widget widget in this.Widgets)
+                foreach (Widget widget in Widgets)
                     if (widget.IsPositionLinked)
                         widget.Position += offset;
 
-                this.CallChanged(new PositionChangeEventArgs(offset));
+                CallChanged(new PositionChangeEventArgs(offset));
             }
         }
 
@@ -858,11 +901,11 @@ namespace BlazeraLib
             }
             set
             {
-                if (this.Background != null && this.Dimension.X == 0F || this.Dimension.Y == 0F)
+                if (Background != null && Dimension.X == 0F || Dimension.Y == 0F)
                 {
                     _dimension = value;
 
-                    this.BackgroundDimension = this.Dimension;
+                    BackgroundDimension = Dimension;
 
                     return;
                 }
@@ -870,48 +913,48 @@ namespace BlazeraLib
                 Vector2f factor = new Vector2f(1F, 1F);
 
                 factor = new Vector2f(
-                    value.X / this.Dimension.X,
-                    value.Y / this.Dimension.Y);
+                    value.X / Dimension.X,
+                    value.Y / Dimension.Y);
 
                 _dimension = value;
 
-                foreach (Widget widget in this.Items)
+                foreach (Widget widget in Items)
                     if (widget.IsDimensionLinked)
                         widget.Dimension = new Vector2f(
                             widget.Dimension.X * factor.X,
                             widget.Dimension.Y * factor.Y);
 
-                if (this.Background != null)
-                    this.BackgroundDimension = this.Dimension + this.GetStructureDimension();
+                if (Background != null)
+                    BackgroundDimension = Dimension + GetStructureDimension();
 
-                this.CallChanged(new DimensionChangeEventArgs(factor));
+                CallChanged(new DimensionChangeEventArgs(factor));
             }
         }
 
         protected virtual Vector2f GetBasePosition()
         {
-            return this.Position;
+            return Position;
         }
 
         public virtual Vector2f BackgroundDimension
         {
             get
             {
-                if (this.Background != null)
-                    return this.Background.Dimension;
+                if (Background != null)
+                    return Background.Dimension;
 
-                return this.Dimension;
+                return Dimension;
             }
             set
             {
                 _dimension = value;
 
-                if (this.Background == null)
+                if (Background == null)
                     return;
 
-                this.Background.Dimension = value;
+                Background.Dimension = value;
 
-                _dimension = value - this.GetStructureDimension();
+                _dimension = value - GetStructureDimension();
             }
         }
 
@@ -922,20 +965,20 @@ namespace BlazeraLib
 
         public float BackgroundRight
         {
-            get { return this.Position.X + this.BackgroundDimension.X; }
-            set { this.Position = new Vector2f(value - this.BackgroundDimension.X, this.Position.Y); }
+            get { return Position.X + BackgroundDimension.X; }
+            set { Position = new Vector2f(value - BackgroundDimension.X, Position.Y); }
         }
 
         public float BackgroundBottom
         {
-            get { return this.Position.Y + this.BackgroundDimension.Y; }
-            set { this.Position = new Vector2f(this.Position.X, value - this.BackgroundDimension.Y); }
+            get { return Position.Y + BackgroundDimension.Y; }
+            set { Position = new Vector2f(Position.X, value - BackgroundDimension.Y); }
         }
 
         public Vector2f BackgroundHalfsize
         {
-            get { return this.BackgroundDimension / 2F; }
-            set { this.BackgroundDimension = value * 2F; }
+            get { return BackgroundDimension / 2F; }
+            set { BackgroundDimension = value * 2F; }
         }
 
         public Vector2f BackgroundCenter
@@ -946,8 +989,8 @@ namespace BlazeraLib
 
         protected Boolean Contains(float x, float y, float offset = 0F)
         {
-            if (offset >= this.Halfsize.X ||
-                offset >= this.Halfsize.Y)
+            if (offset >= Halfsize.X ||
+                offset >= Halfsize.Y)
                 return false;
 
             Vector2f basePosition = GetBasePosition();
@@ -958,9 +1001,10 @@ namespace BlazeraLib
                     y < basePosition.Y + Dimension.Y - offset);
         }
 
+        //!\\ to remove (put into EditorBase)
         public Boolean ContainsMouse(float offset = 0F)
         {
-            return this.Contains(
+            return Contains(
                 ((EditorBaseWidget)Root).GetMousePosition().X,
                 ((EditorBaseWidget)Root).GetMousePosition().Y,
                 offset);
@@ -968,19 +1012,20 @@ namespace BlazeraLib
 
         protected Boolean BackgroundContains(float x, float y, float offset = 0F)
         {
-            if (offset >= this.BackgroundHalfsize.X ||
-                offset >= this.BackgroundHalfsize.Y)
+            if (offset >= BackgroundHalfsize.X ||
+                offset >= BackgroundHalfsize.Y)
                 return false;
 
-            return (x >= this.Left + offset &&
-                    x < this.BackgroundRight - offset &&
-                    y >= this.Top + offset &&
-                    y < this.BackgroundBottom - offset);
+            return (x >= Left + offset &&
+                    x < BackgroundRight - offset &&
+                    y >= Top + offset &&
+                    y < BackgroundBottom - offset);
         }
 
+        //!\\ to remove (put into EditorBase)
         public Boolean BackgroundContainsMouse(float offset = 0F)
         {
-            return this.BackgroundContains(
+            return BackgroundContains(
                 ((EditorBaseWidget)Root).GetMousePosition().X,
                 ((EditorBaseWidget)Root).GetMousePosition().Y,
                 offset);
@@ -988,8 +1033,8 @@ namespace BlazeraLib
 
         protected Boolean Contains(float x, float y, FloatRect offset)
         {
-            if (offset.HSum >= this.Halfsize.X ||
-                offset.VSum >= this.Halfsize.Y)
+            if (offset.HSum >= Halfsize.X ||
+                offset.VSum >= Halfsize.Y)
                 return false;
 
             Vector2f basePosition = GetBasePosition();
@@ -1000,9 +1045,10 @@ namespace BlazeraLib
                     y < basePosition.Y + Dimension.Y - offset.Bottom);
         }
 
+        //!\\ to remove (put into EditorBase)
         public Boolean ContainsMouse(FloatRect offset)
         {
-            return this.Contains(
+            return Contains(
                 ((EditorBaseWidget)Root).GetMousePosition().X,
                 ((EditorBaseWidget)Root).GetMousePosition().Y,
                 offset);
@@ -1010,8 +1056,8 @@ namespace BlazeraLib
 
         protected Boolean BackgroundContains(float x, float y, FloatRect offset)
         {
-            if (offset.HSum >= this.BackgroundHalfsize.X ||
-                offset.VSum >= this.BackgroundHalfsize.Y)
+            if (offset.HSum >= BackgroundHalfsize.X ||
+                offset.VSum >= BackgroundHalfsize.Y)
                 return false;
 
             Vector2f basePosition = GetBasePosition();
@@ -1022,36 +1068,35 @@ namespace BlazeraLib
                     y < BackgroundBottom - offset.Bottom);
         }
 
+        //!\\ to remove (put into EditorBase)
         public Boolean BackgroundContainsMouse(FloatRect offset)
         {
-            return this.BackgroundContains(
+            return BackgroundContains(
                 ((EditorBaseWidget)Root).GetMousePosition().X,
                 ((EditorBaseWidget)Root).GetMousePosition().Y,
                 offset);
         }
 
-        public Boolean IsVisible { get; set; }
-
         public Boolean IsEnabled { get; set; }
 
         public void SwitchState()
         {
-            if (this.IsVisible)
-                this.Close();
+            if (IsVisible)
+                Close();
             else
-                this.Open();
+                Open();
         }
 
         public virtual void Open(OpeningInfo openingInfo = null)
         {
-            this.IsVisible = true;
-            this.IsEnabled = true;
+            IsVisible = true;
+            IsEnabled = true;
             
-            foreach (Widget widget in this.Widgets)
+            foreach (Widget widget in Widgets)
                 widget.Open(openingInfo);
 
             if (openingInfo != null && openingInfo.IsReseted)
-                this.Reset();
+                Reset();
 
             if (Opened != null)
                 Opened(this, new OpenEventArgs(openingInfo));
@@ -1062,14 +1107,14 @@ namespace BlazeraLib
 
         public virtual void Close(ClosingInfo closingInfo = null)
         {
-            this.IsVisible = false;
-            this.IsEnabled = false;
+            IsVisible = false;
+            IsEnabled = false;
 
-            foreach (Widget widget in this.Widgets)
+            foreach (Widget widget in Widgets)
                 widget.Close(closingInfo);
             
             if (closingInfo != null && closingInfo.IsReseted)
-                this.Reset();
+                Reset();
 
             if (Closed != null)
                 Closed(this, new CloseEventArgs(closingInfo));
@@ -1077,25 +1122,25 @@ namespace BlazeraLib
 
         public virtual void Reset()
         {
-            foreach (Widget widget in this.Widgets)
+            foreach (Widget widget in Widgets)
                 widget.Reset();
         }
 
         public virtual void Disable()
         {
-            this.IsEnabled = false;
+            IsEnabled = false;
         }
 
         public virtual void Refresh() { }
 
         public Int32 GetCount()
         {
-            return this.Items.Count;
+            return Items.Count;
         }
 
         public Boolean Contains(Widget widget)
         {
-            return this.Items.Contains(widget);
+            return Items.Contains(widget);
         }
 
         private Color _color;
@@ -1106,10 +1151,10 @@ namespace BlazeraLib
             {
                 _color = value;
 
-                foreach (Widget widget in this.Items)
+                foreach (Widget widget in Items)
                     if (widget.IsColorLinked)
                     {
-                        widget.Color = this.Color;
+                        widget.Color = Color;
 
                         if (widget.IsSealed)
                             widget.Seal();
@@ -1122,8 +1167,8 @@ namespace BlazeraLib
         {
             get
             {
-                if (this.Background != null)
-                    return this.Background.Color;
+                if (Background != null)
+                    return Background.Color;
 
                 return _backgroundColor;
             }
@@ -1131,13 +1176,13 @@ namespace BlazeraLib
             {
                 _backgroundColor = value;
 
-                if (this.Background != null &&
+                if (Background != null &&
                     IsBackgroundColorLinked)
-                    this.Background.Color = value;
+                    Background.Color = value;
 
-                foreach (Widget widget in this.Items)
+                foreach (Widget widget in Items)
                 {
-                    widget.BackgroundColor = this.BackgroundColor;
+                    widget.BackgroundColor = BackgroundColor;
 
                     if (widget.IsSealed)
                         widget.Seal();
@@ -1153,8 +1198,8 @@ namespace BlazeraLib
             {
                 _root = value;
 
-                foreach (Widget widget in this.Widgets)
-                    widget.Root = this.Root;
+                foreach (Widget widget in Widgets)
+                    widget.Root = Root;
             }
         }
 
@@ -1249,32 +1294,32 @@ namespace BlazeraLib
 
         public ChangeEventArgs(EType type)
         {
-            this.Type = type;
+            Type = type;
         }
     }
 
     public class DimensionChangeEventArgs : ChangeEventArgs
     {
         public Vector2f Scale { get; private set; }
-        public DimensionChangeEventArgs(Vector2f scale) : base(EType.Dimension) { this.Scale = scale; }
+        public DimensionChangeEventArgs(Vector2f scale) : base(EType.Dimension) { Scale = scale; }
     }
 
     public class PositionChangeEventArgs : ChangeEventArgs
     {
         public Vector2f Offset { get; private set; }
-        public PositionChangeEventArgs(Vector2f offset) : base(EType.Position) { this.Offset = offset; }
+        public PositionChangeEventArgs(Vector2f offset) : base(EType.Position) { Offset = offset; }
     }
 
     public class WidgetAddedChangeEventArgs : ChangeEventArgs
     {
         public Widget Widget { get; private set; }
-        public WidgetAddedChangeEventArgs(Widget widget) : base(EType.Widget) { this.Widget = widget; }
+        public WidgetAddedChangeEventArgs(Widget widget) : base(EType.Widget) { Widget = widget; }
     }
 
     public class TextChangeEventArgs : ChangeEventArgs
     {
         public String Text { get; private set; }
-        public TextChangeEventArgs(String text) : base(EType.Text) { this.Text = text; }
+        public TextChangeEventArgs(String text) : base(EType.Text) { Text = text; }
     }
 
     public class RefreshInfo
@@ -1291,15 +1336,15 @@ namespace BlazeraLib
         
         public void Reset()
         {
-            this.IsDimensionRefreshed = false;
-            this.IsPositionRefreshed = false;
-            this.IsWidgetRefreshed = false;
-            this.IsTextfreshed = false;
+            IsDimensionRefreshed = false;
+            IsPositionRefreshed = false;
+            IsWidgetRefreshed = false;
+            IsTextfreshed = false;
 
-            this.DimensionScaleRefresh = new Vector2f(1F, 1F);
-            this.PositionOffsetRefresh = new Vector2f(0F, 0F);
-            this.WidgetAddedRefresh = null;
-            this.TextChangeRefresh = null;
+            DimensionScaleRefresh = new Vector2f(1F, 1F);
+            PositionOffsetRefresh = new Vector2f(0F, 0F);
+            WidgetAddedRefresh = null;
+            TextChangeRefresh = null;
         }
 
         public void SetDimensionScaleRefresh(Vector2f dimensionScaleRefresh)
@@ -1308,8 +1353,8 @@ namespace BlazeraLib
                 dimensionScaleRefresh.Y == 1F)
                 return;
 
-            this.IsDimensionRefreshed = true;
-            this.DimensionScaleRefresh = dimensionScaleRefresh;
+            IsDimensionRefreshed = true;
+            DimensionScaleRefresh = dimensionScaleRefresh;
         }
 
         public void SetPositionOffsetRefresh(Vector2f positionOffsetRefresh)
@@ -1318,20 +1363,20 @@ namespace BlazeraLib
                 positionOffsetRefresh.Y == 0F)
                 return;
 
-            this.IsPositionRefreshed = true;
-            this.PositionOffsetRefresh = positionOffsetRefresh;
+            IsPositionRefreshed = true;
+            PositionOffsetRefresh = positionOffsetRefresh;
         }
 
         public void SetWidgetAddedRefresh(Widget widgetAddedRefresh)
         {
-            this.IsWidgetRefreshed = true;
-            this.WidgetAddedRefresh = widgetAddedRefresh;
+            IsWidgetRefreshed = true;
+            WidgetAddedRefresh = widgetAddedRefresh;
         }
 
         public void SetTextChangeRefresh(String textChangeRefresh)
         {
-            this.IsTextfreshed = true;
-            this.TextChangeRefresh = textChangeRefresh;
+            IsTextfreshed = true;
+            TextChangeRefresh = textChangeRefresh;
         }
 
         public Boolean IsRefreshed
@@ -1339,10 +1384,10 @@ namespace BlazeraLib
             get
             {
                 return
-                    this.IsDimensionRefreshed ||
-                    this.IsPositionRefreshed ||
-                    this.IsWidgetRefreshed ||
-                    this.IsTextfreshed;
+                    IsDimensionRefreshed ||
+                    IsPositionRefreshed ||
+                    IsWidgetRefreshed ||
+                    IsTextfreshed;
             }
         }
     }

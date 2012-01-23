@@ -11,12 +11,6 @@ namespace Blazera
         public MainPlayer(Player player) :
             base(player)
         {
-            OnDirectionEnablement += new DirectionEventHandler(MainPlayer_OnDirectionEnablement);
-        }
-
-        void MainPlayer_OnDirectionEnablement(WorldObject sender, DirectionEventArgs e)
-        {
-            
         }
 
         public override void SetMap(Map map, String warpPointName)
@@ -27,9 +21,6 @@ namespace Blazera
             {
                 CWorld.Instance.GetCurrentMap().AddDynamicObject(this, Position.X, Position.Y);
             }
-
-            if (map.Type != GameScreen.GetCurrentMap().Type)
-                GameScreen.ChangeMap(map.Type);
         }
     }
 

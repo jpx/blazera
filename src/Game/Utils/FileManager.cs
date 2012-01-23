@@ -33,7 +33,7 @@ namespace BlazeraLib
 
         private void RemoveFile(String fileName)
         {
-            String path = GameDatas.SCRIPTS_DEFAULT_PATH + fileName;
+            String path = GameData.SCRIPTS_DEFAULT_PATH + fileName;
 
             try
             {
@@ -48,7 +48,7 @@ namespace BlazeraLib
 
         private void RemoveScript(String scriptName)
         {
-            this.RemoveFile(scriptName + ".lua");
+            RemoveFile(scriptName + ".lua");
         }
 
         public void RemoveMap(String mapType)
@@ -56,9 +56,9 @@ namespace BlazeraLib
             String mapScriptName = "Map/Map_" + mapType;
             String groundScriptName = "Ground/Ground_" + mapType;
 
-            this.RemoveFile(groundScriptName);
-            this.RemoveScript(groundScriptName);
-            this.RemoveScript(mapScriptName);
+            RemoveFile(groundScriptName);
+            RemoveScript(groundScriptName);
+            RemoveScript(mapScriptName);
         }
 
         public void RemoveObject(String baseType, String type)

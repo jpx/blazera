@@ -29,41 +29,42 @@ namespace Blazera
     {
         private GraphicsEngine()
         {
-            this.IsRunning = true;
+            IsRunning = true;
         }
 
         public void Init(ScreenType initScreen)
         {
-            this.Window = new RenderWindow(new VideoMode(GameDatas.WINDOW_WIDTH, GameDatas.WINDOW_HEIGHT), "Blazera", GameDatas.WINDOW_STYLE);
+            Window = new RenderWindow(new VideoMode(GameData.WINDOW_WIDTH, GameData.WINDOW_HEIGHT), "Blazera", GameData.WINDOW_STYLE);
 
-            //this.Window.SetFramerateLimit(150);
+           // Window.SetFramerateLimit(60);
 
-            WindowEvents.Instance.Init(this.Window);
-            this.Screens = new ScreenList();
-            this.Screens += new LoadingScreen(this.Window);
-            this.Screens += new LoginScreen(this.Window);
-            this.Screens += new MainTitleScreen(this.Window);
-            this.Screens += new GameScreen(this.Window);
-            this.Screens += new BattleScreen(this.Window);
-            this.FPS = new PTimer(0.6, PrintFPS);
-            this.Screens.Current = initScreen;
-            this.Screens.GetCurrent().Init();
+            WindowEvents.Instance.Init(Window);
+            Screens = new ScreenList();
+            Screens += new LoadingScreen(Window);
+            Screens += new LoginScreen(Window);
+            Screens += new MainTitleScreen(Window);
+            Screens += new GameScreen(Window);
+            Screens += new BattleScreen(Window);
+            FPS = new PTimer(0.2, PrintFPS);
+            Screens.Current = initScreen;
+            Screens.GetCurrent().Init();
         }
 
         public Boolean Update(Time dt)
         {
-           // this.FPS.Update(dt);
+           // FPS.Update(dt);
 
-            this.Window.DispatchEvents();
-            this.Window.Clear();
+            Inputs.Instance.UpdateState();
 
-            Time trueDt = new Time(Window.GetFrameTime() / 1000D);
-            this.Screens.Current = this.Screens.GetCurrent().Run(trueDt);
+            Window.DispatchEvents();
+            Window.Clear();
 
-            this.Window.Display();
+            Screens.Current = Screens.GetCurrent().Run(dt);
 
-            this.IsRunning = this.Window.IsOpened();
-            return this.IsRunning;
+            Window.Display();
+
+            IsRunning = Window.IsOpened();
+            return IsRunning;
         }
 
         private void PrintFPS()
@@ -71,14 +72,14 @@ namespace Blazera
             Log.Clear();
             Log.Cl(GameTime.GetTotalTime().Value, "Played time", ConsoleColor.Yellow);
             Log.Cl(1 / GameTime.Dt.Value, "FPS", ConsoleColor.Red);
-            Log.Cl(1.0f / this.Window.GetFrameTime(), "trueFPS", ConsoleColor.Red);
             Log.Cl(Screens.GetCurrent().Type, "Screen", ConsoleColor.Magenta);
             Log.Cl(GameSession.Instance.IsOnline(), "Connected", ConsoleColor.Blue);
-            if (GameScreen.GetCurrentMap() != null && PlayerHdl.Vlad != null)
+           /* if (GetCurrentMap() != null && PlayerHdl.Vlad != null)
             {
                 Log.Cl(GameScreen.GetCurrentMap().Type, "Map", ConsoleColor.Green);
-                //Log.Cl(PlayerHdl.Vlad.EBoundingBoxes.Count, "BEBB", ConsoleColor.DarkYellow);
-            }
+                Log.Cl(PlayerHdl.Vlad.Direction, "Direction", ConsoleColor.Red);
+              //  Log.Cl(PlayerHdl.Vlad.State, "State", ConsoleColor.Cyan);
+            }*/
             Log.Cl("===================", ConsoleColor.Blue);
         }
 
@@ -130,8 +131,8 @@ namespace Blazera
     {
         public ScreenList()
         {
-            this.Screens = new Dictionary<ScreenType, Screen>();
-            this.FirstInitDone = new List<ScreenType>();
+            Screens = new Dictionary<ScreenType, Screen>();
+            FirstInitDone = new List<ScreenType>();
         }
 
         public static ScreenList operator +(ScreenList screenList, Screen screen)
@@ -139,7 +140,7 @@ namespace Blazera
             if (!screenList.Screens.ContainsKey(screen.Type))
             {
                 screenList.Screens.Add(screen.Type, screen);
-                screen.Init();
+               // screen.Init();
             }
             return screenList;
         }
@@ -152,7 +153,7 @@ namespace Blazera
 
         public Screen GetCurrent()
         {
-            return this.Screens[this.Current];
+            return Screens[Current];
         }
 
         private Dictionary<ScreenType, Screen> Screens
@@ -172,20 +173,22 @@ namespace Blazera
             }
             set
             {
-                ScreenType old = this.Current;
-                if (this.Screens.ContainsKey(value))
+                ScreenType old = Current;
+                if (Screens.ContainsKey(value))
                 {
+                    ScreenArgs args = GetCurrent().GetArgs();
+
                     _current = value;
 
-                    if (!this.FirstInitDone.Contains(this.Current))
+                    if (!FirstInitDone.Contains(Current))
                     {
-                        this.GetCurrent().FirstInit();
-                        this.FirstInitDone.Add(this.Current);
+                        GetCurrent().FirstInit();
+                        FirstInitDone.Add(Current);
                     }
 
-                    if (old != this.Current)
+                    if (old != Current)
                     {
-                        this.GetCurrent().Init();
+                        GetCurrent().Init(args);
                     }
                 }
             }

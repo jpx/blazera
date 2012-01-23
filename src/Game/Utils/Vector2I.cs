@@ -11,14 +11,14 @@ namespace BlazeraLib
     {
         public Vector2I()
         {
-            this.X = 0;
-            this.Y = 0;
+            X = 0;
+            Y = 0;
         }
 
         public Vector2I(int x, int y)
         {
-            this.X = x;
-            this.Y = y;
+            X = x;
+            Y = y;
         }
 
         public Vector2I(uint x, uint y)
@@ -106,7 +106,7 @@ namespace BlazeraLib
 
         public Vector2f ToVector2()
         {
-            return new Vector2f((float)this.X, (float)this.Y);
+            return new Vector2f((float)X, (float)Y);
         }
 
         public static Vector2I FromVector2(Vector2f vector2)
@@ -143,20 +143,26 @@ namespace BlazeraLib
     {
         public IntRect()
         {
-            this.Rect = new SFML.Graphics.IntRect();
+            Rect = new SFML.Graphics.IntRect();
+        }
+
+        public IntRect(IntRect copy)
+            : this(copy.Left, copy.Top, copy.Right, copy.Bottom)
+        {
+
         }
 
         public IntRect(int left, int top, int right, int bottom)
         {
-            this.Rect = new SFML.Graphics.IntRect(left, top, right - left, bottom - top);
+            Rect = new SFML.Graphics.IntRect(left, top, right - left, bottom - top);
         }
 
         public SFML.Graphics.IntRect Rect { get; set; }
 
-        public int Left { get { return this.Rect.Left; } }
-        public int Top { get { return this.Rect.Top; } }
-        public int Right { get { return this.Rect.Left + this.Rect.Width; } }
-        public int Bottom { get { return this.Rect.Top + this.Rect.Height; } }
+        public int Left { get { return Rect.Left; } }
+        public int Top { get { return Rect.Top; } }
+        public int Right { get { return Rect.Left + Rect.Width; } }
+        public int Bottom { get { return Rect.Top + Rect.Height; } }
 
         public static IntRect operator +(IntRect rect, Vector2I offset)
         {
@@ -187,12 +193,17 @@ namespace BlazeraLib
     {
         public FloatRect()
         {
-            this.Rect = new SFML.Graphics.FloatRect();
+            Rect = new SFML.Graphics.FloatRect();
         }
 
         public FloatRect(float left, float top, float right, float bottom)
         {
-            this.Rect = new SFML.Graphics.FloatRect(left, top, right - left, bottom - top);
+            Rect = new SFML.Graphics.FloatRect(left, top, right - left, bottom - top);
+        }
+
+        public FloatRect(FloatRect copy)
+            : this(copy.Left, copy.Top, copy.Right, copy.Bottom)
+        {
         }
 
         public SFML.Graphics.FloatRect Rect
@@ -205,7 +216,7 @@ namespace BlazeraLib
         {
             get
             {
-                return this.Rect.Left;
+                return Rect.Left;
             }
         }
 
@@ -213,7 +224,7 @@ namespace BlazeraLib
         {
             get
             {
-                return this.Rect.Top;
+                return Rect.Top;
             }
         }
 
@@ -221,7 +232,7 @@ namespace BlazeraLib
         {
             get
             {
-                return this.Rect.Left + this.Rect.Width;
+                return Rect.Left + Rect.Width;
             }
         }
 
@@ -229,7 +240,7 @@ namespace BlazeraLib
         {
             get
             {
-                return this.Rect.Top + this.Rect.Height;
+                return Rect.Top + Rect.Height;
             }
         }
 
@@ -237,7 +248,7 @@ namespace BlazeraLib
         {
             get
             {
-                return this.Top + this.Bottom;
+                return Top + Bottom;
             }
         }
 
@@ -245,7 +256,7 @@ namespace BlazeraLib
         {
             get
             {
-                return this.Left + this.Right;
+                return Left + Right;
             }
         }
     }

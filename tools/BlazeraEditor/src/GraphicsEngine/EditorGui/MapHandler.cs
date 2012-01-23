@@ -29,8 +29,8 @@ namespace BlazeraEditor
 
         #region Constants
 
-        public const float DEFAULT_SIZE = 14F;
-        static readonly Vector2f SIZE = new Vector2f(DEFAULT_SIZE, DEFAULT_SIZE) * GameDatas.TILE_SIZE;
+        public const float DEFAULT_SIZE = 18F;
+        static readonly Vector2f SIZE = new Vector2f(DEFAULT_SIZE + 5F, DEFAULT_SIZE) * GameData.TILE_SIZE;
 
         static readonly Color CURRENT_SELECTED_OBJECT_COLOR = new Color(238, 64, 0, 192);
 
@@ -76,8 +76,8 @@ namespace BlazeraEditor
         UpDownBox VelocityUpDownBox = new UpDownBox((Int32)PlayerHdl.Vlad.Velocity, 500, 25, 0, "Velocity");
         HAutoSizeBox PosBox = new HAutoSizeBox();
         VAutoSizeBox PosUpDownBox = new VAutoSizeBox();
-        UpDownBox XPosUpDownBox = new UpDownBox(0, 99, GameDatas.TILE_SIZE, 0, "X");
-        UpDownBox YPosUpDownBox = new UpDownBox(0, 99, GameDatas.TILE_SIZE, 0, "Y");
+        UpDownBox XPosUpDownBox = new UpDownBox(0, 99, GameData.TILE_SIZE, 0, "X");
+        UpDownBox YPosUpDownBox = new UpDownBox(0, 99, GameData.TILE_SIZE, 0, "Y");
         Button PosApplyButton = new Button("Apply");
 
         VAutoSizeBox ViewBox = new VAutoSizeBox(false, "View");
@@ -183,12 +183,12 @@ namespace BlazeraEditor
             if (e.IsChecked)
             {
                 foreach (BBoundingBox BB in PlayerHdl.Vlad.BBoundingBoxes)
-                    BB.IsActive = false;
+                    BB.Activate(false);
             }
             else
             {
                 foreach (BBoundingBox BB in PlayerHdl.Vlad.BBoundingBoxes)
-                    BB.IsActive = true;
+                    BB.Activate(true);
             }
         }
 
@@ -295,6 +295,19 @@ namespace BlazeraEditor
             SelectTileSetButton.Clicked += new ClickEventHandler(SelectTileSetButton_Clicked);
             TilePencilBox.AddItem(SelectTileSetButton);
             #endregion
+
+            OnFocusGain += new WindowedWidgetEventHandler(MapHandler_OnFocusGain);
+            OnFocusLoss += new WindowedWidgetEventHandler(MapHandler_OnFocusLoss);
+        }
+
+        void MapHandler_OnFocusLoss(WindowedWidget sender, WindowedWidgetEventArgs e)
+        {
+            MapBox.RunMapUpdate(false);
+        }
+
+        void MapHandler_OnFocusGain(WindowedWidget sender, WindowedWidgetEventArgs e)
+        {
+            MapBox.RunMapUpdate(true);
         }
 
         public override void Init()
@@ -438,22 +451,22 @@ namespace BlazeraEditor
             CurrentSelectedObjectExternalBoundingBoxes.Clear();
 
             if (CurrentSelectedObject != null)
-                CurrentSelectedObject.Skin.Color = SelectedObjects.ContainsValue(CurrentSelectedObject) ? SelectorTool.OBJECT_SELECTION_COLOR : Color.White;
+                CurrentSelectedObject.Color = SelectedObjects.ContainsValue(CurrentSelectedObject) ? SelectorTool.OBJECT_SELECTION_COLOR : Color.White;
 
             CurrentSelectedObject = SelectedObjects[((Button)sender).Text];
 
-            CurrentSelectedObjectTexture = new BlazeraLib.Texture(SelectedObjects[((Button)sender).Text].Skin);
+            CurrentSelectedObjectTexture = new BlazeraLib.Texture(SelectedObjects[((Button)sender).Text].GetSkinTexture());
             CurrentSelectedObjectTexture.Color = Color.White;
             SelectorToolCurrentObjectDisplayScreen.SetCurrentPicture(CurrentSelectedObjectTexture);
 
-            CurrentSelectedObject.Skin.Color = CURRENT_SELECTED_OBJECT_COLOR;
+            CurrentSelectedObject.Color = CURRENT_SELECTED_OBJECT_COLOR;
 
             SelectorToolCurrentObjectConfigurableBox.SetCurrentConfiguration(CurrentSelectedObject.GetType().Name);
             SelectorToolElementXUpDownBox.SetCurrentValue((Int32)CurrentSelectedObject.Position.X);
             SelectorToolElementYUpDownBox.SetCurrentValue((Int32)CurrentSelectedObject.Position.Y);
 
             SelectorToolElementEventTextList.Clear();
-            foreach (EBoundingBox BB in CurrentSelectedObject.EventBoundingBoxes[EventBoundingBoxType.External])
+            foreach (EBoundingBox BB in CurrentSelectedObject.GetEventBoundingBoxes(EventBoundingBoxType.External))
                 AddBoundingBoxToCurrentSelectedObject(BB);
         }
 
@@ -551,7 +564,7 @@ namespace BlazeraEditor
                 MapBox.UpdateUnlockedViewMove();
         }
 
-        public override void Draw(RenderWindow window)
+        public override void Draw(RenderTarget window)
         {
             base.Draw(window);
 

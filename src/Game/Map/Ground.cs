@@ -65,49 +65,49 @@ namespace BlazeraLib
         public void SetCell(Int32 x, Int32 y, Cell cell)
         {
             cell.Position = new Vector2f(
-                GameDatas.TILE_SIZE * x,
-                GameDatas.TILE_SIZE * y);
+                GameData.TILE_SIZE * x,
+                GameData.TILE_SIZE * y);
             CellSet[y, x] = cell;
         }
 
         public override void ToScript()
         {
-            this.Sw = new ScriptWriter(this);
+            Sw = new ScriptWriter(this);
 
-            this.Sw.InitObject();
+            Sw.InitObject();
 
             base.ToScript();
 
-            this.Sw.WriteMethod("Init", new String[]
+            Sw.WriteMethod("Init", new String[]
             {
-                this.Width.ToString(),
-                this.Height.ToString()
+                Width.ToString(),
+                Height.ToString()
             });
 
-            for (Int32 y = 0; y < this.Height; y++)
-                for (Int32 x = 0; x < this.Width; x++)
-                    if (this.GetBlock(x, y))
-                        this.Sw.WriteMethod("AddBlock", new String[]
+            for (Int32 y = 0; y < Height; y++)
+                for (Int32 x = 0; x < Width; x++)
+                    if (GetBlock(x, y))
+                        Sw.WriteMethod("AddBlock", new String[]
                         {
                             x.ToString(),
                             y.ToString()
                         });
             
-            this.Sw.EndObject();
+            Sw.EndObject();
 
-            ScriptWriter.WriteToFile("Ground/Ground_" + this.Type, GetTileSetStr());
+            ScriptWriter.WriteToFile("Ground/Ground_" + Type, GetTileSetStr());
         }
 
         #region GroundFile
 
         String GetTileSetStr()
         {
-            Char[] tileSet = new Char[this.Width * this.Height * 20];
+            Char[] tileSet = new Char[Width * Height * 20];
             int tot = 0;
 
-            for (Int32 y = 0; y < this.Height; y++)
+            for (Int32 y = 0; y < Height; y++)
             {
-                for (Int32 x = 0; x < this.Width; x++)
+                for (Int32 x = 0; x < Width; x++)
                 {
                     if (GetCell(x, y) == null || GetCell(x, y).GetTileCount() == 0)
                     {
@@ -166,17 +166,17 @@ namespace BlazeraLib
 
         }
 
-        public void Draw(RenderWindow window)
+        public void Draw(RenderTarget window)
         {
-            int left = (int)(window.GetView().Center.X - window.GetView().Size.X / 2) / GameDatas.TILE_SIZE - GameDatas.GROUND_DRAW_MARGIN;
-            int top = (int)(window.GetView().Center.Y - window.GetView().Size.Y / 2) / GameDatas.TILE_SIZE - GameDatas.GROUND_DRAW_MARGIN;
-            int right = (int)(window.GetView().Center.X + window.GetView().Size.X / 2) / GameDatas.TILE_SIZE + GameDatas.GROUND_DRAW_MARGIN;
-            int bottom = (int)(window.GetView().Center.Y + window.GetView().Size.Y / 2) / GameDatas.TILE_SIZE + GameDatas.GROUND_DRAW_MARGIN;
+            int left = (int)(window.GetView().Center.X - window.GetView().Size.X / 2) / GameData.TILE_SIZE - GameData.GROUND_DRAW_MARGIN;
+            int top = (int)(window.GetView().Center.Y - window.GetView().Size.Y / 2) / GameData.TILE_SIZE - GameData.GROUND_DRAW_MARGIN;
+            int right = (int)(window.GetView().Center.X + window.GetView().Size.X / 2) / GameData.TILE_SIZE + GameData.GROUND_DRAW_MARGIN;
+            int bottom = (int)(window.GetView().Center.Y + window.GetView().Size.Y / 2) / GameData.TILE_SIZE + GameData.GROUND_DRAW_MARGIN;
 
             int minLeft = 0;
             int minTop = 0;
-            int maxRight = this.Width;
-            int maxBottom = this.Height;
+            int maxRight = Width;
+            int maxBottom = Height;
 
             if (left < minLeft)
                 left = minLeft;
@@ -226,7 +226,7 @@ namespace BlazeraLib
                 AddBoundingBox(BB);
 
             foreach (EventBoundingBoxType BBT in Enum.GetValues(typeof(EventBoundingBoxType)))
-                foreach (EBoundingBox BB in obj.EventBoundingBoxes[BBT])
+                foreach (EBoundingBox BB in obj.GetActiveEventBoundingBoxes(BBT))
                     AddBoundingBox(BB);
         }
 
@@ -234,14 +234,14 @@ namespace BlazeraLib
         {
             for (int y = BB.TTop; y < BB.TBottom + 1; ++y)
                 for (int x = BB.TLeft; x < BB.TRight + 1; ++x)
-                    GetCell(x, y).AddBoundingBox(BB.Z, BB);
+                    GetCell(x, y).AddBoundingBox(BB);
         }
 
         private void AddBoundingBox(EBoundingBox BB)
         {
             for (int y = BB.TTop; y < BB.TBottom + 1; ++y)
                 for (int x = BB.TLeft; x < BB.TRight + 1; ++x)
-                    GetCell(x, y).AddBoundingBox(BB.Z, BB);
+                    GetCell(x, y).AddBoundingBox(BB);
         }
 
         public void RemoveObjectBoundingBoxes(WorldObject obj)
@@ -253,7 +253,7 @@ namespace BlazeraLib
                 RemoveBoundingBox(BB);
 
             foreach (EventBoundingBoxType BBT in Enum.GetValues(typeof(EventBoundingBoxType)))
-                foreach (EBoundingBox BB in obj.EventBoundingBoxes[BBT])
+                foreach (EBoundingBox BB in obj.GetActiveEventBoundingBoxes(BBT))
                     RemoveBoundingBox(BB);
         }
 
@@ -261,14 +261,14 @@ namespace BlazeraLib
         {
             for (int y = BB.TTop; y < BB.TBottom + 1; ++y)
                 for (int x = BB.TLeft; x < BB.TRight + 1; ++x)
-                    GetCell(x, y).RemoveBoundingBox(BB.Z, BB);
+                    GetCell(x, y).RemoveBoundingBox(BB);
         }
 
         private void RemoveBoundingBox(EBoundingBox BB)
         {
             for (int y = BB.TTop; y < BB.TBottom + 1; ++y)
                 for (int x = BB.TLeft; x < BB.TRight + 1; ++x)
-                    GetCell(x, y).RemoveBoundingBox(BB.Z, BB);
+                    GetCell(x, y).RemoveBoundingBox(BB);
         }
 
         public IEnumerator<BBoundingBox> GetBBoundingBoxesEnumerator(Int32 x, Int32 y, Int32 z)

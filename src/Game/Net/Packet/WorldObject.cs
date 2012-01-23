@@ -30,7 +30,7 @@
             AddGuid(dObj.Guid);
             AddVector2(dObj.Position);
             AddDirection(dObj.Direction);
-            AddDirectionStates(dObj.DirectionStates);
+           // AddDirectionStates(dObj.DirectionStates); TODO ==> fix it
         }
     }
 

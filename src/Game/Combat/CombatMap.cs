@@ -21,6 +21,7 @@ namespace BlazeraLib
 
         public Combat Combat { get; private set; }
 
+        //!\\ TODO: grid shape effect collection for clear opti
         GridShape Grid;
 
         BlazeraLib.Game.Pathfinding.Pathfinding Pathfinding;
@@ -39,16 +40,18 @@ namespace BlazeraLib
             Ground = new Ground(map.Ground);
 
             SetPhysicsIsRunning(false);
+            ActivateLightEngine(false);
 
-            foreach (WorldObject wObj in map.Objects)
+            //!\\ TMP //!\\
+            foreach (WorldObject wObj in map.GetObjects())
             {
-                if (wObj is Player)
+                if (wObj is Player || wObj is Door || wObj is NPC || wObj is Platform)
                     continue;
 
-                ((WorldObject)System.Activator.CreateInstance(wObj.GetType(), wObj)).SetMap(this, wObj.Position.X, wObj.Position.Y);
+                ((WorldObject)wObj.Clone()).SetMap(this, wObj.Position.X, wObj.Position.Y);
             }
 
-            Grid = new GridShape(CELL_SIZE, (uint)Width * (uint)(GameDatas.TILE_SIZE / CELL_SIZE), (uint)Height * (uint)(GameDatas.TILE_SIZE / CELL_SIZE));
+            Grid = new GridShape(CELL_SIZE, (uint)Width * (uint)(GameData.TILE_SIZE / CELL_SIZE), (uint)Height * (uint)(GameData.TILE_SIZE / CELL_SIZE));
             AddObjectToDraw(DrawOrder.Grid, Grid);
 
             Combat = new Combat(this);
@@ -94,7 +97,7 @@ namespace BlazeraLib
             p2.Move(new Vector2I(8, 10));
             t1.AddCombatant(p2);
 
-            MapEffectManager.Instance.AddEffect(new MapTextEffect("2044", Color.Blue), new Vector2f(200, 200));
+            MapEffectManager.Instance.AddEffect(new TextMapEffect("2044", Color.Blue), new Vector2f(200, 200));
 
             Combat.AddTeam(t1);
             #endregion
@@ -138,12 +141,12 @@ namespace BlazeraLib
 
         public override int Width
         {
-            get { return base.Width * GameDatas.TILE_SIZE / (int)CELL_SIZE; }
+            get { return base.Width * GameData.TILE_SIZE / (int)CELL_SIZE; }
         }
 
         public override int Height
         {
-            get { return base.Height * GameDatas.TILE_SIZE / (int)CELL_SIZE; }
+            get { return base.Height * GameData.TILE_SIZE / (int)CELL_SIZE; }
         }
 
         public override Vector2f GetPositionFromCell(Vector2I cell)
@@ -162,8 +165,7 @@ namespace BlazeraLib
 
             double alphaValue = AlphaMode ? ALPHA_MODE_VALUE : 100D;
             foreach (WorldObject wObj in Objects)
-                if (wObj.Skin != null) // tmp
-                wObj.Skin.SetAlpha(alphaValue);
+                wObj.SetAlpha(alphaValue);
         } 
     }
 }

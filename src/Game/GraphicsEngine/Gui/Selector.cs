@@ -94,7 +94,7 @@ namespace BlazeraLib
             OutlineColor = outlineColor;
         }
 
-        public override void Draw(RenderWindow window)
+        public override void Draw(RenderTarget window)
         {
             if (IsActive || ConstantDrawing)
                 window.Draw(SelectionShape);

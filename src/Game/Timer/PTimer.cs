@@ -29,18 +29,18 @@ namespace BlazeraLib
 
         public PTimer(double period, PTimerAction action)
         {
-            this.Period = period;
-            this.Action = action;
-            this.Dt = 0;
+            Period = period;
+            Action = action;
+            Dt = 0;
         }
 
         public void Update(Time dt)
         {
-            this.Dt += dt.Value;
-            if (this.Dt > this.Period)
+            Dt += dt.Value;
+            if (Dt > Period)
             {
-                this.Dt -= this.Period;
-                this.Action.Invoke();
+                Dt -= Period;
+                Action.Invoke();
             }
         }
 

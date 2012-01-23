@@ -4,8 +4,8 @@
     {
         #region Constants
 
-        const double DEFAULT_EFFECT_DELAY = .0002D;
-        const uint DEFAULT_EFFECT_COUNT = 600;
+        const double DEFAULT_EFFECT_DELAY = .2D;
+        const uint DEFAULT_EFFECT_COUNT = 10;
 
         #endregion
 

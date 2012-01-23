@@ -7,7 +7,8 @@ using SFML.Window;
 
 namespace BlazeraLib
 {
-    public class RoundedRectangleShape
+    //!\\ TODO : derive from BaseDrawableShape, rearange BaseDrawableShape //!\\
+    public class RoundedRectangleShape : BaseDrawable, IShape
     {
         const UInt32 BASE_POINT_COUNT = 5;
         const Byte BACKGROUND_COLOR_ALPHA = 192;
@@ -25,14 +26,14 @@ namespace BlazeraLib
         Shape Effect;
         Shape ShadowEffect;
 
-        Vector2f Position;
-        Vector2f Dimension;
-
         float Radius;
         float OutlineThickness;
 
+        Color EffectBeginColor;
+        Color EffectEndColor;
         Color BackgroundColor;
         Color OutlineColor;
+        Color ShadowEffectColor;
 
         Boolean ShadowMode;
         Vector2f ShadowOffset;
@@ -44,7 +45,8 @@ namespace BlazeraLib
             Color backgroundColor,
             Color outlineColor,
             Boolean shadowMode = false,
-            float shadowOffset = DEFAULT_SHADOW_OFFSET)
+            float shadowOffset = DEFAULT_SHADOW_OFFSET,
+            bool alphaMode = false)
         {
             Background = new Shape();
             Background.EnableFill(true);
@@ -68,10 +70,24 @@ namespace BlazeraLib
 
             AdjustSize();
 
+            EffectBeginColor = EFFECT_BEGIN_COLOR;
+            EffectEndColor = EFFECT_END_COLOR;
+            ShadowEffectColor = SHADOW_EFFECT_COLOR;
+
             BackgroundColor = backgroundColor;
-            BackgroundColor.A = BACKGROUND_COLOR_ALPHA;
+            if (!alphaMode)
+                BackgroundColor.A = BACKGROUND_COLOR_ALPHA;
+            else
+            {
+                EffectBeginColor.A = BackgroundColor.A;
+                EffectEndColor.A = BackgroundColor.A;
+                ShadowEffectColor.A = BackgroundColor.A;
+            }
             OutlineColor = outlineColor;
-            OutlineColor.A = BACKGROUND_COLOR_ALPHA;
+            if (!alphaMode)
+                OutlineColor.A = BACKGROUND_COLOR_ALPHA;
+            else
+                OutlineColor.A = BackgroundColor.A;
 
             Background.OutlineThickness = OutlineThickness;
             Effect.OutlineThickness = OutlineThickness;
@@ -80,12 +96,16 @@ namespace BlazeraLib
             Build();
         }
 
+        public override object Clone()
+        {
+            throw new NotImplementedException();
+        }
+
         void AdjustSize()
         {
-            if (Dimension.X < MIN_SIZE)
-                Dimension.X = MIN_SIZE;
-            if (Dimension.Y < MIN_SIZE)
-                Dimension.Y = MIN_SIZE;
+            Dimension = new Vector2f(
+                Math.Max(Dimension.X, MIN_SIZE),
+                Math.Max(Dimension.Y, MIN_SIZE));
 
             while (Dimension.X < Radius * 2F + DIFFERENCE_RADIUS_SIZE_LIMIT)
                 --Radius;
@@ -120,7 +140,7 @@ namespace BlazeraLib
                 Vector2f center = GetCenter(CornerType.TopLeft);
 
                 Background.AddPoint(center + offset * Radius, BackgroundColor, OutlineColor);
-                Effect.AddPoint(center + offset * Radius, EFFECT_BEGIN_COLOR, EFFECT_END_COLOR);
+                Effect.AddPoint(center + offset * Radius, EffectBeginColor, EffectEndColor);
                 ShadowEffect.AddPoint(center + offset * Radius, SHADOW_EFFECT_COLOR, SHADOW_EFFECT_COLOR);
             }
 
@@ -133,7 +153,7 @@ namespace BlazeraLib
                 Vector2f center = GetCenter(CornerType.TopRight);
 
                 Background.AddPoint(center + offset * Radius, BackgroundColor, OutlineColor);
-                Effect.AddPoint(center + offset * Radius, EFFECT_BEGIN_COLOR, EFFECT_END_COLOR);
+                Effect.AddPoint(center + offset * Radius, EffectBeginColor, EffectEndColor);
                 ShadowEffect.AddPoint(center + offset * Radius, SHADOW_EFFECT_COLOR, SHADOW_EFFECT_COLOR);
             }
             // bottom right
@@ -145,7 +165,7 @@ namespace BlazeraLib
                 Vector2f center = GetCenter(CornerType.BottomRight);
 
                 Background.AddPoint(center + offset * Radius, BackgroundColor, OutlineColor);
-                Effect.AddPoint(center + offset * Radius, EFFECT_END_COLOR, EFFECT_END_COLOR);
+                Effect.AddPoint(center + offset * Radius, EffectEndColor, EffectEndColor);
                 ShadowEffect.AddPoint(center + offset * Radius, SHADOW_EFFECT_COLOR, SHADOW_EFFECT_COLOR);
             }
 
@@ -158,21 +178,24 @@ namespace BlazeraLib
                 Vector2f center = GetCenter(CornerType.BottomLeft);
 
                 Background.AddPoint(center + offset * Radius, BackgroundColor, OutlineColor);
-                Effect.AddPoint(center + offset * Radius, EFFECT_END_COLOR, EFFECT_END_COLOR);
+                Effect.AddPoint(center + offset * Radius, EffectEndColor, EffectEndColor);
                 ShadowEffect.AddPoint(center + offset * Radius, SHADOW_EFFECT_COLOR, SHADOW_EFFECT_COLOR);
             }
         }
 
-        public void SetPosition(Vector2f position)
+        public override Vector2f Position
         {
-            Position = Vector2I.FromVector2(position).ToVector2() + GetBasePosition();
+            set
+            {
+                base.Position = Vector2I.FromVector2(value).ToVector2();
 
-            Background.Position = Position;
-            Effect.Position = Position;
-            ShadowEffect.Position = Position + ShadowOffset;
+                Background.Position = Position + GetBasePosition();
+                Effect.Position = Position + GetBasePosition();
+                ShadowEffect.Position = Position + ShadowOffset + GetBasePosition();
+            }
         }
 
-        public void Draw(RenderWindow window)
+        public override void Draw(RenderTarget window)
         {
             if (ShadowMode)
                 window.Draw(ShadowEffect);

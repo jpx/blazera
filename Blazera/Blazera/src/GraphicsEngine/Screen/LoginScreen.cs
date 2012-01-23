@@ -43,7 +43,7 @@ namespace Blazera
             Gui.AddGameWidget(Menu);
         }
 
-        public override void Init()
+        public override void Init(ScreenArgs args = null)
         {
             Gui.Init();
 
@@ -54,8 +54,8 @@ namespace Blazera
         {
             NextScreen = base.Run(dt);
 
-            NextScreen = ScreenType.GameScreen;
-            GameSession.Instance.Init(true);
+          //  NextScreen = ScreenType.MainTitleScreen;
+          //  GameSession.Instance.Init(true);
 
             return NextScreen;
         }

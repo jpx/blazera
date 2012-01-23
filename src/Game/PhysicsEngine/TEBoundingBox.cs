@@ -7,8 +7,8 @@ namespace BlazeraLib
 {
     public class TEBoundingBox : BoundingBox
     {
-        public TEBoundingBox(WorldObject holder, int left, int top, int right, int bottom) :
-            base(holder, left, top, right, bottom)
+        public TEBoundingBox(WorldObject holder, int left, int top, int right, int bottom, int z = DEFAULT_BASE_Z) :
+            base(holder, left, top, right, bottom, z)
         {
             
         }
@@ -16,7 +16,7 @@ namespace BlazeraLib
         public TEBoundingBox(TEBoundingBox copy, WorldObject holder) :
             base(copy, holder)
         {
-            this.Trigger = copy.Trigger;
+            Trigger = copy.Trigger;
         }
 
         public TEBoundingBox Trigger

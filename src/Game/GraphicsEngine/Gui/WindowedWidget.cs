@@ -7,9 +7,12 @@ using SFML.Window;
 
 namespace BlazeraLib
 {
+    public delegate void WindowedWidgetEventHandler(WindowedWidget sender, WindowedWidgetEventArgs e);
+    public class WindowedWidgetEventArgs { }
+
     public abstract class WindowedWidget : Widget
     {
-        public static readonly Color FOCUSED_COLOR = new Color(64, 64, 255);
+        public static readonly Color FOCUSED_COLOR = Border.DEFAULT_FOCUSED_AMBIENT_COLOR;//new Color(64, 64, 255);
 
         public const float BORDER_WIDTH = 8F;
 
@@ -21,6 +24,12 @@ namespace BlazeraLib
         ValidateEventHandler CurrentValidateEventHandler;
 
         protected String OpeningMode;
+
+        public event WindowedWidgetEventHandler OnFocusGain;
+        bool CallOnFocusGain() { if (OnFocusGain == null) return false; OnFocusGain(this, new WindowedWidgetEventArgs()); return true; }
+
+        public event WindowedWidgetEventHandler OnFocusLoss;
+        bool CallOnFocusLoss() { if (OnFocusLoss == null) return false; OnFocusLoss(this, new WindowedWidgetEventArgs()); return true; }
 
         protected void SetFocusedWindow(WindowedWidget focusedWindow, OpeningInfo openingInfo = null, ValidateEventHandler onValidate = null)
         {
@@ -64,11 +73,29 @@ namespace BlazeraLib
         {
             if (CurrentValidateEventHandler != null)
                 FocusedWindow.Validated -= new ValidateEventHandler(CurrentValidateEventHandler);
+
             FocusedWindow.Closed -= new CloseEventHandler(FocusedWindow_Closed);
+
             FocusedWindow.BackgroundColor = Border.DEFAULT_AMBIENT_COLOR;
-            this.BackgroundColor = FOCUSED_COLOR;
+
+            BackgroundColor = FOCUSED_COLOR;
+
             ((EditorBaseWidget)Root).SetWindowOutDrawing(true, FocusedWindow);
             FocusedWindow = null;
+        }
+
+        public void SetFocused(bool focused)
+        {
+            if (focused)
+            {
+                CallOnFocusGain();
+                BackgroundColor = FOCUSED_COLOR;
+            }
+            else
+            {
+                CallOnFocusLoss();
+                BackgroundColor = Border.DEFAULT_AMBIENT_COLOR;
+            }
         }
 
         protected VAutoSizeBox MainBox { get; set; }
@@ -80,31 +107,31 @@ namespace BlazeraLib
         {
             IsBackgroundColorLinked = true;
 
-            this.Margins = Border.GetWindowBorderWidth();
+            Margins = Border.GetWindowBorderWidth();
 
-            this.Background = new WindowBackground(this.BackgroundDimension, windowTopBorderHeight);
+            Background = new WindowBackground(BackgroundDimension, windowTopBorderHeight);
 
-            this.GetBackground().SetTitle(title);
+            GetBackground().SetTitle(title);
 
-            this.GetBackground().Dragged += new DragEventHandler(WindowBackground_Dragged);
-            this.GetBackground().StateChanged += new StateChangeHandler(WindowedWidget_StateChanged);
+            GetBackground().Dragged += new DragEventHandler(WindowBackground_Dragged);
+            GetBackground().StateChanged += new StateChangeHandler(WindowedWidget_StateChanged);
 
-            this.MainBox = new VAutoSizeBox(true, null, this.Margins);
-            this.MainBox.Position = this.GetGlobalFromLocal(new Vector2f(0F, 0F));
-            this.AddWidget(this.MainBox);
+            MainBox = new VAutoSizeBox(true, null, Margins);
+            MainBox.Position = GetGlobalFromLocal(new Vector2f(0F, 0F));
+            AddWidget(MainBox);
 
-            this.Close();
+            Close();
         }
 
         void WindowedWidget_StateChanged(WindowBackground sender, StateChangeEventArgs e)
         {
-            if (this.GetBackground().State == WindowBackground.EState.Disabled)
-                this.Close();
+            if (GetBackground().State == WindowBackground.EState.Disabled)
+                Close();
 
-            else if (this.GetBackground().State != WindowBackground.EState.Restored)
-                this.MainBox.Close();
+            else if (GetBackground().State != WindowBackground.EState.Restored)
+                MainBox.Close();
             else
-                this.MainBox.Open();
+                MainBox.Open();
         }
 
         public override Boolean OnEvent(BlzEvent evt)
@@ -117,16 +144,16 @@ namespace BlazeraLib
                     {
                         case Keyboard.Key.Return:
 
-                            if (this.Validated == null)
+                            if (Validated == null)
                                 break;
 
-                            this.CallValidated();
+                            CallValidated();
 
                             return true;
 
                         case Keyboard.Key.Escape:
 
-                            this.Close();
+                            Close();
 
                             return true;
                     }
@@ -139,7 +166,7 @@ namespace BlazeraLib
 
         public override Boolean HandleEvent(BlzEvent evt)
         {
-            if (!this.IsEnabled)
+            if (!IsEnabled)
                 return false;
 
             if (FocusedWindowHandleEvent(evt))
@@ -193,16 +220,16 @@ namespace BlazeraLib
 
         protected WindowBackground GetBackground()
         {
-            return (WindowBackground)this.Background;
+            return (WindowBackground)Background;
         }
 
-        public override void Draw(RenderWindow window)
+        public override void Draw(RenderTarget window)
         {
-            if (this.GetBackground().State == WindowBackground.EState.Reduced ||
-                this.GetBackground().State == WindowBackground.EState.Reducing ||
-                this.GetBackground().State == WindowBackground.EState.Restoring)
+            if (GetBackground().State == WindowBackground.EState.Reduced ||
+                GetBackground().State == WindowBackground.EState.Reducing ||
+                GetBackground().State == WindowBackground.EState.Restoring)
             {
-                this.Background.Draw(window);
+                Background.Draw(window);
 
                 return;
             }
@@ -218,26 +245,26 @@ namespace BlazeraLib
 
         public void AddItem(Widget widget, UInt32 level = Box.DEFAULT_ITEM_LEVEL, HAlignment hAlignment = WINDOW_ITEM_DEFAULT_ALIGNMENT)
         {
-            this.MainBox.AddItem(widget, level, hAlignment);
+            MainBox.AddItem(widget, level, hAlignment);
         }
 
         public override void Refresh()
         {
-            if (this.GetBackground() != null &&
-                this.GetBackground().State == WindowBackground.EState.Restored)
-                this.Dimension = this.MainBox.BackgroundDimension;
+            if (GetBackground() != null &&
+                GetBackground().State == WindowBackground.EState.Restored)
+                Dimension = MainBox.BackgroundDimension;
 
-            if (this.Root == null)
+            if (Root == null)
                 return;
 
-            if (this.Left < 0F)
-                this.Left = 0F;
-            if (this.Top < 0F)
-                this.Top = 0F;
-            if (this.BackgroundRight >= this.Root.Window.Width)
-                this.BackgroundRight = this.Root.Window.Width - 1F;
-            if (this.Top + this.GetBackground().TopBorderHeight >= this.Root.Window.Height)
-                this.Top = this.Root.Window.Height - this.GetBackground().TopBorderHeight - 1F;
+            if (Left < 0F)
+                Left = 0F;
+            if (Top < 0F)
+                Top = 0F;
+            if (BackgroundRight >= Root.Window.Width)
+                BackgroundRight = Root.Window.Width - 1F;
+            if (Top + GetBackground().TopBorderHeight >= Root.Window.Height)
+                Top = Root.Window.Height - GetBackground().TopBorderHeight - 1F;
         }
 
         protected void CallConfirmationDialogBox(String[] messages, DialogBox.DOnValidate onValidate)
@@ -258,25 +285,25 @@ namespace BlazeraLib
 
             OpeningMode = null;
 
-            if (this.Background != null)
-                this.GetBackground().State = WindowBackground.EState.Restored;
+            if (Background != null)
+                GetBackground().State = WindowBackground.EState.Restored;
         }
 
         void WindowBackground_Dragged(object sender, DragEventArgs e)
         {
-            this.Position = e.DragValue;
+            Position = e.DragValue;
         }
 
         protected override Vector2f GetBasePosition()
         {
             return new Vector2f(
-                base.GetBasePosition().X + this.Margins * 2F,
-                base.GetBasePosition().Y + this.GetBackground().TopBorderHeight + this.Margins);
+                base.GetBasePosition().X + Margins * 2F,
+                base.GetBasePosition().Y + GetBackground().TopBorderHeight + Margins);
         }
 
         protected override Vector2f GetStructureDimension()
         {
-            return base.GetStructureDimension() + new Vector2f(this.Margins * 4F, this.GetBackground().TopBorderHeight + this.Margins * 3F);
+            return base.GetStructureDimension() + new Vector2f(Margins * 4F, GetBackground().TopBorderHeight + Margins * 3F);
         }
 
         public float Margins { get; set; }

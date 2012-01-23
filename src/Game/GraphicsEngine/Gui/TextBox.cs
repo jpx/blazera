@@ -33,19 +33,19 @@ namespace BlazeraLib
         public TextBox(EInputType inputType = DEFAULT_INPUT_TYPE) :
             base()
         {
-            this.InputType = inputType;
+            InputType = inputType;
 
-            this.Background = new PictureBox(Create.Texture("TextBoxBg"));
+            Background = new PictureBox(Create.Texture("TextBoxBg"));
 
-            this.Label = new Label(null, BlazeraLib.Label.ESize.VSmall);
-            this.AddWidget(this.Label);
+            Label = new Label(null, BlazeraLib.Label.ESize.VSmall);
+            AddWidget(Label);
 
-            this.BackHappened = false;
-            this.IsActive = false;
+            BackHappened = false;
+            IsActive = false;
 
-            this.Dimension *= DEFAULT_BACKGROUND_SCALE_FACTOR;
+            Dimension *= DEFAULT_BACKGROUND_SCALE_FACTOR;
 
-            this.Label.Changed += new ChangeEventHandler(Label_Changed);
+            Label.Changed += new ChangeEventHandler(Label_Changed);
         }
 
         void Label_Changed(object sender, ChangeEventArgs e)
@@ -53,18 +53,18 @@ namespace BlazeraLib
             if (e.Type != ChangeEventArgs.EType.Text)
                 return;
 
-            if (this.TextAdded != null)
-                this.TextAdded(this, new TextAddedEventArgs(((TextChangeEventArgs)e).Text));
+            if (TextAdded != null)
+                TextAdded(this, new TextAddedEventArgs(((TextChangeEventArgs)e).Text));
         }
 
         public override void Refresh()
         {
-            this.Label.Position = this.GetGlobalFromLocal(new Vector2f(TEXT_HMARGINS, this.Halfsize.Y - this.Label.Size / 2));
+            Label.Position = GetGlobalFromLocal(new Vector2f(TEXT_HMARGINS, Halfsize.Y - Label.Size / 2));
         }
 
         public override void Update(Time dt)
         {
-            this.BackHappened = false;
+            BackHappened = false;
 
             base.Update(dt);
         }
@@ -78,54 +78,54 @@ namespace BlazeraLib
 
             if (evt.Type == EventType.MouseButtonPressed)
             {
-                if (this.Contains(Mouse.GetPosition(Root.Window).X,
+                if (Contains(Mouse.GetPosition(Root.Window).X,
                                   Mouse.GetPosition(Root.Window).Y))
                 {
-                    this.IsActive = true;
+                    IsActive = true;
 
                     return true;
                 }
                 else
                 {
-                    if (this.IsActive)
+                    if (IsActive)
                     {
-                        this.IsActive = false;
+                        IsActive = false;
 
                         return true;
                     }
                 }
             }
 
-            if (evt.Type == EventType.KeyPressed && this.IsActive)
+            if (evt.Type == EventType.KeyPressed && IsActive)
             {
                 if (evt.Key.Code == Keyboard.Key.Back)
                 {
-                    this.RemoveLast();
+                    RemoveLast();
 
-                    this.BackHappened = true;
+                    BackHappened = true;
 
                     return true;
                 }
 
                 if (evt.Key.Code == Keyboard.Key.Escape || evt.Key.Code == Keyboard.Key.Return)
                 {
-                    this.IsActive = false;
+                    IsActive = false;
 
                     return true;
                 }
 
                 if (evt.Key.Code == Keyboard.Key.Delete)
                 {
-                    this.Reset();
+                    Reset();
 
                     return true;
                 }
             }
 
-            if (evt.Type == EventType.TextEntered && this.IsActive)
+            if (evt.Type == EventType.TextEntered && IsActive)
             {
-                if (!this.BackHappened &&
-                    this.Add((char)evt.Text.Unicode))
+                if (!BackHappened &&
+                    Add((char)evt.Text.Unicode))
                     return true;
             }
             
@@ -134,7 +134,7 @@ namespace BlazeraLib
 
         private Boolean IsValidChar(Char c)
         {
-            switch (this.InputType)
+            switch (InputType)
             {
                 case EInputType.All:
                     return true;
@@ -147,7 +147,7 @@ namespace BlazeraLib
                     Regex numericPattern = new Regex("[0-9-]");
 
                     if (c == '-' &&
-                        (this.Text.Contains('-') || this.Text.Length != 0))
+                        (Text.Contains('-') || Text.Length != 0))
                         return false;
 
                     return numericPattern.IsMatch(c.ToString());
@@ -164,15 +164,15 @@ namespace BlazeraLib
 
         public Boolean Add(char c)
         {
-            if (!this.IsValidChar(c))
+            if (!IsValidChar(c))
                 return false;
 
-            this.Text += c;
-            this.Label.Text += c;
+            Text += c;
+            Label.Text += c;
 
-            while (this.Label.Dimension.X > this.Dimension.X - 2 * TEXT_HMARGINS)
+            while (Label.Dimension.X > Dimension.X - 2 * TEXT_HMARGINS)
             {
-                this.Label.Text = this.Label.Text.Substring(1, this.Label.Text.Length - 1);
+                Label.Text = Label.Text.Substring(1, Label.Text.Length - 1);
             }
 
             return true;
@@ -184,7 +184,7 @@ namespace BlazeraLib
 
             foreach (Char c in str)
             {
-                succeeded &= this.Add(c);
+                succeeded &= Add(c);
             }
 
             return succeeded;
@@ -192,26 +192,26 @@ namespace BlazeraLib
 
         private void RemoveLast()
         {
-            if (this.Text.Length == 0 || this.Label.Text.Length == 0)
+            if (Text.Length == 0 || Label.Text.Length == 0)
             {
                 return;
             }
 
-            this.Text = this.Text.Remove(this.Text.Length - 1);
+            Text = Text.Remove(Text.Length - 1);
 
-            this.Label.Text = this.Label.Text.Remove(this.Label.Text.Length - 1);
+            Label.Text = Label.Text.Remove(Label.Text.Length - 1);
 
-            if (this.Text.Length != this.Label.Text.Length)
+            if (Text.Length != Label.Text.Length)
             {
-                this.Label.Text = this.Text.Substring(this.Text.Length - this.Label.Text.Length - 1,
-                                                                  this.Label.Text.Length + 1);
+                Label.Text = Text.Substring(Text.Length - Label.Text.Length - 1,
+                                                                  Label.Text.Length + 1);
             }
         }
 
         public override void Reset()
         {
-            this.Text = "";
-            this.Label.Text = "";
+            Text = "";
+            Label.Text = "";
         }
 
         public void Reset(String text)
@@ -223,14 +223,14 @@ namespace BlazeraLib
 
         public void SetFont(String font)
         {
-            this.Label.Font = new Font(GameDatas.DATAS_DEFAULT_PATH + "/fonts/" + font + ".ttf");
+            Label.Font = new Font(GameData.DATAS_DEFAULT_PATH + "/fonts/" + font + ".ttf");
         }
 
         public String Text { get; private set; }
 
         public Boolean TextIsValid()
         {
-            return (this.Text != null && this.Text.Trim() != "");
+            return (Text != null && Text.Trim() != "");
         }
 
         private Boolean BackHappened { get; set; }
@@ -243,16 +243,16 @@ namespace BlazeraLib
             {
                 _isActive = value;
 
-                if (this.IsActive)
+                if (IsActive)
                 {
                     Parent.Focused = this;
-                    ((PictureBox)this.Background).Texture.Color = new Color(128, 255, 128);
+                    ((PictureBox)Background).Texture.Color = new Color(128, 255, 128);
                 }
                 else
                 {
                     if (Parent != null)
                         Parent.Focused = null;
-                    ((PictureBox)this.Background).Texture.Color = Color.White;
+                    ((PictureBox)Background).Texture.Color = Color.White;
                 }
             }
         }
@@ -264,7 +264,7 @@ namespace BlazeraLib
     {
         public TextAddedEventArgs(String textAdded)
         {
-            this.TextAdded = textAdded;
+            TextAdded = textAdded;
         }
 
         public String TextAdded { get; set; }

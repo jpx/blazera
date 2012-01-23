@@ -11,17 +11,20 @@ namespace BlazeraLib
 
     public class WarpPoint
     {
-        static readonly WarpPoint DEFAULT = new WarpPoint("Default", new Vector2f(), GameDatas.DEFAULT_DIRECTION);
+        static readonly WarpPoint DEFAULT = new WarpPoint("Default", new Vector2f(), GameData.DEFAULT_DIRECTION);
 
         public String Name { get; set; }
         public Vector2f Point { get; set; }
         public Direction Direction { get; set; }
+        public int Z { get; set; }
 
-        public WarpPoint(String name, Vector2f point, Direction direction)
+        public WarpPoint(String name, Vector2f point, Direction direction, int z = BaseDrawable.DEFAULT_Z)
         {
-            this.Name = name;
-            this.Point = point;
-            this.Direction = direction;
+            Name = name;
+            Point = point;
+            Direction = direction;
+
+            Z = z;
         }
 
         public WarpPoint(WarpPoint copy)
@@ -29,6 +32,8 @@ namespace BlazeraLib
             Name = copy.Name;
             Point = copy.Point;
             Direction = copy.Direction;
+
+            Z = copy.Z;
         }
 
         public static WarpPoint GetDefault()
@@ -39,25 +44,32 @@ namespace BlazeraLib
 
     #endregion
 
-    public class Map : BaseObject
+    public class Map : BaseObject, IVisitable<Map>, IVisitable<WorldObject>
     {
         public Dictionary<String, WarpPoint> WarpPoints { get; private set; }
         public WarpPoint DefaultWarpPoint { get; private set; }
 
+        #region Members
+
+        LightEffectManager LightEffectManager;
+
+        #endregion Members
+
         public Map() :
             base()
         {
-            this.Objects = new List<WorldObject>();
+            Objects = new List<WorldObject>();
 
-            this.Elements = new List<WorldElement>();
+            Elements = new List<WorldElement>();
 
-            this.Players = new List<Player>();
+            Players = new List<Player>();
 
-            this.NPCs = new List<NPC>();
+            NPCs = new List<NPC>();
 
             ObjectsToDraw = new Dictionary<DrawOrder, List<IDrawable>>();
             foreach (DrawOrder drawOrder in Enum.GetValues(typeof(DrawOrder)))
                 ObjectsToDraw.Add(drawOrder, new List<IDrawable>());
+            ObjectsToSort = new HashSet<IDrawable>();
 
             PlayerEvents = new Dictionary<EBoundingBox, List<EBoundingBox>>();
 
@@ -65,6 +77,8 @@ namespace BlazeraLib
             DefaultWarpPoint = WarpPoint.GetDefault();
 
             SetPhysicsIsRunning();
+
+            LightEffectManager = new LightEffectManager(this);
         }
 
         public Map(Map copy) :
@@ -84,13 +98,16 @@ namespace BlazeraLib
             ObjectsToDraw = new Dictionary<DrawOrder, List<IDrawable>>();
             foreach (DrawOrder drawOrder in Enum.GetValues(typeof(DrawOrder)))
                 ObjectsToDraw.Add(drawOrder, new List<IDrawable>());
+            ObjectsToSort = new HashSet<IDrawable>();
 
             Objects = new List<WorldObject>();
             Elements = new List<WorldElement>();
             Players = new List<Player>();
             NPCs = new List<NPC>();
             foreach (WorldObject wObj in copy.Objects)
-                ((WorldObject)System.Activator.CreateInstance(wObj.GetType(), wObj)).SetMap(this, wObj.Position.X, wObj.Position.Y);
+                ((WorldObject)wObj.Clone()).SetMap(this, wObj.Position.X, wObj.Position.Y);
+
+            LightEffectManager = new LightEffectManager(this, copy.LightEffectManager);
         }
 
         public override void SetType(String type, Boolean creation = false)
@@ -106,15 +123,17 @@ namespace BlazeraLib
 
         public virtual Vector2f GetPositionFromCell(Vector2I cell)
         {
-            return cell.ToVector2() * GameDatas.TILE_SIZE;
+            return cell.ToVector2() * GameData.TILE_SIZE;
         }
 
         public void Init()
         {
-            if (this.MusicType != null)
+            if (MusicType != null)
             {
-                SoundManager.Instance.PlayMusic(this.MusicType);
+                SoundManager.Instance.PlayMusic(MusicType);
             }
+
+            LightEffectManager.Init();
         }
 
         #region WarpPoint
@@ -126,13 +145,13 @@ namespace BlazeraLib
 
         public void AddWarpPoint(WarpPoint warpPoint, Boolean defaultWarpPoint = false)
         {
-            if (this.WarpPoints.Count == 0 || defaultWarpPoint)
-                this.DefaultWarpPoint = warpPoint;
+            if (WarpPoints.Count == 0 || defaultWarpPoint)
+                DefaultWarpPoint = warpPoint;
 
-            if (this.WarpPoints.ContainsKey(warpPoint.Name))
-                this.WarpPoints[warpPoint.Name] = warpPoint;
+            if (WarpPoints.ContainsKey(warpPoint.Name))
+                WarpPoints[warpPoint.Name] = warpPoint;
             else
-                this.WarpPoints.Add(warpPoint.Name, warpPoint);
+                WarpPoints.Add(warpPoint.Name, warpPoint);
         }
 
         public Boolean RemoveWarpPoint(String warpPointName)
@@ -153,11 +172,11 @@ namespace BlazeraLib
         public WarpPoint GetWarpPoint(String name = null)
         {
             if (name != null &&
-                this.WarpPoints.ContainsKey(name))
-                return this.WarpPoints[name];
+                WarpPoints.ContainsKey(name))
+                return WarpPoints[name];
 
-            if (this.DefaultWarpPoint != null)
-                return this.DefaultWarpPoint;
+            if (DefaultWarpPoint != null)
+                return DefaultWarpPoint;
 
             return null;
         }
@@ -179,31 +198,31 @@ namespace BlazeraLib
 
         public override void ToScript()
         {
-            this.Sw = new ScriptWriter(this);
+            Sw = new ScriptWriter(this);
 
-            this.Sw.InitObject();
+            Sw.InitObject();
 
             base.ToScript();
 
             Sw.WriteProperty("Ground", "Create:Ground(\"" + Ground.Type + "\")");
             Ground.ToScript();
 
-            foreach (WorldElement element in this.Elements)
+            foreach (WorldElement element in Elements)
             {
-                this.Sw.WriteObjectCreation(element);
+                Sw.WriteObjectCreation(element);
 
-                String str = element.Id + ":SetMap(" + this.Type + ", " + element.Position.X.ToString() + ", " + element.Position.Y.ToString();
-                this.Sw.WriteLine(ScriptWriter.GetStrMethod(
+                String str = element.Id + ":SetMap(" + Type + ", " + element.Position.X.ToString() + ", " + element.Position.Y.ToString();
+                Sw.WriteLine(ScriptWriter.GetStrMethod(
                     element.Id,
                     "SetMap",
                     new String[]
                     {
-                        this.LongType,
+                        LongType,
                         element.Position.X.ToString(),
                         element.Position.Y.ToString()
                     }));
 
-                foreach (EBoundingBox BB in element.EventBoundingBoxes[EventBoundingBoxType.External])
+                foreach (EBoundingBox BB in element.GetEventBoundingBoxes(EventBoundingBoxType.External))
                     Sw.WriteLine(BB.ToScript());
             }
 
@@ -215,7 +234,7 @@ namespace BlazeraLib
                     ScriptWriter.GetStrOfDirection(warpPoint.Direction)
                 });
 
-            this.Sw.EndObject();
+            Sw.EndObject();
         }
 
         #endregion
@@ -224,6 +243,8 @@ namespace BlazeraLib
 
         public virtual void Update(Time dt)
         {
+            LightEffectManager.Update(dt);
+
             MapEffectManager.Instance.Update(dt);
             while (!MapEffectManager.Instance.IsEmpty())
             {
@@ -256,51 +277,36 @@ namespace BlazeraLib
 
         #region Draw
 
-        protected void DrawGround(RenderWindow window)
+        protected void DrawGround(RenderTarget window)
         {
             Ground.Draw(window);
         }
 
-        //!\\ mettre en place un dico<draworder, list> permanent pour une opti (trier uniquement perso en mouvement [et ajoutes])
-        protected void DrawObjects(RenderWindow window)
+        void DrawObjects(RenderTarget window)
         {
-            Dictionary<DrawOrder, List<IDrawable>> drawingObjects = new Dictionary<DrawOrder, List<IDrawable>>();
+            SortDrawingObjects(ObjectsToDraw[DrawOrder.Normal]);
             foreach (DrawOrder drawOrder in Enum.GetValues(typeof(DrawOrder)))
-                drawingObjects.Add(drawOrder, new List<IDrawable>());
-
-            IEnumerator<WorldObject> wObjects = this.Objects.GetEnumerator();
-            while (wObjects.MoveNext())
-            {
-                WorldObject wObj = wObjects.Current;
-
-                if (!wObj.IsVisible)
-                    continue;
-
-                if (!ViewContainsObject(window, wObj))
-                    continue;
-
-                drawingObjects[wObj.DrawOrder].Add(wObj);
-            }
-
-            foreach (DrawOrder drawOrder in ObjectsToDraw.Keys)
                 foreach (IDrawable iDrawable in ObjectsToDraw[drawOrder])
-                    drawingObjects[drawOrder].Add(iDrawable);
-
-            SortDrawingObjects(drawingObjects[DrawOrder.Normal]);
-            foreach (DrawOrder drawOrder in Enum.GetValues(typeof(DrawOrder)))
-                foreach (IDrawable iDrawable in drawingObjects[drawOrder])
-                    iDrawable.Draw(window);
+                   // if (ViewContainsObject(window, iDrawable)) //!\\ decreases perf' //!\\
+                        iDrawable.Draw(window);
         }
 
-        public virtual void Draw(RenderWindow window)
+        void DrawLightEffects(RenderTarget window)
+        {
+            LightEffectManager.Draw(window);
+        }
+
+        public virtual void Draw(RenderTarget window)
         {
             DrawGround(window);
 
             DrawObjects(window);
+
+            DrawLightEffects(window);
         }
 
         const float OBJECT_DRAW_MARGIN = 10F;
-        Boolean ViewContainsObject(RenderWindow window, WorldObject wObj)
+        Boolean ViewContainsObject(RenderTarget window, IDrawable drawable)
         {
             Vector2f viewTopLeft = window.GetView().Center - window.GetView().Size / 2F;
             Vector2f viewBottomRight = viewTopLeft + window.GetView().Size;
@@ -311,11 +317,13 @@ namespace BlazeraLib
                 viewBottomRight.X + OBJECT_DRAW_MARGIN,
                 viewBottomRight.Y + OBJECT_DRAW_MARGIN);
 
+            FloatRect objRect = drawable.GetVisibleRect();
+
             return !(
-                wObj.Right < viewRect.Left ||
-                wObj.Bottom < viewRect.Top ||
-                wObj.Left >= viewRect.Right ||
-                wObj.Top >= viewRect.Bottom);
+                objRect.Right < viewRect.Left ||
+                objRect.Bottom < viewRect.Top ||
+                objRect.Left >= viewRect.Right ||
+                objRect.Top >= viewRect.Bottom);
         }
 
         protected Dictionary<DrawOrder, List<IDrawable>> ObjectsToDraw;
@@ -323,11 +331,28 @@ namespace BlazeraLib
         public void AddObjectToDraw(DrawOrder drawOrder, IDrawable obj)
         {
             ObjectsToDraw[drawOrder].Add(obj);
+
+            if (drawOrder == DrawOrder.Normal)
+            {
+                ObjectsToSort.Add(obj);
+                obj.OnMove += new MoveEventHandler(obj_OnMove);
+            }
+        }
+
+        void obj_OnMove(IDrawable sender, MoveEventArgs e)
+        {
+            ObjectsToSort.Add(sender);
         }
 
         public bool RemoveObjectToDraw(DrawOrder drawOrder, IDrawable obj)
         {
-            return ObjectsToDraw[drawOrder].Remove(obj);
+            if (!ObjectsToDraw[drawOrder].Remove(obj))
+                return false;
+
+            if (drawOrder == DrawOrder.Normal)
+                obj.OnMove -= new MoveEventHandler(obj_OnMove);
+
+            return true;
         }
 
         public bool ContainsObjectToDraw(DrawOrder drawOrder, IDrawable obj)
@@ -339,56 +364,34 @@ namespace BlazeraLib
             return false;
         }
 
+        HashSet<IDrawable> ObjectsToSort;
         void SortDrawingObjects(List<IDrawable> drawables)
         {
-            Queue<IDrawable> objectsToSort = new Queue<IDrawable>();
-
-            foreach (IDrawable drawable in drawables)
-            {
-#if false
-                if (!(drawable is WorldObject))
-                    continue;
-
-                WorldObject wObj = (WorldObject)drawable;
-
-                if (!wObj.IsMoving())
-                    continue;
-#endif
-                objectsToSort.Enqueue(drawable);
-            }
-
-            while (objectsToSort.Count > 0)
-            {
-                IDrawable drawable = objectsToSort.Dequeue();
+            foreach (IDrawable drawable in ObjectsToSort)
                 if (!drawables.Remove(drawable))
-                    continue;
+                    ObjectsToSort.Remove(drawable);
 
+            ZOrderComparer comparer = new ZOrderComparer();
+            foreach (IDrawable drawable in ObjectsToSort)
+            {
                 int count = 0;
                 for (; count < drawables.Count; ++count)
                 {
-                    if (CompareObjectsZ(drawable, drawables[count]) <= 0)
+                    if (comparer.Compare(drawable, drawables[count]) <= 0)
                         break;
                 }
 
                 drawables.Insert(count, drawable);
             }
-        }
-        // Inclure gestion de Z
-        int CompareObjectsZ(IDrawable obj1, IDrawable obj2)
-        {
-            Int32 dif = (Int32)(BaseDrawable.GetComparisonPointYByType(obj1, obj1.ComparisonPointYType) - BaseDrawable.GetComparisonPointYByType(obj2, obj2.ComparisonPointYType));
 
-            if (dif == 0)
-                dif = (Int32)(obj1.Position.X - obj2.Position.Y); // just a trick to avoid scintillment
-
-            return dif < 0 ? -1 : 1;
+            ObjectsToSort.Clear();
         }
 
         #endregion
 
         #region Objects
 
-        public List<WorldObject> Objects { get; private set; }
+        protected List<WorldObject> Objects { get; private set; }
 
         protected List<WorldElement> Elements { get; private set; }
 
@@ -398,36 +401,42 @@ namespace BlazeraLib
 
         public virtual void AddObject(WorldObject wObj)
         {
-            this.Objects.Add(wObj);
+            Objects.Add(wObj);
 
             if (wObj is WorldElement)
-                this.Elements.Add((WorldElement)wObj);
+                Elements.Add((WorldElement)wObj);
 
             else if (wObj is Player)
-                this.Players.Add((Player)wObj);
+                Players.Add((Player)wObj);
 
             else if (wObj is NPC)
-                this.NPCs.Add((NPC)wObj);
+                NPCs.Add((NPC)wObj);
 
             UpdateObjectEvents(wObj);
+
+            AddObjectToDraw(wObj.DrawOrder, wObj);
         }
 
         public virtual void RemoveObject(WorldObject wObj)
         {
             Ground.RemoveObjectBoundingBoxes(wObj);
 
-            this.Objects.Remove(wObj);
+            wObj.UnsetMap();
+
+            Objects.Remove(wObj);
 
             if (wObj is WorldElement)
-                this.Elements.Remove((WorldElement)wObj);
+                Elements.Remove((WorldElement)wObj);
 
             else if (wObj is Player)
-                this.Players.Remove((Player)wObj);
+                Players.Remove((Player)wObj);
 
             else if (wObj is NPC)
-                this.NPCs.Remove((NPC)wObj);
+                NPCs.Remove((NPC)wObj);
 
             RemoveObjectEvents(wObj);
+
+            RemoveObjectToDraw(wObj.DrawOrder, wObj);
         }
 
         public List<WorldObject> GetObjects()
@@ -437,12 +446,17 @@ namespace BlazeraLib
 
         public IEnumerator<WorldObject> GetEnumerator()
         {
-            return this.Objects.GetEnumerator();
+            return Objects.GetEnumerator();
         }
 
         public Int32 GetObjectCount()
         {
             return Objects.Count;
+        }
+
+        public List<WorldElement> GetElements()
+        {
+            return Elements;
         }
 
         #endregion
@@ -469,14 +483,40 @@ namespace BlazeraLib
             return MoveEngineIsRunning;
         }
 
+        public bool BoundingBoxTest(BBoundingBox BB, bool temporarlyActivate = false)
+        {
+            if (temporarlyActivate)
+                BB.Activate();
+
+            BlazeraLib.IntRect tmp = BB.GetNextTRect(new Vector2f());
+
+            for (Int32 y = tmp.Top; y < tmp.Bottom + 1; ++y)
+                for (Int32 x = tmp.Left; x < tmp.Right + 1; ++x)
+                {
+                    IEnumerator<BBoundingBox> BBEnum = Ground.GetBBoundingBoxesEnumerator(x, y, BB.Z);
+                    while (BBEnum.MoveNext())
+                        if (BB.BoundingBoxTest(BBEnum.Current))
+                        {
+                            if (temporarlyActivate)
+                                BB.Activate(false);
+                            return true;
+                        }
+                }
+
+            if (temporarlyActivate)
+                BB.Activate(false);
+
+            return false;
+        }
+
         #region Moves
 
-        const float DECOMPOSITION_LIMIT = .1F;
-        const Int32 DECOMPOSITION_COUNT = 3;
-
+        const float DECOMPOSITION_LIMIT = .5F;
+        const Int32 DECOMPOSITION_COUNT = 1;
+        const bool DECOMPOSITION_IS_ACTIVE = true;
         public void DisableAllMoves()
         {
-            IEnumerator<WorldObject> objectsEnum = this.Objects.GetEnumerator();
+            IEnumerator<WorldObject> objectsEnum = Objects.GetEnumerator();
             while (objectsEnum.MoveNext())
                 objectsEnum.Current.StopMove();
         }
@@ -485,7 +525,7 @@ namespace BlazeraLib
         {
             List<WorldObject> movingObjects = new List<WorldObject>();
 
-            IEnumerator<WorldObject> iEnum = this.Objects.GetEnumerator();
+            IEnumerator<WorldObject> iEnum = Objects.GetEnumerator();
             while (iEnum.MoveNext())
                 if (iEnum.Current.IsMoving())
                     movingObjects.Add(iEnum.Current);
@@ -501,12 +541,13 @@ namespace BlazeraLib
 
         public void UpdateObjectMoves(Time dt, WorldObject wObj)
         {
-            Vector2f move = this.GetMove(wObj, dt);
+            Vector2f move = GetMove(wObj, dt);
 
-            if (Math.Abs(move.X) < DECOMPOSITION_LIMIT &&
-                Math.Abs(move.Y) < DECOMPOSITION_LIMIT)
+            if (!DECOMPOSITION_IS_ACTIVE ||
+                (Math.Abs(move.X) < DECOMPOSITION_LIMIT &&
+                Math.Abs(move.Y) < DECOMPOSITION_LIMIT))
             {
-                wObj.Move(new Vector2f(this.GetPhysicalMoveX(wObj, move.X), this.GetPhysicalMoveY(wObj, move.Y)));
+                wObj.Move(new Vector2f(GetPhysicalMoveX(wObj, move.X), GetPhysicalMoveY(wObj, move.Y)));
 
                 return;
             }
@@ -587,12 +628,6 @@ namespace BlazeraLib
                         IEnumerator<BBoundingBox> iEnum = Ground.GetBBoundingBoxesEnumerator(x, y, BB.Z);
                         while (iEnum.MoveNext())
                         {
-                            if (BB.Z != iEnum.Current.Z)
-                                continue;
-
-                            if (BB.Holder.Equals(iEnum.Current.Holder))
-                                continue;
-
                             if (BB.BoundingBoxTest(iEnum.Current, new Vector2f(offset, 0F)))
                                 return 0F;
                         }
@@ -624,12 +659,6 @@ namespace BlazeraLib
                         IEnumerator<BBoundingBox> iEnum = Ground.GetBBoundingBoxesEnumerator(x, y, BB.Z);
                         while (iEnum.MoveNext())
                         {
-                            if (BB.Z != iEnum.Current.Z)
-                                continue;
-
-                            if (BB.Holder.Equals(iEnum.Current.Holder))
-                                continue;
-
                             if (BB.BoundingBoxTest(iEnum.Current, new Vector2f(0F, offset)))
                                 return 0F;
                         }
@@ -777,7 +806,7 @@ namespace BlazeraLib
         {
             foreach (EventBoundingBoxType eventBBType in Enum.GetValues(typeof(EventBoundingBoxType)))
             {
-                foreach (EBoundingBox sNPCBB in wObj.EventBoundingBoxes[eventBBType])
+                foreach (EBoundingBox sNPCBB in wObj.GetActiveEventBoundingBoxes(eventBBType))
                 {
                     foreach (EBoundingBox triggerBB in player.BodyBoundingBoxes)
                     {
@@ -836,12 +865,6 @@ namespace BlazeraLib
                             EBoundingBox NPCBB = NPCBBs.Current;
 
                             if (NPCBB.Type != EBoundingBoxType.Event)
-                                continue;
-
-                            if (triggerBB.Holder.Equals(NPCBB.Holder))
-                                continue;
-
-                            if (triggerBB.Equals(NPCBBs))
                                 continue;
 
                             if (!triggerBB.BoundingBoxTest(NPCBB))
@@ -922,24 +945,24 @@ namespace BlazeraLib
         {
             get
             {
-                return new Vector2f(this.Width * GameDatas.TILE_SIZE, 
-                                   this.Height * GameDatas.TILE_SIZE);
+                return new Vector2f(Width * GameData.TILE_SIZE,
+                                   Height * GameData.TILE_SIZE);
             }
         }
 
         public virtual int Width
         {
-            get { return this.Ground.Width; }
+            get { return Ground.Width; }
         }
 
         public virtual int Height
         {
-            get { return this.Ground.Height; }
+            get { return Ground.Height; }
         }
 
         public Vector2f Halfsize
         {
-            get { return this.Dimension / 2F; }
+            get { return Dimension / 2F; }
         }
 
         #endregion
@@ -949,5 +972,144 @@ namespace BlazeraLib
         private String MusicType { get; set; }
 
         #endregion
+
+        #region Light
+
+        public void AddDynamicLightEffect(LightEffect lightEffect)
+        {
+            LightEffectManager.AddDynamicEffect(lightEffect);
+        }
+
+        public void RemoveDynamicLightEffect(LightEffect lightEffect)
+        {
+            LightEffectManager.RemoveDynamicEffect(lightEffect);
+        }
+
+        public void AddStaticLightEffect(LightEffect lightEffect)
+        {
+            LightEffectManager.AddStaticEffect(lightEffect);
+        }
+
+        public void RemoveStaticLightEffect(LightEffect lightEffect)
+        {
+            LightEffectManager.RemoveStaticEffect(lightEffect);
+        }
+
+        public void SetGlobalColor(Color color)
+        {
+            LightEffectManager.GlobalColor = color;
+        }
+
+        public void ActivateLightEngine(bool isActive = true)
+        {
+            LightEffectManager.IsActive = isActive;
+        }
+
+        #endregion Light
+
+        public void Accept(IVisitor<Map> visitor)
+        {
+            visitor.Visit(this);
+        }
+
+        public void Accept(IVisitor<WorldObject> visitor)
+        {
+            foreach (WorldObject wObj in Objects)
+                wObj.Accept(visitor);
+        }
+
+        Screen Parent;
+        public void SetParent(Screen parent)
+        {
+            Parent = parent;
+        }
+
+        MapBaseWidget Gui;
+        public void InitGui()
+        {
+            Gui = new MapBaseWidget();
+
+            Parent.Gui.AddGameWidget(Gui);
+        }
+
+        public void AddWidget(GameWidget gameWidget)
+        {
+            Gui.AddWidget(gameWidget);
+        }
+
+        public void AsyncRemoveWidget(GameWidget gameWidget)
+        {
+            Gui.AsyncRemoveWidget(gameWidget);
+        }
+
+        public bool RemoveWidget(GameWidget gameWidget)
+        {
+            return Gui.RemoveWidget(gameWidget);
+        }
+    }
+    
+   /* public class ZOrderComparer : IComparer<IDrawable>
+    {
+        public int Compare(IDrawable left, IDrawable right)
+        {
+            Int32 dif =
+                (int)(BaseDrawable.GetComparisonPointYByType(left, left.ComparisonPointYType) -
+                BaseDrawable.GetComparisonPointYByType(right, right.ComparisonPointYType));
+
+            if (left is Platform)
+            {
+                if (dif > 0)
+                {
+                     if (left.Z >= right.Summit)
+                    // left is in front of right
+                    return -1;
+                }
+
+                return 1;
+
+            }
+
+            if (dif > 0 )
+            {
+                //if (right.Z < left.Summit)
+                    // left is in front of right
+                    return 1;
+            }
+
+            if (left.Z >= right.Summit)
+                return 1;
+
+            return -1;
+        }
+    }*/
+
+    public class ZComparer : IComparer<IDrawable>
+    {
+        public int Compare(IDrawable left, IDrawable right)
+        {
+            return left.Z - right.Z;
+        }
+    }
+    
+    //!\\ TODO : to fix bug of big object in front of a surelevated one ==> it is drawn under //!\\
+    public class ZOrderComparer : IComparer<IDrawable>
+    {
+        public int Compare(IDrawable left, IDrawable right)
+        {
+            if (left.Z > right.Z)
+                return 1;
+
+            if (right.Z > left.Z)
+                return -1;
+
+            Int32 dif =
+                (int)(BaseDrawable.GetComparisonPointYByType(left, left.ComparisonPointYType) -
+                BaseDrawable.GetComparisonPointYByType(right, right.ComparisonPointYType));
+
+            if (dif == 0)
+                dif = (Int32)(left.Position.X - right.Position.Y); // just a trick to avoid scintillment
+
+            return dif < 0 ? -1 : 1;
+        }
     }
 }

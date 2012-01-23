@@ -63,12 +63,12 @@ namespace BlazeraLib
 
                 Label = new Button(label, Button.EMode.Label);
 
-                switch (this.Mode)
+                switch (Mode)
                 {
                     case EMode.Left:
-                    case EMode.Right: HBox = new HAutoSizeBox(true, null); this.AddWidget(HBox); break;
+                    case EMode.Right: HBox = new HAutoSizeBox(true, null); AddWidget(HBox); break;
                     case EMode.Top:
-                    case EMode.Bottom: VBox = new VAutoSizeBox(true, null); this.AddWidget(VBox); break;
+                    case EMode.Bottom: VBox = new VAutoSizeBox(true, null); AddWidget(VBox); break;
                 }
 
                 ShortCutMode = shortCutMode;
@@ -89,19 +89,19 @@ namespace BlazeraLib
                 Picture = new Button(picture, null);
                 Picture.Dimension = new SFML.Window.Vector2f(DEFAULT_PICTURE_SIZE, DEFAULT_PICTURE_SIZE);
 
-                switch (this.Mode)
+                switch (Mode)
                 {
                     case EMode.Left:
-                    case EMode.Right: HBox = new HAutoSizeBox(true, null, DEFAULT_BOXPICTURE_OFFSET); this.AddWidget(HBox); break;
+                    case EMode.Right: HBox = new HAutoSizeBox(true, null, DEFAULT_BOXPICTURE_OFFSET); AddWidget(HBox); break;
                     case EMode.Top:
-                    case EMode.Bottom: VBox = new VAutoSizeBox(true, null, DEFAULT_BOXPICTURE_OFFSET); this.AddWidget(VBox); break;
+                    case EMode.Bottom: VBox = new VAutoSizeBox(true, null, DEFAULT_BOXPICTURE_OFFSET); AddWidget(VBox); break;
                 }
             }
         }
 
         protected void AddLabeledWidget(Widget widget)
         {
-            Widget LabelWidget = this.GetLabelWidget();
+            Widget LabelWidget = GetLabelWidget();
 
             if ((HBox != null && HBox.Contains(LabelWidget)) || (VBox != null && VBox.Contains(LabelWidget)))
                 return;

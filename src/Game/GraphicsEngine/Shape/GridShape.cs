@@ -41,6 +41,11 @@ namespace BlazeraLib
             Build();
         }
 
+        public override object Clone()
+        {
+            throw new System.NotImplementedException();
+        }
+
         void Build()
         {
             Lines = new Shape[Width + Height + 2];
@@ -56,7 +61,7 @@ namespace BlazeraLib
             }
         }
 
-        public override void Draw(RenderWindow window)
+        public override void Draw(RenderTarget window)
         {
             if (!IsVisible)
                 return;

@@ -87,14 +87,14 @@ namespace BlazeraLib
             return guiPoint + GetRoot().MapView.Center - GetRoot().GuiView.Center;
         }
 
-        public override void Update(Time dt)
+        public override void Refresh()
         {
-            base.Update(dt);
+            base.Refresh();
 
             switch (Location)
             {
                 case ELocation.Desactivated:
-                    return;
+                    break;
 
                 case ELocation.TopLeft:
                     Left = GetRoot().Left;
@@ -134,6 +134,9 @@ namespace BlazeraLib
                 case ELocation.MidBottom:
                     BackgroundBottom = GetRoot().BackgroundBottom;
                     BackgroundCenter = new Vector2f(GetRoot().BackgroundCenter.X, BackgroundCenter.Y);
+                    break;
+
+                default:
                     break;
             }
         }

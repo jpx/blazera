@@ -20,8 +20,8 @@ namespace BlazeraEditor
 
         public void Init(String login)
         {
-            this.MainP = Create.Player("Vlad");
-            this.MainP.Name = "VLAD";
+            MainP = Create.Player("Vlad");
+            MainP.Name = "VLAD";
         }
 
         public void Draw(SFML.Graphics.RenderWindow window)
@@ -88,7 +88,7 @@ namespace BlazeraEditor
                 }
             }
 
-            foreach (SFML.Window.Vector2f v in this.MainP.MovesInfo.Path)
+            foreach (SFML.Window.Vector2f v in MainP.MovesInfo.Path)
             {
                 SFML.Graphics.Sprite spr = new SFML.Graphics.Sprite(new SFML.Graphics.Image(32, 32, new SFML.Graphics.Color(255, 255, 255, 64)));
                 spr.Position = v;

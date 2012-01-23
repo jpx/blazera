@@ -45,7 +45,7 @@ namespace BlazeraEditor
             base("Map creator")
         {
             #region widgets init
-            this.AddItem(SettingBox);
+            AddItem(SettingBox);
 
             SettingBox.AddItem(TypeTextBox);
 
@@ -53,7 +53,7 @@ namespace BlazeraEditor
             SizeBox.AddItem(WidthUDBox);
             SizeBox.AddItem(HeightUDBox);
 
-            this.AddItem(ButtonBox);
+            AddItem(ButtonBox);
 
             SaveButton.Clicked += new ClickEventHandler(SaveButton_Clicked);
             ButtonBox.AddItem(SaveButton);
@@ -70,12 +70,12 @@ namespace BlazeraEditor
 
         void CancelButton_Clicked(object sender, SFML.Window.MouseButtonEventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         void SaveButton_Clicked(object sender, SFML.Window.MouseButtonEventArgs e)
         {
-            this.CallValidated();
+            CallValidated();
         }
         #endregion
 

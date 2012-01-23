@@ -20,12 +20,12 @@ namespace BlazeraLib
         public DownList(Int32 size = BlazeraLib.ExtendedBox.DEFAULT_SIZE) :
             base(size, false)
         {
-            this.Top = new Button(null, Button.EMode.LabelEffect);
-            this.Top.Clicked += new ClickEventHandler(Top_Clicked);
-            this.MainBox.AddItemFirst(Top);
+            Top = new Button(null, Button.EMode.LabelEffect);
+            Top.Clicked += new ClickEventHandler(Top_Clicked);
+            MainBox.AddItemFirst(Top);
 
             ScrollBox.SetBackgroundAlphaFactor(100D);
-            this.ScrollBox.Close();
+            ScrollBox.Close();
 
             Texts = new List<Button>();
         }
@@ -92,8 +92,8 @@ namespace BlazeraLib
         {
             base.Reset();
 
-            if (this.ScrollBox != null)
-                this.ScrollBox.Close();
+            if (ScrollBox != null)
+                ScrollBox.Close();
 
             if (Top == null)
                 return;
@@ -110,7 +110,7 @@ namespace BlazeraLib
         public void AddText(Button text)
         {
             text.Clicked += new ClickEventHandler(button_Clicked);
-            this.AddItem(text);
+            AddItem(text);
 
             if (Texts.Count == 0)
                 Top.Text = text.Text;
@@ -129,12 +129,12 @@ namespace BlazeraLib
         {
             get
             {
-                if (this.Top == null || this.ScrollBox == null)
+                if (Top == null || ScrollBox == null)
                     return base.Dimension;
 
                 return new Vector2f(
                     Top.Dimension.X,
-                    this.Top.Dimension.Y);
+                    Top.Dimension.Y);
             }
         }
 

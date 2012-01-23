@@ -29,7 +29,7 @@
 
         void Cursor_OnValidation(CombatCursor sender, CombatCursorEventArgs e)
         {
-            Log.Cl("Your player is placed on cell : " + e.CellPosition.ToString());
+            Log("Your player is placed on cell : " + e.CellPosition.ToString());
           //  Combat.Cursor.Source.SetCellPositionTo(e.CellPosition);
         }
     }

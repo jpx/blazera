@@ -60,7 +60,10 @@
             if (!Combat.GetCell(Combat.Cursor.CellPosition).IsWithinArea(CurrentSpell.RangeArea, CurrentCombatant.CellPosition))
                 return;
 
-            Spell = new RandomEffectAreaSpell(CurrentSpell, CurrentCombatant);
+            Spell = new CombatSpell(CurrentSpell, CurrentCombatant);
+           // Spell = new RandomEffectAreaSpell(CurrentSpell, CurrentCombatant);
+
+            Log("launches " + Spell.GetName());
 
             Spell.Launch(e.CellPosition);
             Spell.OnStopping += new CombatSpellEventHandler(Spell_OnStopping);

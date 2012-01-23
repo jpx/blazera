@@ -66,11 +66,13 @@ namespace BlazeraLib
 
             Effects[effect] = new Shape();
             Effects[effect].EnableFill(true);
+
+            Color = Color;
         }
 
         protected abstract void Build();
 
-        public override void Draw(RenderWindow window)
+        public override void Draw(RenderTarget window)
         {
             foreach (Shape shape in Effects.Values)
                 if (shape != null)
@@ -87,7 +89,7 @@ namespace BlazeraLib
                     value.R,
                     value.G,
                     value.B,
-                    (byte)(BACKGROUND_COLOR_ALPHA));
+                    Effects[ShapeEffect.Shade] == null ? value.A : (byte)(BACKGROUND_COLOR_ALPHA));
             }
         }
 

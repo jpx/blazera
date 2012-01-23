@@ -32,20 +32,21 @@ namespace Blazera
 
         public ClientConnection()
         {
-            this.Packets = new Queue<ReceptionPacket>();
+            Packets = new Queue<ReceptionPacket>();
         }
 
         public Boolean Connect(String ip, int port)
         {
             try
             {
-                TcpClient = new TcpClient(ip, port);
+                TcpClient = new System.Net.Sockets.TcpClient();
                 TcpClient.ReceiveTimeout = 5000;
                 TcpClient.SendTimeout = 5000;
-                Ns = this.TcpClient.GetStream();
+                TcpClient.Connect(ip, port);
+                Ns = TcpClient.GetStream();
 
-                Bw = new BinaryWriter(this.TcpClient.GetStream());
-                Br = new BinaryReader(this.TcpClient.GetStream());
+                Bw = new BinaryWriter(TcpClient.GetStream());
+                Br = new BinaryReader(TcpClient.GetStream());
 
                 IsConnected = true;
             }
@@ -75,7 +76,7 @@ namespace Blazera
 
         public void Close()
         {
-            this.TcpClient.Close();
+            TcpClient.Close();
         }
 
         public void Deco()
@@ -108,7 +109,7 @@ namespace Blazera
                 }
             }
 
-            this.Close();
+            Close();
         }
 
         public Boolean ContainsReceivedPacket()

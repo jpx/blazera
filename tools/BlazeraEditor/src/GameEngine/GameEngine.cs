@@ -22,7 +22,7 @@ namespace BlazeraEditor
 
         public void Init()
         {
-            ScriptEngine.Instance.Init("EditorDatas");
+            ScriptEngine.Instance.Init("EditorData");
             ScriptEngine.Instance.Load_Assembly("BlazeraEditor");
             ScriptEngine.Instance.Import_Type(typeof(PlayerHdl));
 

@@ -9,74 +9,95 @@ namespace BlazeraLib
 {
     public abstract class BoundingBox
     {
-        public Boolean IsActive { get; set; }
+        #region Constants
 
-        public BoundingBox(WorldObject holder, int left, int top, int right, int bottom)
+        protected const int DEFAULT_BASE_Z = 0;
+
+        #endregion Constants
+
+        public Boolean IsActive { get; private set; }
+
+        public BoundingBox(WorldObject holder, int left, int top, int right, int bottom, int z)
         {
-            this.IsActive = true;
+            IsActive = true;
 
-            this.Holder = holder;
+            BaseLeft = left;
+            BaseTop = top;
+            BaseRight = right;
+            BaseBottom = bottom;
 
-            this.BaseLeft = left;
-            this.BaseTop = top;
-            this.BaseRight = right;
-            this.BaseBottom = bottom;
+            BaseZ = z;
 
-            if (this.Holder != null)
-                this.Update();
+            Holder = holder;
         }
 
         public BoundingBox(BoundingBox copy, WorldObject holder)
         {
-            this.IsActive = true;
+            IsActive = true;
 
-            this.Holder = holder;
+            BaseLeft = copy.BaseLeft;
+            BaseTop = copy.BaseTop;
+            BaseRight = copy.BaseRight;
+            BaseBottom = copy.BaseBottom;
 
-            this.BaseLeft = copy.BaseLeft;
-            this.BaseTop = copy.BaseTop;
-            this.BaseRight = copy.BaseRight;
-            this.BaseBottom = copy.BaseBottom;
+            BaseZ = copy.BaseZ;
 
-            if (this.Holder != null)
-                this.Update();
+            Holder = holder;
+        }
+
+        public void Activate(bool isActive = true)
+        {
+            IsActive = isActive;
         }
 
         public Boolean BoundingBoxTest(BoundingBox testBB)
         {
-            if (!this.IsActive)
+            if (!IsActive || !testBB.IsActive)
                 return false;
 
-            if (this.Z != testBB.Z)
+            if (Z != testBB.Z)
                 return false;
 
-            return !(this.Left >= testBB.Right ||
-                     this.Right <= testBB.Left ||
-                     this.Top >= testBB.Bottom ||
-                     this.Bottom <= testBB.Top);
+            if (Holder == testBB.Holder)
+                return false;
+
+            if (this == testBB)
+                return false;
+
+            return !(Left >= testBB.Right ||
+                     Right <= testBB.Left ||
+                     Top >= testBB.Bottom ||
+                     Bottom <= testBB.Top);
         }
 
         public Boolean BoundingBoxTest(BoundingBox testBB, Vector2f offset)
         {
-            if (!this.IsActive)
+            if (!IsActive || !testBB.IsActive)
                 return false;
 
-            if (this.Z != testBB.Z)
+            if (Z != testBB.Z)
                 return false;
 
-            return !(this.Left + offset.X >= testBB.Right ||
-                     this.Right + offset.X <= testBB.Left ||
-                     this.Top + offset.Y >= testBB.Bottom ||
-                     this.Bottom + offset.Y <= testBB.Top);
+            if (Holder == testBB.Holder)
+                return false;
+
+            if (this == testBB)
+                return false;
+
+            return !(Left + offset.X >= testBB.Right ||
+                     Right + offset.X <= testBB.Left ||
+                     Top + offset.Y >= testBB.Bottom ||
+                     Bottom + offset.Y <= testBB.Top);
         }
 
         public void Update()
         {
-            this.Left = this.BaseLeft + this.Holder.Left;
-            this.Right = this.BaseRight + this.Holder.Left;
-            this.Top = this.BaseTop + this.Holder.Top;
-            this.Bottom = this.BaseBottom + this.Holder.Top;
+            Left = BaseLeft + Holder.Left;
+            Right = BaseRight + Holder.Left;
+            Top = BaseTop + Holder.Top;
+            Bottom = BaseBottom + Holder.Top;
 
-            this.Z = Holder.Z;
+            Z = BaseZ + Holder.Z;
         }
 
         public IntRect GetBaseRect()
@@ -97,10 +118,10 @@ namespace BlazeraLib
                 Bottom + offset.Y);
 
             return new IntRect(
-                nextTRect.Left < 0F ? (Int32)(nextTRect.Left / GameDatas.TILE_SIZE) - 1 : (Int32)(nextTRect.Left / GameDatas.TILE_SIZE),
-                nextTRect.Top < 0F ? (Int32)(nextTRect.Top / GameDatas.TILE_SIZE) - 1 : (Int32)(nextTRect.Top / GameDatas.TILE_SIZE),
-                nextTRect.Right < 0F ? (Int32)(nextTRect.Right / GameDatas.TILE_SIZE) - 1 : (Int32)(nextTRect.Right / GameDatas.TILE_SIZE),
-                nextTRect.Bottom < 0F ? (Int32)(nextTRect.Bottom / GameDatas.TILE_SIZE) - 1 : (Int32)(nextTRect.Bottom / GameDatas.TILE_SIZE));
+                nextTRect.Left < 0F ? (Int32)(nextTRect.Left / GameData.TILE_SIZE) - 1 : (Int32)(nextTRect.Left / GameData.TILE_SIZE),
+                nextTRect.Top < 0F ? (Int32)(nextTRect.Top / GameData.TILE_SIZE) - 1 : (Int32)(nextTRect.Top / GameData.TILE_SIZE),
+                nextTRect.Right < 0F ? (Int32)(nextTRect.Right / GameData.TILE_SIZE) - 1 : (Int32)(nextTRect.Right / GameData.TILE_SIZE),
+                nextTRect.Bottom < 0F ? (Int32)(nextTRect.Bottom / GameData.TILE_SIZE) - 1 : (Int32)(nextTRect.Bottom / GameData.TILE_SIZE));
         }
 
         WorldObject _holder;
@@ -140,6 +161,12 @@ namespace BlazeraLib
             private set;
         }
 
+        public int BaseZ
+        {
+            get;
+            private set;
+        }
+
         public Int32 Z { get; private set; }
 
         public float Left
@@ -152,11 +179,11 @@ namespace BlazeraLib
         {
             get
             {
-                return (int)this.Left / GameDatas.TILE_SIZE;
+                return (int)Left / GameData.TILE_SIZE;
             }
             private set
             {
-                this.Left = value * GameDatas.TILE_SIZE;
+                Left = value * GameData.TILE_SIZE;
             }
         }
 
@@ -170,11 +197,11 @@ namespace BlazeraLib
         {
             get
             {
-                return (int)this.Top / GameDatas.TILE_SIZE;
+                return (int)Top / GameData.TILE_SIZE;
             }
             private set
             {
-                this.Top = value * GameDatas.TILE_SIZE;
+                Top = value * GameData.TILE_SIZE;
             }
         }
 
@@ -188,11 +215,11 @@ namespace BlazeraLib
         {
             get
             {
-                return (int)this.Right / GameDatas.TILE_SIZE;
+                return (int)Right / GameData.TILE_SIZE;
             }
             private set
             {
-                this.Right = value * GameDatas.TILE_SIZE;
+                Right = value * GameData.TILE_SIZE;
             }
         }
 
@@ -206,11 +233,11 @@ namespace BlazeraLib
         {
             get
             {
-                return (int)this.Bottom / GameDatas.TILE_SIZE;
+                return (int)Bottom / GameData.TILE_SIZE;
             }
             private set
             {
-                this.Bottom = value * GameDatas.TILE_SIZE;
+                Bottom = value * GameData.TILE_SIZE;
             }
         }
     }

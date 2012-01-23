@@ -16,9 +16,31 @@ namespace BlazeraLib
         BattleScreen
     }
 
+    public class ScreenArgs
+    {
+        Dictionary<string, object> Args;
+
+        public ScreenArgs(Dictionary<string, object> args)
+        {
+            Args = args;
+        }
+
+        public T Get<T>(string argName)
+        {
+            return (T)Args[argName];
+        }
+    }
+
     public abstract class Screen
     {
         const float MAP_VIEW_ZOOM_FACTOR = 1F;
+
+        protected ScreenArgs Args;
+
+        public ScreenArgs GetArgs()
+        {
+            return Args;
+        }
 
         public Screen(RenderWindow window)
         {
@@ -32,16 +54,16 @@ namespace BlazeraLib
 
         public virtual void FirstInit() { }
 
-        public virtual void Init() { }
+        public virtual void Init(ScreenArgs args = null) { }
 
         public virtual ScreenType Run(Time dt)
         {
-            this.NextScreen = this.Type;
+            NextScreen = Type;
 
-            this.Window.SetView(this.GuiView);
+            Window.SetView(GuiView);
 
-            this.Gui.Update(dt);
-            this.Gui.Draw(this.Window);
+            Gui.Update(dt);
+            Gui.Draw(Window);
 
             while (WindowEvents.EventHappened())
             {
@@ -52,20 +74,20 @@ namespace BlazeraLib
 
                 GameScoring.EventCount++;
 
-                if (this.HandleEvent(evt))
+                if (HandleEvent(evt))
                 {
                     GameScoring.EventHandled++;
                 }
             }
 
-            this.Window.SetView(this.GameView);
+            Window.SetView(GameView);
 
-            return this.NextScreen;
+            return NextScreen;
         }
 
         public virtual Boolean HandleEvent(BlzEvent evt)
         {
-            return this.Gui.HandleEvent(evt);
+            return Gui.HandleEvent(evt);
         }
 
         public ScreenType Type

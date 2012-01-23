@@ -92,7 +92,7 @@ namespace BlazeraEditor
         {
             #region widgets init
             // maps
-            this.AddItem(MapListBox);
+            AddItem(MapListBox);
             MapListBox.AddItem(MapList);
 
             MapListBox.AddItem(MapListButtonBox);
@@ -107,7 +107,7 @@ namespace BlazeraEditor
             MapListButtonBox.AddItem(SelectButton, 0, HAlignment.Right);
 
             // current map
-            this.AddItem(CurrentMapBox);
+            AddItem(CurrentMapBox);
             // current map warp points
             CurrentMapBox.AddItem(WarpPointBox, 0, HAlignment.Left);
             WarpPointBox.AddItem(WarpPointList);
@@ -176,7 +176,7 @@ namespace BlazeraEditor
             FileManager.Instance.RemoveMap(CurrentMap.Type);
             RemoveMap(CurrentMap.Type);
 
-            this.RefreshMaps();
+            RefreshMaps();
         }
 
         void MapCreator_Validated(WindowedWidget sender, ValidateEventArgs e)
@@ -185,7 +185,7 @@ namespace BlazeraEditor
 
             map.ToScript();
 
-            this.RefreshMaps();
+            RefreshMaps();
         }
 
         void CreateButton_Clicked(object sender, SFML.Window.MouseButtonEventArgs e)
@@ -195,7 +195,7 @@ namespace BlazeraEditor
 
         void RefreshButton_Clicked(object sender, SFML.Window.MouseButtonEventArgs e)
         {
-            this.RefreshMaps();
+            RefreshMaps();
         }
 
         void SaveButton_Clicked(object sender, SFML.Window.MouseButtonEventArgs e)
@@ -250,7 +250,7 @@ namespace BlazeraEditor
         {
             MapList.Clear();
 
-            this.LoadMaps();
+            LoadMaps();
 
             if (MapList.GetTextCount() > 0)
                 SetCurrentMap(((Button)MapList.GetAt(0)).Text);

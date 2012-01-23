@@ -87,7 +87,7 @@ namespace BlazeraLib
 
             while (id < buffer.Length - 1 && buffer[id] != '\0')
             {
-                String word = this.GetNextWord(buffer, id, border);
+                String word = GetNextWord(buffer, id, border);
                 words.Add(word);
                 id += (id + word.Length + 1 < buffer.Length) ? word.Length + 1 : buffer.Length - id - 1;
             }
@@ -97,18 +97,18 @@ namespace BlazeraLib
 
         public List<List<String>> GetGround(String groundType)
         {
-            Char[] buffer = this.GetCharArray(GameDatas.SCRIPTS_DEFAULT_PATH + "Ground/Ground_" + groundType);
+            Char[] buffer = GetCharArray(GameData.SCRIPTS_DEFAULT_PATH + "Ground/Ground_" + groundType);
 
             if (buffer == null)
                 return null;
 
             List<List<String>> ground = new List<List<String>>();
 
-            IEnumerator<String> iEnum = this.GetWords(buffer, ';').GetEnumerator();
+            IEnumerator<String> iEnum = GetWords(buffer, ';').GetEnumerator();
 
             while (iEnum.MoveNext())
             {
-                ground.Add(this.GetWords(iEnum.Current.ToCharArray(), ','));
+                ground.Add(GetWords(iEnum.Current.ToCharArray(), ','));
             }
 
             return ground;
@@ -116,7 +116,7 @@ namespace BlazeraLib
 
         private List<String> GetFiles(String path, Boolean isScript = true)
         {
-            String folder = isScript ? GameDatas.SCRIPTS_DEFAULT_PATH : GameDatas.IMAGES_DEFAULT_PATH;
+            String folder = isScript ? GameData.SCRIPTS_DEFAULT_PATH : GameData.IMAGES_DEFAULT_PATH;
             String longPath = folder + path;
 
             int subFolderOffset = 0;
@@ -139,7 +139,7 @@ namespace BlazeraLib
 
         public List<String> GetMapTypes()
         {
-            List<String> maps = this.GetFiles("Map/");
+            List<String> maps = GetFiles("Map/");
 
             for (Int32 count = 0; count < maps.Count; count++)
             {
@@ -151,7 +151,7 @@ namespace BlazeraLib
 
         public List<String> GetTextureTypes(String[] filter = null)
         {
-            List<String> textures = this.GetFiles("Texture/");
+            List<String> textures = GetFiles("Texture/");
 
             for (Int32 count = 0; count < textures.Count; count++)
             {
@@ -201,7 +201,7 @@ namespace BlazeraLib
 
         public List<String> GetObjectTypes(String elementBaseType)
         {
-            List<String> elements = this.GetFiles(elementBaseType + "/");
+            List<String> elements = GetFiles(elementBaseType + "/");
 
             for (Int32 count = 0; count < elements.Count; count++)
             {
@@ -213,7 +213,7 @@ namespace BlazeraLib
 
         public List<String> GetTileTypes()
         {
-            List<String> tiles = this.GetFiles("Tile/");
+            List<String> tiles = GetFiles("Tile/");
 
             for (Int32 count = 0; count < tiles.Count; count++)
             {
@@ -225,7 +225,7 @@ namespace BlazeraLib
 
         public List<String> GetTileSetTypes()
         {
-            List<String> tileSets = this.GetFiles("TileSet/");
+            List<String> tileSets = GetFiles("TileSet/");
 
             for (Int32 count = 0; count < tileSets.Count; count++)
             {
@@ -240,7 +240,7 @@ namespace BlazeraLib
             if (subFolderName != "")
                 subFolderName = "/" + subFolderName;
 
-            return this.GetFiles(subFolderName, false);
+            return GetFiles(subFolderName, false);
         }
     }
 }

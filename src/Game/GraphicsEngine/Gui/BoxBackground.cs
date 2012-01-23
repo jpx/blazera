@@ -24,26 +24,26 @@ namespace BlazeraLib
         public BoxBackground(Vector2f dimension, String name = null, Boolean noBackgroundMode = true) :
             base()
         {
-            this.Dimension = dimension;
+            Dimension = dimension;
 
-            this.Name = name;
+            Name = name;
 
-            this.Margins = Border.GetBoxBorderWidth();
+            Margins = Border.GetBoxBorderWidth();
 
-            if (this.Name != null)
+            if (Name != null)
             {
-                this.Label = new Label(this.Name);
+                Label = new Label(Name);
                 Label.Style = LABEL_STYLE;
                 Label.IsColorLinked = false;
-                this.AddWidget(this.Label);
+                AddWidget(Label);
 
-                this.TopBorderHeight = this.Label.Dimension.Y + this.Margins * 4F;
+                TopBorderHeight = Label.Dimension.Y + Margins * 4F;
 
-                this.TopBorder = new Border(new Vector2f(this.Label.Dimension.X + this.Margins * 4F, this.TopBorderHeight), Border.EMode.Box, noBackgroundMode);
-                this.Label.Position = this.GetGlobalFromLocal(this.TopBorder.Dimension / 2F - this.Label.Dimension / 2F);
+                TopBorder = new Border(new Vector2f(Label.Dimension.X + Margins * 4F, TopBorderHeight), Border.EMode.Box, noBackgroundMode);
+                Label.Position = GetGlobalFromLocal(TopBorder.Dimension / 2F - Label.Dimension / 2F);
             }
             
-            this.BottomBorder = new Border(this.Dimension, Border.EMode.Box, noBackgroundMode);
+            BottomBorder = new Border(Dimension, Border.EMode.Box, noBackgroundMode);
         }
 
         public void SetBackgroundAlphaFactor(double backgroundAlphaFactor)
@@ -56,34 +56,34 @@ namespace BlazeraLib
 
         public override void Refresh()
         {
-            if (this.TopBorder != null)
+            if (TopBorder != null)
             {
                 if (RefreshInfo.IsDimensionRefreshed)
-                    this.TopBorder.Resize(new Vector2f(
-                            (this.Label.Dimension.X + this.Margins * 4F) / this.TopBorder.Dimension.X,
-                            this.TopBorderHeight / this.TopBorder.Dimension.Y));
+                    TopBorder.Resize(new Vector2f(
+                            (Label.Dimension.X + Margins * 4F) / TopBorder.Dimension.X,
+                            TopBorderHeight / TopBorder.Dimension.Y));
 
-                this.TopBorder.Move(this.Position - this.TopBorder.Position);
+                TopBorder.Move(Position - TopBorder.Position);
 
-                this.Label.Position = this.GetGlobalFromLocal(this.TopBorder.Dimension / 2F - this.Label.Dimension / 2F);
+                Label.Position = GetGlobalFromLocal(TopBorder.Dimension / 2F - Label.Dimension / 2F);
             }
 
             if (RefreshInfo.IsDimensionRefreshed)
-                this.BottomBorder.Resize(new Vector2f(
-                    this.Dimension.X / this.BottomBorder.Dimension.X,
-                    this.Dimension.Y / this.BottomBorder.Dimension.Y));
+                BottomBorder.Resize(new Vector2f(
+                    Dimension.X / BottomBorder.Dimension.X,
+                    Dimension.Y / BottomBorder.Dimension.Y));
 
-            this.BottomBorder.Move(Position - BottomBorder.Position);
+            BottomBorder.Move(Position - BottomBorder.Position);
         }
 
-        public override void Draw(RenderWindow window)
+        public override void Draw(RenderTarget window)
         {
-            if (this.TopBorder != null)
-                this.TopBorder.Draw(window);
+            if (TopBorder != null)
+                TopBorder.Draw(window);
 
             base.Draw(window);
 
-            this.BottomBorder.Draw(window);
+            BottomBorder.Draw(window);
         }
 
         public override Color Color
@@ -96,10 +96,10 @@ namespace BlazeraLib
             {
                 base.Color = value;
 
-                if (this.TopBorder != null)
-                    this.TopBorder.SetColor(this.Color);
+                if (TopBorder != null)
+                    TopBorder.SetColor(Color);
 
-                this.BottomBorder.SetColor(this.Color);
+                BottomBorder.SetColor(Color);
             }
         }
 

@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using SFML.Graphics;
 using SFML.Window;
 
@@ -9,176 +6,157 @@ namespace BlazeraLib
 {
     public class Particle
     {
-        public Particle(
+        #region Members
+
+        Texture Texture;
+
+        public bool IsActive { get; private set; }
+
+        float Gravity;
+        float GravityPoint;
+
+        float Velocity;
+
+        float Acceleration;
+
+        Time DurationTime;
+        Timer Timer;
+
+        Vector2f Position;
+
+        Vector2f Scale;
+        Vector2f ScaleVariation;
+        Vector2f BaseDimension;
+
+        float Angle; // internal angle
+        float Rotation;
+
+        float Direction; // angle of move
+        float AngularVelocity;
+
+        Color Color;
+        float AlphaLimit;
+        float CurrentAlpha;
+
+        float Mass;
+
+        #endregion
+
+        public Particle()
+        {
+
+        }
+
+        public void Init(
             Texture texture,
             Vector2f position,
             float velocity,
             float acceleration,
             double durationTime,
             Vector2f scale,
+            Vector2f scaleVariation,
             float angle,
             float rotation,
+            float direction,
+            float angularVelocity,
             Color color,
-            Color dColor,
-            float alphaLimit)
+            float alphaLimit,
+            float gravity,
+            float gravityPoint,
+            float mass)
         {
-            this.IsActive = true;
-            this.Texture = new Texture(texture);
-            this.Position = position;
-            this.Velocity = velocity;
-            this.Acceleration = acceleration;
-            this.DurationTime = new Time(durationTime);
-            this.Texture.Dimension = new Vector2f(this.Texture.Dimension.X * scale.X,
-                                                 this.Texture.Dimension.Y * scale.Y);
-            this.Angle = angle;
-            this.Rotation = rotation;
-            this.Color = color;
-            this.DColor = dColor;
-            this.AlphaLimit = alphaLimit;
+            IsActive = true;
 
-            this.Timer = new Timer();
-            this.Timer.Reset();
-        }
+            Texture = new Texture(texture);
 
-        public void Reset()
-        {
+            Position = position;
+            Velocity = velocity;
+            Acceleration = acceleration;
+            DurationTime = new Time(durationTime);
 
+            Scale = scale;
+            ScaleVariation = scaleVariation;
+
+            Angle = angle;
+            Rotation = rotation;
+
+            Direction = direction;
+            AngularVelocity = angularVelocity;
+
+            Color = color;
+
+            AlphaLimit = alphaLimit;
+            CurrentAlpha = 255F;
+
+            Gravity = gravity;
+            GravityPoint = gravityPoint;
+            Mass = mass;
+
+            Timer = new Timer();
+            Timer.Reset();
+
+            InitTexture();
         }
 
         public void Update(Time dt)
         {
-            if (this.Timer.GetElapsedTime().Value > this.DurationTime.Value)
+            if (Timer.IsDelayCompleted(DurationTime.Value))
             {
-                this.IsActive = false;
+                IsActive = false;
                 return;
             }
 
-            if (this.Timer.GetElapsedTime().Value > this.AlphaLimit * this.DurationTime.Value)
+            if (Timer.GetElapsedTime().Value > AlphaLimit * DurationTime.Value)
             {
-                this.Color = new Color(this.Color.R,
-                                       this.Color.G,
-                                       this.Color.B,
-                                       (byte)(this.Color.A - (byte)((float)dt.Value * 255 / (float)this.DurationTime.Value * (1f - this.AlphaLimit))));
+                CurrentAlpha -= ((float)dt.Value * 255F) / ((float)DurationTime.Value * (1f - AlphaLimit));
+                if (CurrentAlpha < 0F)
+                    CurrentAlpha = 0F;
+                Color = new Color(Color.R,
+                                  Color.G,
+                                  Color.B,
+                                  (byte)CurrentAlpha);
             }
 
-            this.Texture.Sprite.Color = new Color((byte)(this.Color.R + this.DColor.R),
-                                                  (byte)(this.Color.G + this.DColor.G),
-                                                  (byte)(this.Color.B + this.DColor.B),
-                                                  this.Color.A);
+            Position += new Vector2f(Velocity * (float)Math.Cos(Direction * Math.PI / 180),
+                                     Velocity * (float)Math.Sin(Direction * Math.PI / 180)
+                                     + (0.5F * Mass * Gravity * (GravityPoint - Position.Y) / 100F)) * (float)dt.Value;
 
-            this.Position += new Vector2f(this.Velocity * (float)Math.Cos(this.Angle * Math.PI / 180),
-                                         this.Velocity * (float)Math.Sin(this.Angle * Math.PI / 180)) * (float)dt.Value;
+            Velocity += Acceleration * (float)dt.Value;
+            if (Velocity < 0)
+                Velocity = 0;
 
-            this.Velocity += this.Acceleration * (float)dt.Value;
+            Angle += Rotation * (float)dt.Value;
+            Direction += AngularVelocity * (float)dt.Value;
 
-            this.Texture.Sprite.Rotation = this.Angle;
-            this.Angle += this.Rotation *(float)dt.Value;
+            Scale += ScaleVariation * (float)dt.Value;
+
+            UpdateTexture();
         }
 
-        public void Draw(RenderWindow window)
+        public void Draw(RenderTarget window)
         {
-            this.Texture.Draw(window);
+            Texture.Draw(window);
         }
 
-        public Texture Texture
+        void InitTexture()
         {
-            get;
-            set;
+            if (Texture == null)
+                return;
+
+            Texture.Sprite.Origin = Texture.Dimension / 2F;
+
+            BaseDimension = new Vector2f(Texture.Dimension.X, Texture.Dimension.Y);
+            UpdateTexture();
         }
 
-        public Boolean IsActive
+        void UpdateTexture()
         {
-            get;
-            set;
-        }
-
-        public float Velocity
-        {
-            get;
-            set;
-        }
-
-        public float Acceleration
-        {
-            get;
-            set;
-        }
-
-        public Time DurationTime
-        {
-            get;
-            set;
-        }
-
-        public Timer Timer
-        {
-            get;
-            set;
-        }
-
-        private Vector2f _position;
-        public Vector2f Position
-        {
-            get
-            {
-                return _position;
-            }
-            set
-            {
-                _position = value;
-
-                if (this.Texture != null)
-                {
-                    this.Texture.Position = this.Position - this.Texture.Dimension / 2;
-                }
-            }
-        }
-
-        public Vector2f Scale
-        {
-            get;
-            set;
-        }
-
-        private float _angle;
-        public float Angle
-        {
-            get
-            {
-                return _angle;
-            }
-            set
-            {
-                _angle = value;
-                if (this.Texture != null)
-                {
-                    this.Texture.Sprite.Rotation = this.Angle;
-                }
-            }
-        }
-
-        public float Rotation
-        {
-            get;
-            set;
-        }
-
-        public Color Color
-        {
-            get;
-            set;
-        }
-
-        public float AlphaLimit
-        {
-            get;
-            set;
-        }
-
-        public Color DColor
-        {
-            get;
-            set;
+            Texture.Dimension = new Vector2f(
+                BaseDimension.X * Scale.X,
+                BaseDimension.Y * Scale.Y);
+            Texture.Position = Position;
+            Texture.Sprite.Rotation = Angle;
+            Texture.Color = Color;
         }
     }
 }

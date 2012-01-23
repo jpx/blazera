@@ -103,13 +103,13 @@ namespace BlazeraLib
         BlazeraProgram()
         {
             // GameEngine init
-            ScriptEngine.Instance.Init("ProgramDatas");
+            ScriptEngine.Instance.Init("ProgramData");
 
             TextureManager.Instance.Init();
             SoundManager.Instance.Init();
 
             // GraphicsEngine init
-            Window = new RenderWindow(new VideoMode(GameDatas.WINDOW_WIDTH, GameDatas.WINDOW_HEIGHT), "Blazera program", GameDatas.WINDOW_STYLE);
+            Window = new RenderWindow(new VideoMode(GameData.WINDOW_WIDTH, GameData.WINDOW_HEIGHT), "Blazera program", GameData.WINDOW_STYLE);
             Window.Closed += new System.EventHandler(Window_Closed);
             WindowEvents.Instance.Init(Window);
 
@@ -150,7 +150,7 @@ namespace BlazeraLib
 
                 CallOnRunning();
 
-                Gui.Update(/*GameTime.GetDt()*/new Time(Window.GetFrameTime() / 1000D));
+                Gui.Update(GameTime.Dt);
                 Gui.Draw(Window);
 
                 while (WindowEvents.EventHappened())

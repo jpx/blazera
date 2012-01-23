@@ -21,9 +21,9 @@ namespace Blazera
         {
             public SessionInfo(String login, String initMap, Vector2f initPos)
             {
-                this.Login = login;
-                this.InitMap = initMap;
-                this.InitPos = initPos;
+                Login = login;
+                InitMap = initMap;
+                InitPos = initPos;
             }
 
             public String Login;
@@ -111,7 +111,7 @@ namespace Blazera
                     return;
                 }
 
-                Info = new SessionInfo(ClientConnection.Login, GameDatas.INIT_MAP, new Vector2f());
+                Info = new SessionInfo(ClientConnection.Login, GameData.INIT_MAP, new Vector2f());
 
                 ReceptionThread.Start();
             }
@@ -122,11 +122,11 @@ namespace Blazera
             if (!ClientConnection.IsConnected)
             {
                 Console.Write("Enter a login : ");
-                ClientConnection.Login = "Jpx" + RandomHelper.Get(0, 10000);//Console.ReadLine();
+                ClientConnection.Login = "0x" + RandomHelper.Get(0, 10000);//Console.ReadLine();
                 Log.Cl(ClientConnection.Login, ConsoleColor.Green);
                 try
                 {
-                    if (ClientConnection.Connect(GameDatas.SERVER_IP, GameDatas.SERVER_PORT))
+                    if (ClientConnection.Connect(GameData.SERVER_IP, GameData.SERVER_PORT))
                     {
                         Log.Cl("Connected.", ConsoleColor.Green);
 
@@ -231,9 +231,9 @@ namespace Blazera
         }
 
         /// <summary>
-        /// Sends a packet of datas to the game server
+        /// Sends a packet of data to the game server
         /// </summary>
-        /// <param name="data">Packet of datas to send</param>
+        /// <param name="data">Packet of data to send</param>
         /// <returns>If the sending was successful</returns>
         public Boolean SendPacket(SendingPacket data)
         {

@@ -1,51 +1,48 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace BlazeraLib
+﻿namespace BlazeraLib
 {
     public class Timer
     {
-        public Timer()
+        System.Diagnostics.Stopwatch Sw;
+
+        public Timer(bool start = false)
         {
-            this.InitTime = new DateTime();
-            this.ElapsedTime = new TimeSpan(0, 0, 0);
+            Sw = new System.Diagnostics.Stopwatch();
+
+            if (start)
+                Start();
         }
 
         public void Start()
         {
-            this.InitTime = DateTime.Now;
+            Sw.Start();
         }
 
         public void Stop()
         {
-            this.ElapsedTime.Subtract(this.ElapsedTime);
+            Sw.Stop();
         }
 
-        public void Reset()
+        public void Reset(bool start = true)
         {
-            this.Stop();
-            this.Start();
+            Sw.Reset();
+
+            if (start)
+                Start();
         }
 
         public Time GetElapsedTime()
         {
-            this.ElapsedTime = DateTime.Now.Subtract(this.InitTime);
-            return new Time(this.ElapsedTime.TotalSeconds);
+            double elapsedTime = (double)Sw.ElapsedTicks / (double)System.Diagnostics.Stopwatch.Frequency;
+            return new Time(elapsedTime);
         }
 
-        public Boolean IsDelayCompleted(Time time)
-        {
-            return IsDelayCompleted(time.Value);
-        }
-
-        public Boolean IsDelayCompleted(double delay, Boolean reset = true)
+        public bool IsDelayCompleted(double delay, bool reset = true, bool start = true)
         {
             if (GetElapsedTime().Value < delay)
                 return false;
 
             if (reset)
-                Reset();
+                Reset(start);
 
             return true;
         }
@@ -56,27 +53,15 @@ namespace BlazeraLib
         /// <param name="delay">Base period in s</param>
         /// <param name="reset">Reset the timer if period is outdated</param>
         /// <returns>Number of period(s) completed</returns>
-        public UInt32 GetDelayFactor(double delay, Boolean reset = true)
+        public uint GetDelayFactor(double delay, bool reset = true)
         {
-            UInt32 delayFactor = (UInt32)(GetElapsedTime().Value / delay);
+            uint delayFactor = (uint)(GetElapsedTime().Value / delay);
 
             if (delayFactor > 0 &&
                 reset)
                 Reset();
 
             return delayFactor;
-        }
-
-        private DateTime InitTime
-        {
-            get;
-            set;
-        }
-
-        private TimeSpan ElapsedTime
-        {
-            get;
-            set;
         }
     }
 }

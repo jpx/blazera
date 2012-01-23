@@ -15,20 +15,20 @@ namespace BlazeraEditor
 
         private GraphicsEngine()
         {
-            this.IsRunning = true;
+            IsRunning = true;
         }
 
         public void Init()
         {
-            this.Window = new RenderWindow(
-                new VideoMode(GameDatas.WINDOW_WIDTH, GameDatas.WINDOW_HEIGHT),
+            Window = new RenderWindow(
+                new VideoMode(GameData.WINDOW_WIDTH, GameData.WINDOW_HEIGHT),
                 "BlazeraEditor",
-                GameDatas.WINDOW_STYLE,
+                GameData.WINDOW_STYLE,
                 new ContextSettings(24, 8, 0));
 
-            //this.Window.SetFramerateLimit(150);
+            //Window.SetFramerateLimit(150);
             Border.Init();
-            WindowEvents.Instance.Init(this.Window);
+            WindowEvents.Instance.Init(Window);
 
             GameScreen = new GameScreen(Window);
             GameScreen.Init();
@@ -36,18 +36,18 @@ namespace BlazeraEditor
 
         public Boolean Update(Time dt)
         {
-            //this.FPS.Update(dt);
+            //FPS.Update(dt);
 
-            this.Window.DispatchEvents();
-            this.Window.Clear();
+            Window.DispatchEvents();
+            Window.Clear();
 
             Time trueDt = new Time(Window.GetFrameTime() / 1000D);
             GameScreen.Run(trueDt);
 
-            this.Window.Display();
+            Window.Display();
 
-            this.IsRunning = this.Window.IsOpened();
-            return this.IsRunning;
+            IsRunning = Window.IsOpened();
+            return IsRunning;
         }
 
         private static GraphicsEngine _instance;

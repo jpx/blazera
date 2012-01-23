@@ -43,45 +43,41 @@ namespace BlazeraLib
 
             Timer Timer;
 
-            Boolean pIsActive;
-            Boolean IsEventReleased;
-            Boolean IsInputReleased;
+            bool IsDown;
+            bool WasReleased;
 
-            Boolean IsHandled;
+            bool EventIsHandled;
+            bool InputIsHandled;
 
             public GameInput(List<Keyboard.Key> keys)
             {
                 Keys = keys;
 
-                Timer = new Timer();
+                Timer = new Timer(true);
 
-                pIsActive = false;
-                IsEventReleased = true;
-                IsInputReleased = true;
+                IsDown = false;
+                WasReleased = true;
 
-                IsHandled = false;
+                EventIsHandled = false;
+                InputIsHandled = false;
             }
 
             public void UpdateState()
             {
-                if (pIsActive &&
-                    IsInputReleased)
-                    IsInputReleased = false;
-
-                IsHandled = false;
+                InputIsHandled = false;
             }
 
             public Boolean UpdateState(BlzEvent evt)
             {
-                IsHandled = false;
+                EventIsHandled = false;
 
                 if (evt.Type == EventType.KeyPressed &&
                     Keys.Contains(evt.Key.Code))
                 {
-                    if (pIsActive)
-                        IsEventReleased = false;
+                    if (IsDown)
+                        WasReleased = false;
 
-                    pIsActive = true;
+                    IsDown = true;
 
                     return true;
                 }
@@ -90,67 +86,67 @@ namespace BlazeraLib
                     !Keys.Contains(evt.Key.Code))
                     return false;
 
-                pIsActive = false;
-                IsEventReleased = true;
-                IsInputReleased = true;
+                IsDown = false;
+                WasReleased = true;
 
                 return true;
             }
 
-            public Boolean IsActive(double delay, BlzEvent evt, Boolean releaseMode, Boolean reset, bool handle)
+            public bool IsActive(BlzEvent evt, bool releaseMode, double delay, bool resetTimer, bool handleEvent, bool checkEventIsHandled)
             {
-                if (evt != null)
-                {
-                    if (evt.Type == EventType.KeyPressed &&
-                        Keys.Contains(evt.Key.Code))
-                    {
-                        pIsActive = true;
-
-                        if (releaseMode &&
-                            !IsEventReleased)
-                            return false;
-
-                        IsEventReleased = false;
-
-                        if (!Timer.IsDelayCompleted(delay, reset))
-                            return false;
-
-                        if (!handle)
-                            return true;
-
-                        if (IsHandled)
-                            return false;
-
-                        IsHandled = true;
-
-                        return true;
-                    }
-                    
-                    else if (evt.Type == EventType.KeyReleased &&
-                        Keys.Contains(evt.Key.Code))
-                    {
-                        IsEventReleased = true;
-                        pIsActive = false;
-
-                        IsHandled = false;
-
-                        return true;
-                    }
-
+                if (!Keys.Contains(evt.Key.Code))
                     return false;
+
+                if (evt.Type != EventType.KeyPressed)
+                {
+                    if (evt.Type != EventType.KeyReleased)
+                        return false;
+
+                    return true;
                 }
 
-                if (!pIsActive)
+                if (releaseMode &&
+                    !WasReleased)
                     return false;
 
-                if (IsHandled)
+                if (checkEventIsHandled && EventIsHandled)
+                    return false;
+
+                if (!Timer.IsDelayCompleted(delay, resetTimer))
+                    return false;
+
+                if (handleEvent)
+                {
+                    EventIsHandled = true;
+                    WasReleased = false;
+                    //EventWasReleased = false;
+                }
+
+                return true;
+            }
+
+            public Boolean IsActive(bool releaseMode, double delay, bool resetTimer, bool handleInput, bool checkInputIsHandled)
+            {
+                if (!IsDown)
                     return false;
 
                 if (releaseMode &&
-                    !IsInputReleased)
+                    !WasReleased)
                     return false;
 
-                return Timer.IsDelayCompleted(delay, reset);
+                if (checkInputIsHandled && InputIsHandled)
+                    return false;
+
+                if (!Timer.IsDelayCompleted(delay, resetTimer))
+                    return false;
+
+                if (handleInput)
+                {
+                    InputIsHandled = true;
+                    WasReleased = false;
+                }
+
+                return true;
             }
         }
 
@@ -162,28 +158,31 @@ namespace BlazeraLib
         {
             GameInputs = new Dictionary<InputType, GameInput>()
             {
-                { InputType.Up,         new GameInput(GameDatas.KEY_UP) },
-                { InputType.Right,      new GameInput(GameDatas.KEY_RIGHT) },
-                { InputType.Down,       new GameInput(GameDatas.KEY_DOWN) },
-                { InputType.Left,       new GameInput(GameDatas.KEY_LEFT) },
-                { InputType.Action,     new GameInput(GameDatas.KEY_ACTION) },
-                { InputType.Back,       new GameInput(GameDatas.KEY_BACK) },
-                { InputType.Misc,       new GameInput(GameDatas.KEY_MISC) },
-                { InputType.Up2,        new GameInput(GameDatas.KEY_UP2) },
-                { InputType.Right2,     new GameInput(GameDatas.KEY_RIGHT2) },
-                { InputType.Down2,      new GameInput(GameDatas.KEY_DOWN2) },
-                { InputType.Left2,      new GameInput(GameDatas.KEY_LEFT2) },
-                { InputType.Action2,    new GameInput(GameDatas.KEY_ACTION2) },
-                { InputType.Special0,   new GameInput(GameDatas.KEY_SPECIAL0) },
-                { InputType.Special1,   new GameInput(GameDatas.KEY_SPECIAL1) },
-                { InputType.Special2,   new GameInput(GameDatas.KEY_SPECIAL2) },
-                { InputType.Special3,   new GameInput(GameDatas.KEY_SPECIAL3) },
-                { InputType.Special4,   new GameInput(GameDatas.KEY_SPECIAL4) },
-                { InputType.Special5,   new GameInput(GameDatas.KEY_SPECIAL5) },
-                { InputType.Special6,   new GameInput(GameDatas.KEY_SPECIAL6) },
-                { InputType.Special7,   new GameInput(GameDatas.KEY_SPECIAL7) },
-                { InputType.Special8,   new GameInput(GameDatas.KEY_SPECIAL8) },
-                { InputType.Special9,   new GameInput(GameDatas.KEY_SPECIAL9) }
+                { InputType.Up,         new GameInput(GameData.KEY_UP) },
+                { InputType.Right,      new GameInput(GameData.KEY_RIGHT) },
+                { InputType.Down,       new GameInput(GameData.KEY_DOWN) },
+                { InputType.Left,       new GameInput(GameData.KEY_LEFT) },
+                { InputType.Action,     new GameInput(GameData.KEY_ACTION) },
+
+                { InputType.Back,       new GameInput(GameData.KEY_BACK) },
+                { InputType.Misc,       new GameInput(GameData.KEY_MISC) },
+
+                { InputType.Up2,        new GameInput(GameData.KEY_UP2) },
+                { InputType.Right2,     new GameInput(GameData.KEY_RIGHT2) },
+                { InputType.Down2,      new GameInput(GameData.KEY_DOWN2) },
+                { InputType.Left2,      new GameInput(GameData.KEY_LEFT2) },
+                { InputType.Action2,    new GameInput(GameData.KEY_ACTION2) },
+
+                { InputType.Special0,   new GameInput(GameData.KEY_SPECIAL0) },
+                { InputType.Special1,   new GameInput(GameData.KEY_SPECIAL1) },
+                { InputType.Special2,   new GameInput(GameData.KEY_SPECIAL2) },
+                { InputType.Special3,   new GameInput(GameData.KEY_SPECIAL3) },
+                { InputType.Special4,   new GameInput(GameData.KEY_SPECIAL4) },
+                { InputType.Special5,   new GameInput(GameData.KEY_SPECIAL5) },
+                { InputType.Special6,   new GameInput(GameData.KEY_SPECIAL6) },
+                { InputType.Special7,   new GameInput(GameData.KEY_SPECIAL7) },
+                { InputType.Special8,   new GameInput(GameData.KEY_SPECIAL8) },
+                { InputType.Special9,   new GameInput(GameData.KEY_SPECIAL9) }
             };
         }
 
@@ -223,18 +222,15 @@ namespace BlazeraLib
             return false;
         }
 
-        /// <summary>
-        /// Modes :
-        /// > 
-        /// </summary>
-        /// <param name="gameInputType"></param>
-        /// <param name="evt"></param>
-        /// <param name="releaseMode"></param>
-        /// <param name="delay"></param>
-        /// <returns></returns>
-        public static Boolean IsGameInput(InputType gameInputType, BlzEvent evt = null, Boolean releaseMode = false, double delay = DEFAULT_INPUT_DELAY, bool handle = true)
+
+        public static bool IsGameInput(InputType type, BlzEvent evt, bool releaseMode = false, double delay = DEFAULT_INPUT_DELAY, bool handle = true, bool checkIsHandled = true)
         {
-            return Instance.GameInputs[gameInputType].IsActive(delay, evt, releaseMode, true, handle);
+            return Instance.GameInputs[type].IsActive(evt, releaseMode, delay, true, handle, checkIsHandled);
+        }
+
+        public static bool IsGameInput(InputType type, bool releaseMode = false, double delay = DEFAULT_INPUT_DELAY, bool handle = true, bool checkIsHandled = false)
+        {
+            return Instance.GameInputs[type].IsActive(releaseMode, delay, true, handle, checkIsHandled);
         }
     }
 }

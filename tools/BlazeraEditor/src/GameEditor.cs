@@ -12,7 +12,7 @@ namespace BlazeraEditor
         public GameEditor()
         {
             GameEditor.IsRunning = true;
-            this.Init();
+            Init();
         }
 
         private void Init()
@@ -26,7 +26,9 @@ namespace BlazeraEditor
         {
             while (GameEditor.IsRunning)
             {
-                Time Dt = GameTime.GetDt();
+                GameTime.Update();
+
+                Time Dt = GameTime.Dt;
                 GameEditor.IsRunning = GraphicsEngine.Instance.Update(Dt);
             }
         }

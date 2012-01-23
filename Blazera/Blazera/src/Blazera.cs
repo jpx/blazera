@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using BlazeraLib;
 
 namespace Blazera
 {
@@ -9,10 +7,17 @@ namespace Blazera
     {
         static void Main(string[] args)
         {
-            // game instance
-            Game game = new Game();
-            // launches the game instance
-            game.Launch();
+            /*try
+            {*/
+                // game instance
+                Game game = new Game();
+                // launches the game instance
+                game.Launch();
+            /*}
+            catch (Exception ex)
+            {
+                Log.Clerr(ex.Message);
+            }*/
         }
     }
 }

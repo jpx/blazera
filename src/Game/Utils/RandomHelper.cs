@@ -9,7 +9,7 @@ namespace BlazeraLib
     {
         private RandomHelper()
         {
-            this.Random = new Random();
+            Random = new Random();
         }
 
         public void Init()
@@ -41,7 +41,7 @@ namespace BlazeraLib
         }
 
         /// <summary>
-        /// Get randomly an int between min (include) and max (include)
+        /// Get randomly an int between min (included) and max (included)
         /// </summary>
         /// <param name="min"></param>
         /// <param name="max"></param>

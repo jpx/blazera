@@ -147,7 +147,7 @@ namespace BlazeraEditor
 
         void typeButton_Clicked(object sender, SFML.Window.MouseButtonEventArgs e)
         {
-            DisplayScreen.SetCurrentPicture(GetObject(((Button)sender).Text).Skin);
+            DisplayScreen.SetCurrentPicture(new Texture(GetObject(((Button)sender).Text).GetSkinTexture()));
         }
 
         WorldObject GetObjectFromType(WorldObjectBaseType baseType, String type)
@@ -172,7 +172,7 @@ namespace BlazeraEditor
             }
 
             if (ObjectTextList.GetTextCount() > 0)
-                DisplayScreen.SetCurrentPicture(GetObject(((Button)ObjectTextList.GetAt(0)).Text).Skin);
+                DisplayScreen.SetCurrentPicture(new Texture(GetObject(((Button)ObjectTextList.GetAt(0)).Text).GetSkinTexture()));
         }
 
         void RefreshObjects()

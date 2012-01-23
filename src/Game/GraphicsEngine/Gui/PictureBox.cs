@@ -12,28 +12,28 @@ namespace BlazeraLib
         public PictureBox(Texture texture) :
             base()
         {
-            this.Texture = texture;
+            Texture = texture;
         }
 
-        public override void Draw(RenderWindow window)
+        public override void Draw(RenderTarget window)
         {
             base.Draw(window);
 
-            if (!this.IsVisible)
+            if (!IsVisible)
                 return;
 
-            if (this.Texture != null)
-                this.Texture.Draw(window);
+            if (Texture != null)
+                Texture.Draw(window);
         }
 
         public override void Refresh()
         {
-            if (this.Texture == null)
+            if (Texture == null)
                 return;
 
-            this.Texture.Dimension = this.Dimension;
+            Texture.Dimension = Dimension;
 
-            this.Texture.Position = this.GetGlobalFromLocal(
+            Texture.Position = GetGlobalFromLocal(
                 new Vector2f(
                     0F,
                     0F));
@@ -43,17 +43,17 @@ namespace BlazeraLib
         {
             get
             {
-                if (this.Texture == null)
+                if (Texture == null)
                     return base.Dimension;
 
-                return this.Texture.Dimension;
+                return Texture.Dimension;
             }
             set
             {
                 base.Dimension = value;
 
-                if (this.Texture != null)
-                    this.Texture.Dimension = value;
+                if (Texture != null)
+                    Texture.Dimension = value;
             }
         }
 
@@ -65,10 +65,10 @@ namespace BlazeraLib
             {
                 _texture = value;
 
-                if (this.Texture == null)
+                if (Texture == null)
                     return;
 
-                this.Dimension = this.Texture.Dimension;
+                Dimension = Texture.Dimension;
 
                 Texture.Position = GetGlobalFromLocal(new Vector2f());
             }
@@ -82,7 +82,7 @@ namespace BlazeraLib
                 base.Color = value;
 
                 if (Texture != null)
-                    this.Texture.Color = this.Color;
+                    Texture.Color = Color;
             }
         }
     }

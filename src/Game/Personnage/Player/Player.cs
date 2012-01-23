@@ -21,12 +21,17 @@ namespace BlazeraLib
             Inventory = new Inventory(copy.Inventory);
         }
 
+        public override object Clone()
+        {
+            return new Player(this);
+        }
+
         public override void ToScript()
         {
-            this.Sw = new ScriptWriter(this);
-            this.Sw.InitObject();
+            Sw = new ScriptWriter(this);
+            Sw.InitObject();
             base.ToScript();
-            this.Sw.EndObject();
+            Sw.EndObject();
         }
     }
 }

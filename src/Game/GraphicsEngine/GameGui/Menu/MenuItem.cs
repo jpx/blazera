@@ -160,6 +160,7 @@ namespace BlazeraLib
         void MenuItem_Validated(MenuItem sender, ValidationEventArgs e)
         {
             GetParentMenu().ShowCursor(false);
+            GetParentMenu().Disable();
 
             GetRoot().SetFirst(MenuSwitchingInfo.AttachedMenu);
             MenuSwitchingInfo.AttachedMenu.Open(new OpeningInfo(true));

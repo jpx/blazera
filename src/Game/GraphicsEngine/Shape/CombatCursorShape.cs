@@ -70,7 +70,7 @@ namespace BlazeraLib
             CenterSquare.AddPoint(new Vector2f(centerOffset, Size - centerOffset), centerColor, sideColor);
         }
 
-        public override void Draw(RenderWindow window)
+        public override void Draw(RenderTarget window)
         {
             if (!IsVisible)
                 return;
@@ -93,6 +93,11 @@ namespace BlazeraLib
         public override Vector2f Dimension
         {
             get { return new Vector2f(Size, Size); }
+        }
+
+        public override object Clone()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

@@ -10,7 +10,7 @@
             Grid = new GridShape(scale, width, height);
         }
 
-        public override void Draw(SFML.Graphics.RenderWindow window)
+        public override void Draw(SFML.Graphics.RenderTarget window)
         {
             base.Draw(window);
 

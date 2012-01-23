@@ -11,7 +11,7 @@ namespace BlazeraLib
     {
         private WindowEvents()
         {
-            this.Events = new Queue<Event>();
+            Events = new Queue<Event>();
         }
 
         public void Init(RenderWindow window)
@@ -40,7 +40,7 @@ namespace BlazeraLib
             evt.Type = EventType.TextEntered;
             evt.Text.Unicode = (uint)Char.ConvertToUtf32(e.Unicode, 0);
 
-            this.Events.Enqueue(evt);
+            Events.Enqueue(evt);
         }
 
         private void window_Resized(object sender, SizeEventArgs e)
@@ -50,7 +50,7 @@ namespace BlazeraLib
             evt.Size.Height = e.Height;
             evt.Size.Width = e.Width;
 
-            this.Events.Enqueue(evt);
+            Events.Enqueue(evt);
         }
 
         private void window_MouseWheelMoved(object sender, MouseWheelEventArgs e)
@@ -59,7 +59,7 @@ namespace BlazeraLib
             evt.Type = EventType.MouseWheelMoved;
             evt.MouseWheel.Delta = e.Delta;
 
-            this.Events.Enqueue(evt);
+            Events.Enqueue(evt);
         }
 
         private void window_MouseMoved(object sender, MouseMoveEventArgs e)
@@ -69,7 +69,7 @@ namespace BlazeraLib
             evt.MouseMove.X = e.X;
             evt.MouseMove.Y = e.Y;
 
-            this.Events.Enqueue(evt);
+            Events.Enqueue(evt);
         }
 
         private void window_MouseLeft(object sender, EventArgs e)
@@ -77,7 +77,7 @@ namespace BlazeraLib
             Event evt = new Event();
             evt.Type = EventType.MouseLeft;
 
-            this.Events.Enqueue(evt);
+            Events.Enqueue(evt);
         }
 
         private void window_MouseEntered(object sender, EventArgs e)
@@ -85,7 +85,7 @@ namespace BlazeraLib
             Event evt = new Event();
             evt.Type = EventType.MouseEntered;
 
-            this.Events.Enqueue(evt);
+            Events.Enqueue(evt);
         }
 
         private void window_MouseButtonReleased(object sender, MouseButtonEventArgs e)
@@ -96,7 +96,7 @@ namespace BlazeraLib
             evt.MouseButton.X = e.X;
             evt.MouseButton.Y = e.Y;
 
-            this.Events.Enqueue(evt);
+            Events.Enqueue(evt);
         }
 
         private void window_MouseButtonPressed(object sender, MouseButtonEventArgs e)
@@ -107,7 +107,7 @@ namespace BlazeraLib
             evt.MouseButton.X = e.X;
             evt.MouseButton.Y = e.Y;
 
-            this.Events.Enqueue(evt);
+            Events.Enqueue(evt);
         }
 
         private void window_LostFocus(object sender, EventArgs e)
@@ -115,7 +115,7 @@ namespace BlazeraLib
             Event evt = new Event();
             evt.Type = EventType.LostFocus;
 
-            this.Events.Enqueue(evt);
+            Events.Enqueue(evt);
         }
 
         private void window_KeyReleased(object sender, KeyEventArgs e)
@@ -127,7 +127,7 @@ namespace BlazeraLib
             evt.Key.Shift = e.Shift ? 1 : 0;
             evt.Key.Code = e.Code;
 
-            this.Events.Enqueue(evt);
+            Events.Enqueue(evt);
         }
 
         private void window_KeyPressed(object sender, KeyEventArgs e)
@@ -139,7 +139,7 @@ namespace BlazeraLib
             evt.Key.Shift = e.Shift ? 1 : 0;
             evt.Key.Code = e.Code;
 
-            this.Events.Enqueue(evt);
+            Events.Enqueue(evt);
         }
 
         private void window_JoyMoved(object sender, JoystickMoveEventArgs e)
@@ -150,7 +150,7 @@ namespace BlazeraLib
             evt.JoystickMove.JoystickId = e.JoystickId;
             evt.JoystickMove.Position = e.Position;
 
-            this.Events.Enqueue(evt);
+            Events.Enqueue(evt);
         }
 
         private void window_JoyButtonReleased(object sender, JoystickButtonEventArgs e)
@@ -160,7 +160,7 @@ namespace BlazeraLib
             evt.JoystickButton.Button = e.Button;
             evt.JoystickButton.JoystickId = e.JoystickId;
 
-            this.Events.Enqueue(evt);
+            Events.Enqueue(evt);
         }
 
         private void window_JoyButtonPressed(object sender, JoystickButtonEventArgs e)
@@ -170,7 +170,7 @@ namespace BlazeraLib
             evt.JoystickButton.Button = e.Button;
             evt.JoystickButton.JoystickId = e.JoystickId;
 
-            this.Events.Enqueue(evt);
+            Events.Enqueue(evt);
         }
 
         private void window_GainedFocus(object sender, EventArgs e)
@@ -178,7 +178,7 @@ namespace BlazeraLib
             Event evt = new Event();
             evt.Type = EventType.GainedFocus;
 
-            this.Events.Enqueue(evt);
+            Events.Enqueue(evt);
         }
 
         private void window_Closed(object sender, EventArgs e)

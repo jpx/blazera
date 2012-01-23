@@ -9,6 +9,8 @@ namespace BlazeraLib
 {
     public class MapBox : Widget
     {
+        const bool ECONOMIC_MODE = false;
+
         Vector2f Size;
         float Margins;
 
@@ -16,6 +18,7 @@ namespace BlazeraLib
         HScrollBar HScrollBar;
 
         public Map Map { get; private set; }
+        bool MapIsUpdated;
 
         GameBaseWidget GameRoot;
         Vector2f ViewMove;
@@ -37,6 +40,8 @@ namespace BlazeraLib
             AddWidget(VScrollBar);
             HScrollBar = new HScrollBar();
             AddWidget(HScrollBar);
+
+            MapIsUpdated = false;
         }
 
         public void SetGameRoot(RenderWindow window)
@@ -57,11 +62,16 @@ namespace BlazeraLib
             return GameRoot.RemoveGameWidget(gameWidget);
         }
 
+        bool GetMapIsUpdated()
+        {
+            return !ECONOMIC_MODE || MapIsUpdated;
+        }
+
         public override void Update(Time dt)
         {
             base.Update(dt);
 
-            if (Map == null)
+            if (Map == null || !GetMapIsUpdated())
                 return;
 
             Map.Update(dt);
@@ -73,9 +83,9 @@ namespace BlazeraLib
             Inputs.Instance.UpdateState();
         }
 
-        public override void Draw(RenderWindow window)
+        public override void Draw(RenderTarget window)
         {
-            if (Map == null)
+            if (Map == null || !GetMapIsUpdated())
                 return;
 
             window.SetView(GameRoot.MapView);
@@ -138,6 +148,9 @@ namespace BlazeraLib
 
         Boolean HandlePlayerEvent(BlzEvent evt)
         {
+            if (!MapIsUpdated)
+                return false;
+
             switch (evt.Type)
             {
                 #region player moves
@@ -271,11 +284,17 @@ namespace BlazeraLib
         public void SetMap(Map map)
         {
             Map = map;
+            MapIsUpdated = true;
 
-            VScrollBar.SetValues((Int32)(GameRoot.MapView.Size.Y / GameDatas.TILE_SIZE), (Int32)(Map.Dimension.Y / GameDatas.TILE_SIZE));
-            HScrollBar.SetValues((Int32)(GameRoot.MapView.Size.X / GameDatas.TILE_SIZE), (Int32)(Map.Dimension.X / GameDatas.TILE_SIZE));
+            VScrollBar.SetValues((Int32)(GameRoot.MapView.Size.Y / GameData.TILE_SIZE), (Int32)(Map.Dimension.Y / GameData.TILE_SIZE));
+            HScrollBar.SetValues((Int32)(GameRoot.MapView.Size.X / GameData.TILE_SIZE), (Int32)(Map.Dimension.X / GameData.TILE_SIZE));
 
             UpdateView();
+        }
+
+        public void RunMapUpdate(bool mapIsUpdated)
+        {
+            MapIsUpdated = mapIsUpdated;
         }
 
         const float VIEW_MOVE_MINOR_LIMIT = .5F;
@@ -292,10 +311,10 @@ namespace BlazeraLib
 
             Vector2f p = player.Center;
 
-            if (Math.Abs(p.X - GameRoot.MapView.Center.X) > VIEW_MOVE_TRIGGER_LIMIT * (GameDatas.WINDOW_HEIGHT / GameDatas.WINDOW_WIDTH))
-                moveX = player.Velocity * (p.X - GameRoot.MapView.Center.X) / 50f * GameDatas.WINDOW_WIDTH / GameDatas.WINDOW_HEIGHT * (float)dt.Value;
-            if (Math.Abs(p.Y - GameRoot.MapView.Center.Y) > VIEW_MOVE_TRIGGER_LIMIT * (GameDatas.WINDOW_WIDTH / GameDatas.WINDOW_HEIGHT))
-                moveY = player.Velocity * (p.Y - GameRoot.MapView.Center.Y) / 50f * GameDatas.WINDOW_HEIGHT / GameDatas.WINDOW_WIDTH * (float)dt.Value;
+            if (Math.Abs(p.X - GameRoot.MapView.Center.X) > VIEW_MOVE_TRIGGER_LIMIT * (GameData.WINDOW_HEIGHT / GameData.WINDOW_WIDTH))
+                moveX = player.Velocity * (p.X - GameRoot.MapView.Center.X) / 50f * GameData.WINDOW_WIDTH / GameData.WINDOW_HEIGHT * (float)dt.Value;
+            if (Math.Abs(p.Y - GameRoot.MapView.Center.Y) > VIEW_MOVE_TRIGGER_LIMIT * (GameData.WINDOW_WIDTH / GameData.WINDOW_HEIGHT))
+                moveY = player.Velocity * (p.Y - GameRoot.MapView.Center.Y) / 50f * GameData.WINDOW_HEIGHT / GameData.WINDOW_WIDTH * (float)dt.Value;
 
             /*if (Math.Abs(moveX) < VIEW_MOVE_MINOR_LIMIT)
                 moveX = p.X - Gui.MapView.Center.X;
@@ -337,8 +356,8 @@ namespace BlazeraLib
 
         public void UpdateUnlockedViewMove()
         {
-            float xMove = HScrollBar.CursorPosition * GameDatas.TILE_SIZE - (GameRoot.MapView.Center.X - GameRoot.MapView.Size.X / 2F);
-            float yMove = VScrollBar.CursorPosition * GameDatas.TILE_SIZE - (GameRoot.MapView.Center.Y - GameRoot.MapView.Size.Y / 2F);
+            float xMove = HScrollBar.CursorPosition * GameData.TILE_SIZE - (GameRoot.MapView.Center.X - GameRoot.MapView.Size.X / 2F);
+            float yMove = VScrollBar.CursorPosition * GameData.TILE_SIZE - (GameRoot.MapView.Center.Y - GameRoot.MapView.Size.Y / 2F);
 
             ViewMove = new Vector2f(xMove, yMove);
         }

@@ -279,7 +279,7 @@ namespace BlazeraEditor
                     }
 
                     wObj = new Element();
-                    wObj.Skin = Create.Texture(ElementTextureButton.Text);
+                    wObj.SetSkin(Create.Texture(ElementTextureButton.Text));
 
                     foreach (BBoundingBox BB in ElementBBoundingBoxes.Values)
                         wObj.AddBoundingBox(BB);
@@ -289,7 +289,7 @@ namespace BlazeraEditor
                 case WorldObjectBaseType.DisplaceableElement:
 
                     wObj = new DisplaceableElement();
-                    wObj.Skin = Create.Texture(ElementTextureButton.Text);
+                    wObj.SetSkin(Create.Texture(ElementTextureButton.Text));
 
                     foreach (BBoundingBox BB in ElementBBoundingBoxes.Values)
                         wObj.AddBoundingBox(BB);
@@ -312,7 +312,7 @@ namespace BlazeraEditor
                     }
 
                     wObj = new GroundElement();
-                    wObj.Skin = Create.Texture(GroundElementTextureButton.Text);
+                    wObj.SetSkin(Create.Texture(GroundElementTextureButton.Text));
 
                     break;
 

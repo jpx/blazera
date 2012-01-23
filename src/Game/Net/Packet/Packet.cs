@@ -74,7 +74,7 @@ namespace BlazeraLib
         public string GetNext()
         {
             if (CurrentWord >= Data.Length)
-                throw new Exception("End of packet");
+                throw new Exception("End of packet is reached.");
 
             return Data[CurrentWord++];
         }

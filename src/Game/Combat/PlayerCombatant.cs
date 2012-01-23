@@ -7,5 +7,10 @@
         {
 
         }
+
+        public override object Clone()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

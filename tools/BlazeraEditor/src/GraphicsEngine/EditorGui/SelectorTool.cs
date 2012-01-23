@@ -169,7 +169,7 @@ namespace BlazeraEditor
                 return;
 
             SelectedObjects.Add(wObj);
-            wObj.Skin.Color = OBJECT_SELECTION_COLOR;
+            wObj.Color = OBJECT_SELECTION_COLOR;
 
             if (OnObjectAddition != null)
                 OnObjectAddition(this, new SelectedObjectChangeEventArgs(wObj));
@@ -180,7 +180,7 @@ namespace BlazeraEditor
             if (!SelectedObjects.Remove(wObj))
                 return false;
 
-            wObj.Skin.Color = Color.White;
+            wObj.Color = Color.White;
 
             if (OnObjectSuppression != null)
                 OnObjectSuppression(this, new SelectedObjectChangeEventArgs(wObj));

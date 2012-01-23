@@ -36,6 +36,11 @@ namespace BlazeraLib
             Position = copy.Position;
         }
 
+        public override object Clone()
+        {
+            return new Tile(this);
+        }
+
         public override void ToScript()
         {
             Sw = new ScriptWriter(this);
@@ -53,7 +58,7 @@ namespace BlazeraLib
         {
         }
 
-        public override void Draw(RenderWindow window)
+        public override void Draw(RenderTarget window)
         {
             Texture.Draw(window);
         }

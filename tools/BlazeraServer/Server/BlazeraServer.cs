@@ -59,7 +59,7 @@ namespace BlazeraServer
         /// </summary>
         public void Init()
         {
-            ScriptEngine.Instance.Init("GameDatas");
+            ScriptEngine.Instance.Init("GameData");
             TextureManager.Instance.Init();
             GameTime.Instance.Init();
 
@@ -100,7 +100,7 @@ namespace BlazeraServer
         /// </summary>
         void RunServer()
         {
-            TcpListener listener = new TcpListener(IPAddress.Parse(GameDatas.SERVER_IP), GameDatas.SERVER_PORT);
+            TcpListener listener = new TcpListener(IPAddress.Parse(GameData.SERVER_IP), GameData.SERVER_PORT);
 
             listener.Start();
 
@@ -128,8 +128,8 @@ namespace BlazeraServer
                 }
 
                 Socket socketClient = socket;
-                socketClient.ReceiveTimeout = GameDatas.SERVER_IO_TIMEOUT;
-                socketClient.SendTimeout = GameDatas.SERVER_IO_TIMEOUT;
+                socketClient.ReceiveTimeout = GameData.SERVER_IO_TIMEOUT;
+                socketClient.SendTimeout = GameData.SERVER_IO_TIMEOUT;
 
                 ClientService cs = new ClientService(socketClient);
                 AddClient(cs);
@@ -159,19 +159,21 @@ namespace BlazeraServer
 
             while (!IsKilled)
             {
+                GameTime.Update();
+
                 SleepTimer.Reset();
 
                 Queue<ClientService> droppedClients = new Queue<ClientService>();
-                for (int i = 0; i < this.Clients.Count; ++i)
+                for (int i = 0; i < Clients.Count; ++i)
                 {
-                    ClientService cs = (ClientService)this.Clients[i];
+                    ClientService cs = (ClientService)Clients[i];
                     if (cs.IsDropped)
                         droppedClients.Enqueue(cs);
                 }
                 while (droppedClients.Count > 0)
                     RemoveClient(droppedClients.Dequeue());
                 
-                SWorld.Instance.Update(GameTime.GetDt());
+                SWorld.Instance.Update(GameTime.Dt);
 
                 if (PING_MODE)
                     Pinger.Update(GameTime.Dt);
@@ -194,7 +196,7 @@ namespace BlazeraServer
         {
             Log.Cl("Packet broadcasted : " + packet.Type.ToString(), ConsoleColor.DarkMagenta);
 
-            IEnumerator<ClientService> iEnum = this.Clients.GetEnumerator();
+            IEnumerator<ClientService> iEnum = Clients.GetEnumerator();
 
             while (iEnum.MoveNext())
                 if (exceptions == null || !exceptions.Contains<int>(iEnum.Current.GetGuid()))

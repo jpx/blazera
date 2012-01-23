@@ -24,22 +24,22 @@ namespace BlazeraLib
             get { return _state; }
             set
             {
-                EState oldState = this.State;
+                EState oldState = State;
 
                 _state = value;
 
-                if (this.State == EState.Restored)
-                    this.RefreshButtons();
+                if (State == EState.Restored)
+                    RefreshButtons();
 
-                if (this.State == oldState)
+                if (State == oldState)
                     return;
 
-                this.RefreshButtons();
+                RefreshButtons();
 
-                if (this.StateChanged != null)
-                    this.StateChanged(this, new StateChangeEventArgs(this.State));
+                if (StateChanged != null)
+                    StateChanged(this, new StateChangeEventArgs(State));
 
-                this.Refresh();
+                Refresh();
             }
         }
 
@@ -69,59 +69,59 @@ namespace BlazeraLib
         public WindowBackground(Vector2f dimension, float topBorderHeight = DEFAULT_TOPBORDER_HEIGHT) :
             base()
         {
-            this.TopBorderHeight = topBorderHeight;
+            TopBorderHeight = topBorderHeight;
 
-            this.State = EState.Restored;
+            State = EState.Restored;
 
-            this.Dimension = dimension;
+            Dimension = dimension;
 
-            this.UpBorder = new Border(
+            UpBorder = new Border(
                 new Vector2f(
-                    this.Dimension.X,
-                    this.TopBorderHeight));
+                    Dimension.X,
+                    TopBorderHeight));
 
-            this.DownBorder = new Border(
+            DownBorder = new Border(
                 new Vector2f(
-                    this.Dimension.X,
-                    this.Dimension.Y));
+                    Dimension.X,
+                    Dimension.Y));
 
             // Window close button
-            this.CloseBtn = new Button(
+            CloseBtn = new Button(
                 Create.Texture("Gui_CloseButtonN"),
                 Create.Texture("Gui_CloseButtonO"));
-            this.CloseBtn.Clicked += new ClickEventHandler(CloseBtn_Clicked);
+            CloseBtn.Clicked += new ClickEventHandler(CloseBtn_Clicked);
             CloseBtn.IsColorLinked = false;
             
-            this.CloseBtn.ClickOffset = BUTTON_CLICK_OFFSET;
+            CloseBtn.ClickOffset = BUTTON_CLICK_OFFSET;
 
-            this.AddWidget(this.CloseBtn);
+            AddWidget(CloseBtn);
 
             // window reduce button
-            this.ReduceBtn = new Button(
+            ReduceBtn = new Button(
                 Create.Texture("Gui_ReduceButtonN"),
                 Create.Texture("Gui_ReduceButtonO"));
 
-            this.ReduceBtn.ClickOffset = BUTTON_CLICK_OFFSET;
+            ReduceBtn.ClickOffset = BUTTON_CLICK_OFFSET;
 
-            this.ReduceBtn.Clicked += new ClickEventHandler(ReduceBtn_Clicked);
+            ReduceBtn.Clicked += new ClickEventHandler(ReduceBtn_Clicked);
             ReduceBtn.IsColorLinked = false;
 
-            this.AddWidget(this.ReduceBtn);
+            AddWidget(ReduceBtn);
 
             // window restore button
-            this.RestoreBtn = new Button(
+            RestoreBtn = new Button(
                 Create.Texture("Gui_restoreButtonN"),
                 Create.Texture("Gui_restoreButtonO"));
 
-            this.RestoreBtn.ClickOffset = BUTTON_CLICK_OFFSET;
+            RestoreBtn.ClickOffset = BUTTON_CLICK_OFFSET;
 
-            this.RestoreBtn.Clicked += new ClickEventHandler(ReduceBtn_Clicked);
+            RestoreBtn.Clicked += new ClickEventHandler(ReduceBtn_Clicked);
             RestoreBtn.IsColorLinked = false;
 
-            this.RestoreBtn.Close();
-            this.AddWidget(this.RestoreBtn);
+            RestoreBtn.Close();
+            AddWidget(RestoreBtn);
             
-            this.IsDragged = false;
+            IsDragged = false;
         }
 
         void CloseBtn_Clicked(object sender, MouseButtonEventArgs e)
@@ -129,16 +129,16 @@ namespace BlazeraLib
             if (IsDragged)
                 return;
 
-            this.State = EState.Disabled;
+            State = EState.Disabled;
         }
 
         public void SetTitle(String title)
         {
-            this.Title = new Label(title);
+            Title = new Label(title);
             Title.Style = LABEL_STYLE;
             Title.IsColorLinked = false;
-            this.Title.Center = this.GetGlobalFromLocal(new Vector2f(Border.GetWindowBorderWidth() * 2F + this.Title.Halfsize.X, this.TopBorderHeight / 2F));
-            this.AddWidget(this.Title);
+            Title.Center = GetGlobalFromLocal(new Vector2f(Border.GetWindowBorderWidth() * 2F + Title.Halfsize.X, TopBorderHeight / 2F));
+            AddWidget(Title);
         }
 
         void ReduceBtn_Clicked(object sender, MouseButtonEventArgs e)
@@ -146,39 +146,39 @@ namespace BlazeraLib
             if (IsDragged)
                 return;
 
-            if (this.State == EState.Restored ||
-                this.State == EState.Restoring)
-                this.State = EState.Reducing;
+            if (State == EState.Restored ||
+                State == EState.Restoring)
+                State = EState.Reducing;
 
-            else if (this.State == EState.Reduced ||
-                     this.State == EState.Reducing)
-                this.State = EState.Restoring;
+            else if (State == EState.Reduced ||
+                     State == EState.Reducing)
+                State = EState.Restoring;
         }
 
         private void RefreshButtons()
         {
-            if (this.ReduceBtn == null ||
-                this.RestoreBtn == null)
+            if (ReduceBtn == null ||
+                RestoreBtn == null)
                 return;
 
-            if (this.State == EState.Restored ||
-                this.State == EState.Restoring)
+            if (State == EState.Restored ||
+                State == EState.Restoring)
             {
-                this.ReduceBtn.Open();
-                this.RestoreBtn.Close();
+                ReduceBtn.Open();
+                RestoreBtn.Close();
             }
 
-            else if (this.State == EState.Reduced ||
-                     this.State == EState.Reducing)
+            else if (State == EState.Reduced ||
+                     State == EState.Reducing)
             {
-                this.RestoreBtn.Open();
-                this.ReduceBtn.Close();
+                RestoreBtn.Open();
+                ReduceBtn.Close();
             }
 
             else
             {
-                this.RestoreBtn.Close();
-                this.ReduceBtn.Close();
+                RestoreBtn.Close();
+                ReduceBtn.Close();
             }
         }
 
@@ -195,24 +195,24 @@ namespace BlazeraLib
 
                     evt.IsHandled = true;
 
-                    if (!this.IsDragged)
+                    if (!IsDragged)
                         break;
 
-                    this.IsDragged = false;
+                    IsDragged = false;
 
                     return true;
 
                 case EventType.MouseButtonPressed:
 
-                    if (!this.ContainsMouse())
+                    if (!ContainsMouse())
                         break;
 
                     if (State != EState.Restored)
                     {
-                        if (this.TopBorderContainsMouse())
+                        if (TopBorderContainsMouse())
                         {
-                            this.IsDragged = true;
-                            this.DragPoint = this.GetLocalFromGlobal(new Vector2f(evt.MouseButton.X, evt.MouseButton.Y));
+                            IsDragged = true;
+                            DragPoint = GetLocalFromGlobal(new Vector2f(evt.MouseButton.X, evt.MouseButton.Y));
 
                             return true;
                         }
@@ -220,10 +220,10 @@ namespace BlazeraLib
                         break;
                     }
 
-                    if (this.TopBorderContainsMouse())
+                    if (TopBorderContainsMouse())
                     {
-                        this.IsDragged = true;
-                        this.DragPoint = this.GetLocalFromGlobal(new Vector2f(evt.MouseButton.X, evt.MouseButton.Y));
+                        IsDragged = true;
+                        DragPoint = GetLocalFromGlobal(new Vector2f(evt.MouseButton.X, evt.MouseButton.Y));
 
                         return true;
                     }
@@ -234,54 +234,54 @@ namespace BlazeraLib
 
                     if (evt.MouseButton.Button != Mouse.Button.Left)
                     {
-                        if (this.ContainsMouse())
+                        if (ContainsMouse())
                             evt.IsHandled = true;
 
                         break;
                     }
 
-                    if (this.IsDragged)
-                        this.IsDragged = false;
+                    if (IsDragged)
+                        IsDragged = false;
 
-                    if (!this.ContainsMouse())
+                    if (!ContainsMouse())
                         break;
 
-                    if (this.TopBorderContainsMouse())
+                    if (TopBorderContainsMouse())
                         return true;
 
-                    if (this.State == EState.Reduced)
+                    if (State == EState.Reduced)
                         break;
 
                     return true;
 
                 case EventType.MouseMoved:
 
-                    if (this.IsDragged)
+                    if (IsDragged)
                     {
-                        if (this.Dragged != null)
+                        if (Dragged != null)
                         {
-                            this.Dragged(this, new DragEventArgs(new Vector2f(
-                                evt.MouseMove.X - this.DragPoint.X,
-                                evt.MouseMove.Y - this.DragPoint.Y)));
+                            Dragged(this, new DragEventArgs(new Vector2f(
+                                evt.MouseMove.X - DragPoint.X,
+                                evt.MouseMove.Y - DragPoint.Y)));
 
                             return true;
                         }
                     }
 
-                    if (!this.ContainsMouse())
+                    if (!ContainsMouse())
                         break;
 
-                    if (this.TopBorderContainsMouse())
+                    if (TopBorderContainsMouse())
                         return true;
 
-                    if (this.State == EState.Reduced)
+                    if (State == EState.Reduced)
                         break;
 
                     return true;
 
                 case EventType.MouseWheelMoved:
 
-                    if (this.ContainsMouse())
+                    if (ContainsMouse())
                         evt.IsHandled = true;
 
                     break;
@@ -294,86 +294,86 @@ namespace BlazeraLib
         {
             base.Update(dt);
 
-            if (this.State == EState.Reducing)
+            if (State == EState.Reducing)
             {
-                this.DownBorder.Resize(new Vector2f(1F, 1F - (float)(RESIZE_VELOCITY * dt.Value)));
-                if (this.DownBorder.Dimension.Y <= this.UpBorder.Dimension.Y)
+                DownBorder.Resize(new Vector2f(1F, 1F - (float)(RESIZE_VELOCITY * dt.Value)));
+                if (DownBorder.Dimension.Y <= UpBorder.Dimension.Y)
                 {
-                    this.State = EState.Reduced;
-                    this.DownBorder.Resize(new Vector2f(1F, this.UpBorder.Dimension.Y / this.DownBorder.Dimension.Y));
+                    State = EState.Reduced;
+                    DownBorder.Resize(new Vector2f(1F, UpBorder.Dimension.Y / DownBorder.Dimension.Y));
                 }
             }
 
-            else if (this.State == EState.Restoring)
+            else if (State == EState.Restoring)
             {
-                this.DownBorder.Resize(new Vector2f(1F, 1F + (float)(RESIZE_VELOCITY * dt.Value)));
-                if (this.DownBorder.Dimension.Y >= this.Dimension.Y)
+                DownBorder.Resize(new Vector2f(1F, 1F + (float)(RESIZE_VELOCITY * dt.Value)));
+                if (DownBorder.Dimension.Y >= Dimension.Y)
                 {
-                    this.State = EState.Restored;
-                    this.DownBorder.Resize(new Vector2f(1F, this.Dimension.Y / this.DownBorder.Dimension.Y));
+                    State = EState.Restored;
+                    DownBorder.Resize(new Vector2f(1F, Dimension.Y / DownBorder.Dimension.Y));
                 }
             }
         }
 
-        public override void Draw(RenderWindow window)
+        public override void Draw(RenderTarget window)
         {
-            this.UpBorder.Draw(window);
+            UpBorder.Draw(window);
             
             base.Draw(window);
 
-            this.DownBorder.Draw(window);
+            DownBorder.Draw(window);
         }
 
         private Boolean TopBorderContainsMouse()
         {
-            return this.GetLocalFromGlobal(new Vector2f(Mouse.GetPosition(Root.Window).X, Mouse.GetPosition(Root.Window).Y)).Y < this.TopBorderHeight &&
-                   this.GetLocalFromGlobal(new Vector2f(Mouse.GetPosition(Root.Window).X, Mouse.GetPosition(Root.Window).Y)).Y >= 0F &&
-                   this.GetLocalFromGlobal(new Vector2f(Mouse.GetPosition(Root.Window).X, Mouse.GetPosition(Root.Window).Y)).X >= 0F &&
-                   this.GetLocalFromGlobal(new Vector2f(Mouse.GetPosition(Root.Window).X, Mouse.GetPosition(Root.Window).Y)).X < this.Dimension.X;
+            return GetLocalFromGlobal(new Vector2f(Mouse.GetPosition(Root.Window).X, Mouse.GetPosition(Root.Window).Y)).Y < TopBorderHeight &&
+                   GetLocalFromGlobal(new Vector2f(Mouse.GetPosition(Root.Window).X, Mouse.GetPosition(Root.Window).Y)).Y >= 0F &&
+                   GetLocalFromGlobal(new Vector2f(Mouse.GetPosition(Root.Window).X, Mouse.GetPosition(Root.Window).Y)).X >= 0F &&
+                   GetLocalFromGlobal(new Vector2f(Mouse.GetPosition(Root.Window).X, Mouse.GetPosition(Root.Window).Y)).X < Dimension.X;
         }
 
         public override void Refresh()
         {
-            if (this.UpBorder == null ||
-                this.DownBorder == null)
+            if (UpBorder == null ||
+                DownBorder == null)
                 return;
 
-            this.UpBorder.Resize(new Vector2f(
-                this.Dimension.X / this.UpBorder.Dimension.X,
-                this.TopBorderHeight / this.UpBorder.Dimension.Y));
+            UpBorder.Resize(new Vector2f(
+                Dimension.X / UpBorder.Dimension.X,
+                TopBorderHeight / UpBorder.Dimension.Y));
 
-            if (this.State == EState.Restored)
-                this.DownBorder.Resize(new Vector2f(
-                    this.Dimension.X / this.DownBorder.Dimension.X,
-                    this.Dimension.Y / this.DownBorder.Dimension.Y));
+            if (State == EState.Restored)
+                DownBorder.Resize(new Vector2f(
+                    Dimension.X / DownBorder.Dimension.X,
+                    Dimension.Y / DownBorder.Dimension.Y));
 
-            this.CloseBtn.Dimension = new Vector2f(
-                this.TopBorderHeight * BUTTON_SCALE_FACTOR,
-                this.TopBorderHeight * BUTTON_SCALE_FACTOR);
+            CloseBtn.Dimension = new Vector2f(
+                TopBorderHeight * BUTTON_SCALE_FACTOR,
+                TopBorderHeight * BUTTON_SCALE_FACTOR);
 
-            this.CloseBtn.Position = this.GetGlobalFromLocal(new Vector2f(
-                this.Dimension.X - Border.GetWindowBorderWidth() * 2F - this.CloseBtn.Dimension.X,
-                this.TopBorderHeight / 2F - this.CloseBtn.Halfsize.Y));
+            CloseBtn.Position = GetGlobalFromLocal(new Vector2f(
+                Dimension.X - Border.GetWindowBorderWidth() * 2F - CloseBtn.Dimension.X,
+                TopBorderHeight / 2F - CloseBtn.Halfsize.Y));
 
-            this.ReduceBtn.Dimension = new Vector2f(
-                this.TopBorderHeight * BUTTON_SCALE_FACTOR,
-                this.TopBorderHeight * BUTTON_SCALE_FACTOR);
+            ReduceBtn.Dimension = new Vector2f(
+                TopBorderHeight * BUTTON_SCALE_FACTOR,
+                TopBorderHeight * BUTTON_SCALE_FACTOR);
 
-            this.ReduceBtn.Position = this.GetGlobalFromLocal(new Vector2f(
-                this.Dimension.X - this.CloseBtn.Dimension.X * 2 - Border.GetWindowBorderWidth() * 2F,
-                this.TopBorderHeight / 2F - this.ReduceBtn.Halfsize.Y));
+            ReduceBtn.Position = GetGlobalFromLocal(new Vector2f(
+                Dimension.X - CloseBtn.Dimension.X * 2 - Border.GetWindowBorderWidth() * 2F,
+                TopBorderHeight / 2F - ReduceBtn.Halfsize.Y));
 
-            this.RestoreBtn.Dimension = new Vector2f(
-                this.TopBorderHeight * BUTTON_SCALE_FACTOR,
-                this.TopBorderHeight * BUTTON_SCALE_FACTOR);
+            RestoreBtn.Dimension = new Vector2f(
+                TopBorderHeight * BUTTON_SCALE_FACTOR,
+                TopBorderHeight * BUTTON_SCALE_FACTOR);
 
-            this.RestoreBtn.Position = this.GetGlobalFromLocal(new Vector2f(
-                this.Dimension.X - this.CloseBtn.Dimension.X * 2 - Border.GetWindowBorderWidth() * 2F,
-                this.TopBorderHeight / 2F - this.RestoreBtn.Halfsize.Y));
+            RestoreBtn.Position = GetGlobalFromLocal(new Vector2f(
+                Dimension.X - CloseBtn.Dimension.X * 2 - Border.GetWindowBorderWidth() * 2F,
+                TopBorderHeight / 2F - RestoreBtn.Halfsize.Y));
 
-            this.UpBorder.Move(this.Position - this.UpBorder.Position);
+            UpBorder.Move(Position - UpBorder.Position);
 
-            this.DownBorder.Move(this.Position - this.DownBorder.Position);
+            DownBorder.Move(Position - DownBorder.Position);
         }
 
         public event StateChangeHandler StateChanged;
@@ -388,8 +388,8 @@ namespace BlazeraLib
             {
                 base.Color = value;
 
-                this.UpBorder.SetColor(this.Color);
-                this.DownBorder.SetColor(this.Color);
+                UpBorder.SetColor(Color);
+                DownBorder.SetColor(Color);
             }
         }
     }
@@ -400,7 +400,7 @@ namespace BlazeraLib
     {
         public DragEventArgs(Vector2f dragValue)
         {
-            this.DragValue = dragValue;
+            DragValue = dragValue;
         }
 
         public Vector2f DragValue { get; set; }
@@ -414,7 +414,7 @@ namespace BlazeraLib
 
         public StateChangeEventArgs(WindowBackground.EState state)
         {
-            this.State = state;
+            State = state;
         }
     }
 }

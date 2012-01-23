@@ -130,7 +130,7 @@ namespace Blazera
 
             dObj.MoveTo(rcvData.ReadVector2());
             dObj.Direction = rcvData.ReadDirection();
-            dObj.ResetDirectionStates(rcvData.ReadDirectionStates());
+          //  dObj.ResetDirectionStates(rcvData.ReadDirectionStates()); TODO : fix it
 
             Log.Cldebug(dObj.Guid, "Moved oject", System.ConsoleColor.Cyan);
 

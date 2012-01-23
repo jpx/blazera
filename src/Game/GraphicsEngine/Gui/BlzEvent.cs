@@ -21,31 +21,31 @@ namespace BlazeraLib
 
         public BlzEvent(Event evt)
         {
-            this.Event = evt;
+            Event = evt;
 
-            this.IsHandled = false;
-            this.IsAbsorbed = false;
+            IsHandled = false;
+            IsAbsorbed = false;
         }
 
         public EventType Type
         {
-            get { return this.Event.Type; }
+            get { return Event.Type; }
         }
 
         public EType GetType()
         {
-            if (this.Type == EventType.MouseMoved ||
-                this.Type == EventType.MouseEntered ||
-                this.Type == EventType.MouseLeft ||
-                this.Type == EventType.GainedFocus ||
-                this.Type == EventType.LostFocus)
+            if (Type == EventType.MouseMoved ||
+                Type == EventType.MouseEntered ||
+                Type == EventType.MouseLeft ||
+                Type == EventType.GainedFocus ||
+                Type == EventType.LostFocus)
                 return EType.MouseMove;
 
-            if (this.Type == EventType.JoystickButtonPressed ||
-                this.Type == EventType.JoystickButtonReleased ||
-                this.Type == EventType.KeyPressed ||
-                this.Type == EventType.KeyReleased ||
-                this.Type == EventType.TextEntered)
+            if (Type == EventType.JoystickButtonPressed ||
+                Type == EventType.JoystickButtonReleased ||
+                Type == EventType.KeyPressed ||
+                Type == EventType.KeyReleased ||
+                Type == EventType.TextEntered)
                 return EType.Key;
 
             return EType.MouseButton;
@@ -53,42 +53,42 @@ namespace BlazeraLib
 
         public JoystickButtonEvent JoyButton
         {
-            get { return this.Event.JoystickButton; }
+            get { return Event.JoystickButton; }
         }
 
         public JoystickMoveEvent JoyMove
         {
-            get { return this.Event.JoystickMove; }
+            get { return Event.JoystickMove; }
         }
 
         public KeyEvent Key
         {
-            get { return this.Event.Key; }
+            get { return Event.Key; }
         }
 
         public MouseButtonEvent MouseButton
         {
-            get { return this.Event.MouseButton; }
+            get { return Event.MouseButton; }
         }
 
         public MouseMoveEvent MouseMove
         {
-            get { return this.Event.MouseMove; }
+            get { return Event.MouseMove; }
         }
 
         public MouseWheelEvent MouseWheel
         {
-            get { return this.Event.MouseWheel; }
+            get { return Event.MouseWheel; }
         }
 
         public SizeEvent Size
         {
-            get { return this.Event.Size; }
+            get { return Event.Size; }
         }
 
         public TextEvent Text
         {
-            get { return this.Event.Text; }
+            get { return Event.Text; }
         }
     }
 }

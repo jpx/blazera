@@ -34,7 +34,7 @@ namespace BlazeraEditor
         public void SetCurrentObject(WorldObject wObj)
         {
             CurrentObject = wObj;
-            SetCursorTexture(new BlazeraLib.Texture(wObj.Skin));
+            SetCursorTexture(new BlazeraLib.Texture(wObj.GetSkinTexture()));
         }
 
         protected override void Empty()

@@ -6,22 +6,185 @@ using SFML.Graphics;
 
 namespace BlazeraLib
 {
-    public enum State
-    {
-        Moving,
-        Active,
-        Inactive
-    }
-
-    public enum MovingState
-    {
-        Normal, // just for Personnage.Animations
-        Walking,
-        Running
-    }
-
     public abstract class Personnage : DynamicWorldObject
     {
+        #region Classes
+
+        class CMovingStateInfo : WorldObject.CMovingStateInfo
+        {
+            #region Constants
+
+            const bool DEFAULT_RUNNING_STATE = false;
+            const float ROTATING_VELOCITY_FACTOR = .75F;
+
+            #endregion Constants
+
+            #region Members
+
+            public bool IsRunning { get; set; }
+
+            bool IsRotating;
+
+            #endregion
+
+            public CMovingStateInfo(Personnage parent)
+                : base(parent)
+            {
+                IsRunning = DEFAULT_RUNNING_STATE;
+
+                IsRotating = false;
+            }
+
+            public override float GetVelocity()
+            {
+                return base.GetVelocity() * (IsRunning ? GameData.PERSONNAGE_RUN_VELOCITY_FACTOR : 1F)
+                    * (IsRotating ? ROTATING_VELOCITY_FACTOR : 1F);
+            }
+
+            public override void Update(Time dt)
+            {
+                base.Update(dt);
+
+                RefreshDirection();
+            }
+
+            /*
+             * Direction handling
+             */
+            const float DIRECTION_CHANGE_TIME = 0.05f;
+
+            private int UpDir(int dir)
+            {
+                return (dir + 1) % 8;
+            }
+
+            private int DownDir(int dir)
+            {
+                return (dir + 7) % 8;
+            }
+
+            private int posD(int d, int md)
+            {
+                int count = 0;
+
+                while (d != md)
+                {
+                    d = UpDir(d);
+                    count++;
+                }
+
+                return count;
+            }
+
+            private int negD(int d, int md)
+            {
+                int count = 0;
+
+                while (d != md)
+                {
+                    d = DownDir(d);
+                    count++;
+                }
+
+                return count;
+            }
+
+            private Boolean IsPos(int d, int md)
+            {
+                return posD(d, md) <= negD(d, md);
+            }
+
+            private Timer RotationCount = new Timer(true);
+
+            protected override void RefreshDirection()
+            {
+                if (!IsMoving() || (Parent.IsActive() && !Parent.IsMoving()/* && IsRotating*/))
+                {
+                    if (Parent.IsMoving())
+                        Parent.TrySetState("Inactive");
+                    return;
+                }
+
+                Direction moveDir = Direction;
+
+                if (IsEnabled(Direction.N) && IsEnabled(Direction.E))
+                    moveDir = Direction.NE;
+                else if (IsEnabled(Direction.N) && IsEnabled(Direction.O))
+                    moveDir = Direction.NO;
+                else if (IsEnabled(Direction.S) && IsEnabled(Direction.E))
+                    moveDir = Direction.SE;
+                else if (IsEnabled(Direction.S) && IsEnabled(Direction.O))
+                    moveDir = Direction.SO;
+                else if (IsEnabled(Direction.N))
+                    moveDir = Direction.N;
+                else if (IsEnabled(Direction.S))
+                    moveDir = Direction.S;
+                else if (IsEnabled(Direction.E))
+                    moveDir = Direction.E;
+                else if (IsEnabled(Direction.O))
+                    moveDir = Direction.O;
+
+                int md = (int)moveDir;
+                int d = (int)Direction;
+
+                // direction pas encore atteinte
+                if (md != d)
+                {
+                    IsRotating = true;
+                    Parent.TrySetState("Rotating");
+                    if (RotationCount.IsDelayCompleted(DIRECTION_CHANGE_TIME))
+                    {
+                        // rotation + (sens aiguilles)
+                        if (IsPos(d, md))
+                        {
+                            if (d < 7)
+                            {
+                                SetDirection(Direction + 1);
+                            }
+                            else
+                            {
+                                SetDirection(Direction.N);
+                            }
+                        }
+                        // rotation -
+                        else
+                        {
+                            if (d > 0)
+                            {
+                                SetDirection(Direction - 1);
+                            }
+                            else
+                            {
+                                SetDirection(Direction.NO);
+                            }
+                        }
+                    }
+                }
+                // direction atteinte, en avant !
+                else
+                {
+                    IsRotating = false;
+                    if (!IsRunning)
+                        Parent.TrySetState("Moving");
+                    else
+                        Parent.TrySetState("Running");
+
+                    RotationCount.Reset();
+                }
+            }
+        }
+
+        #endregion Classes
+
+        #region Constants
+
+        /// <summary>
+        /// Specifies that the personnage is moving while rotating.
+        /// </summary>
+        const bool SMOOTH_ROTATION = true;
+
+        #endregion Constants
+
         #region Members
 
         public SpellPanoply SpellPanoply { get; private set; }
@@ -31,15 +194,6 @@ namespace BlazeraLib
         public Personnage() :
             base()
         {
-            this.Animations = new Dictionary<MovingState, Dictionary<Direction, Animation>>()
-            {
-                { MovingState.Normal, new Dictionary<Direction, Animation>() },
-                { MovingState.Walking, new Dictionary<Direction, Animation>() },
-                { MovingState.Running, new Dictionary<Direction, Animation>() }
-            };
-            
-            this.UpdateStates();
-
             SpeechHandler = new SpeechHandler(this);
             SetSpeech();
         }
@@ -47,231 +201,77 @@ namespace BlazeraLib
         public Personnage(Personnage copy) :
             base(copy)
         {
-            this.Direction = copy.Direction;
-            this.Velocity = copy.Velocity;
-            this.Animations = new Dictionary<MovingState, Dictionary<Direction, Animation>>()
-            {
-                { MovingState.Normal, new Dictionary<Direction, Animation>() },
-                { MovingState.Walking, new Dictionary<Direction, Animation>() },
-                { MovingState.Running, new Dictionary<Direction, Animation>() }
-            };
-
-            foreach (KeyValuePair<MovingState, Dictionary<Direction, Animation>> anims in copy.Animations)
-            {
-                foreach (KeyValuePair<Direction, Animation> anim in anims.Value)
-                {
-                    this.Animations[anims.Key][anim.Key] = new Animation(copy.Animations[anims.Key][anim.Key]);
-                }
-            }
-            
-            this.UpdateStates();
-
             SpeechHandler = new SpeechHandler(this, copy.SpeechHandler);
             SetSpeech();
         }
 
-        public override void ToScript()
+        protected override void InitMovingStateInfo()
         {
-            base.ToScript();
+            MovingStateInfo = new CMovingStateInfo(this);
 
-            foreach (KeyValuePair<MovingState, Dictionary<Direction, Animation>> anims in Animations)
+            MovingStateInfo.OnDirectionChange += new WorldObject.CMovingStateInfo.DirectionEventHandler(MovingStateInfo_OnDirectionChange);
+        }
+
+        void MovingStateInfo_OnDirectionChange(WorldObject.CMovingStateInfo sender, DirectionEventArgs e)
+        {
+            IEnumerator<KeyValuePair<State<string>, Skin>> skinSetEnumerator = Skin.GetEnumerator();
+            while (skinSetEnumerator.MoveNext())
+                GetSkinSet(skinSetEnumerator.Current.Key).SetCurrentState(Direction.ToString());
+
+            Skin.Start();
+        }
+
+        SkinSet GetSkinSet(string state)
+        {
+            return (SkinSet)GetSkin(state);
+        }
+
+        public void AddSkin(string state, Direction direction, Skin skin)
+        {
+            AddSkin(state, new SkinSet());
+            GetSkinSet(state).AddSkin(direction.ToString(), skin);
+        }
+
+        public Skin GetSkin(string state, Direction direction)
+        {
+            return GetSkinSet(state).GetSkin(direction.ToString());
+        }
+
+        public void SetRunning(bool isRunning = true)
+        {
+            ((Personnage.CMovingStateInfo)MovingStateInfo).IsRunning = isRunning;
+        }
+
+        protected override string GetLogicalState()
+        {
+            switch (State)
             {
-                foreach (KeyValuePair<Direction, Animation> anim in anims.Value)
+                case "Running":
+                    return "Moving";
+
+                case "Rotating":
+
+                    if (!SMOOTH_ROTATION)
+                        break;
+
+                    return "Moving";
+            }
+
+            return base.GetLogicalState();
+        }
+
+        protected override void SkinToScript()
+        {
+            IEnumerator<KeyValuePair<State<string>, Skin>> skinSetEnum = Skin.GetEnumerator();
+            while (skinSetEnum.MoveNext())
+            {
+                IEnumerator<KeyValuePair<State<string>, Skin>> skinEnum = GetSkinSet(skinSetEnum.Current.Key).GetEnumerator();
+                while (skinEnum.MoveNext())
                 {
-                    Sw.WriteMethod("AddAnimation",
-                                        new String[]
-                                        {
-                                            "Create:Animation(\"" + anim.Value.Type + "_" + anim.Key.ToString() + "_" + anims.Key.ToString()[0] + "\")",
-                                            "State." + anims.Key.ToString(),
-                                            "Direction." + anim.Key.ToString()
-                                        } );
+                    Sw.WriteMethod("AddSkin", new string[] { ScriptWriter.GetStringOf(skinSetEnum.Current.Key), "Direction." + skinEnum.Current.Key, skinEnum.Current.Value.ToScriptString() });
                 }
             }
         }
-
-        public override void Update(Time dt)
-        {
-            base.Update(dt);
-            Dimension = CurrentAnimation.Dimension;
-            if (IsMoving())
-                CurrentAnimation.Play(true, false);
-            else
-                CurrentAnimation.Stop();
-            CurrentAnimation.Position = Position;
-            CurrentAnimation.Update(dt);
-        }
-
-        public override void Draw(RenderWindow window)
-        {
-            this.CurrentAnimation.Draw(window);
-            
-            base.Draw(window);
-        }
-
-        public void AddAnimation(Animation anim, MovingState state, Direction dir)
-        {
-            this.Animations[state][dir] = anim;
-        }
-
-        public Animation CurrentAnimation
-        {
-            get { return Animations[MovingState][Direction]; }
-        }
-
-        private Dictionary<MovingState, Dictionary<Direction, Animation>> Animations
-        {
-            get;
-            set;
-        }
-
-        public Animation GetAnimation(MovingState state, Direction direction)
-        {
-            return Animations[state][direction];
-        }
-
-        public Color Color
-        {
-            get { return this.CurrentAnimation.Color; }
-            set
-            {
-                foreach (State state in Enum.GetValues(typeof(State)))
-                    foreach (Animation animation in Animations[MovingState].Values)
-                        animation.Color = value;
-            }
-        }
-
-        public override float Velocity
-        {
-            get { return MovingState == MovingState.Running ? GameDatas.PERSONNAGE_RUN_VELOCITY_FACTOR * base.Velocity : base.Velocity; }
-            set { base.Velocity = value; }
-        }
-
-        #region Direction
-
-        const float DIRECTION_CHANGE_TIME = 0.05f;
-
-        private int UpDir(int dir)
-        {
-            return (dir + 1) % 8;
-        }
-
-        private int DownDir(int dir)
-        {
-            return (dir + 7) % 8;
-        }
-
-        private int posD(int d, int md)
-        {
-            int count = 0;
-
-            while (d != md)
-            {
-                d = this.UpDir(d);
-                count++;
-            }
-
-            return count;
-        }
-
-        private int negD(int d, int md)
-        {
-            int count = 0;
-
-            while (d != md)
-            {
-                d = this.DownDir(d);
-                count++;
-            }
-
-            return count;
-        }
-
-        private Boolean IsPos(int d, int md)
-        {
-            return this.posD(d, md) <= this.negD(d, md);
-        }
-
-        private Timer RotationCount = new Timer();
-
-        protected override void UpdateStates()
-        {
-            if (this.DirectionStates[Direction.N] ||
-                this.DirectionStates[Direction.S] ||
-                this.DirectionStates[Direction.E] ||
-                this.DirectionStates[Direction.O])
-            {
-                if (!TrySetState(State.Moving))
-                    return;
-
-                Direction moveDir = this.Direction;
-
-                if (this.DirectionStates[Direction.N] && this.DirectionStates[Direction.E])
-                    moveDir = Direction.NE;
-                else if (this.DirectionStates[Direction.N] && this.DirectionStates[Direction.O])
-                    moveDir = Direction.NO;
-                else if (this.DirectionStates[Direction.S] && this.DirectionStates[Direction.E])
-                    moveDir = Direction.SE;
-                else if (this.DirectionStates[Direction.S] && this.DirectionStates[Direction.O])
-                    moveDir = Direction.SO;
-                else if (this.DirectionStates[Direction.N])
-                    moveDir = Direction.N;
-                else if (this.DirectionStates[Direction.S])
-                    moveDir = Direction.S;
-                else if (this.DirectionStates[Direction.E])
-                    moveDir = Direction.E;
-                else if (this.DirectionStates[Direction.O])
-                    moveDir = Direction.O;
-
-                int md = (int)moveDir;
-                int d = (int)this.Direction;
-
-                // direction pas encore atteinte
-                if (md != d)
-                {
-                    if (RotationCount.GetElapsedTime().Value >= DIRECTION_CHANGE_TIME)
-                    {
-                        // rotation + (sens aiguilles)
-                        if (this.IsPos(d, md))
-                        {
-                            if (d < 7)
-                            {
-                                this.Direction++;
-                            }
-                            else
-                            {
-                                this.Direction = Direction.N;
-                            }
-                        }
-                        // rotation -
-                        else
-                        {
-                            if (d > 0)
-                            {
-                                this.Direction--;
-                            }
-                            else
-                            {
-                                this.Direction = Direction.NO;
-                            }
-                        }
-                        RotationCount.Reset();
-                    }
-                }
-                // direction atteinte, en avant !
-                else
-                {
-                    TrySetMovingStateFromState(State.Moving);
-
-                    RotationCount.Reset();
-                }
-            }
-            else
-            {
-                TrySetMovingStateFromState(State.Inactive);
-            }
-        }
-
-        #endregion
 
         #region DialogEvent
 

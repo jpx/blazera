@@ -20,37 +20,37 @@ namespace BlazeraLib
         public ScrollableWidget(Int32 size = BlazeraLib.ExtendedBox.DEFAULT_SIZE, Boolean noBackgroundMode = true) :
             base()
         {
-            this.MainBox = new VAutoSizeBox();
-            this.AddWidget(this.MainBox);
+            MainBox = new VAutoSizeBox();
+            AddWidget(MainBox);
 
-            this.ScrollBox = new HAutoSizeBox(false, null, Border.GetBoxBorderWidth(), HBox.DEFAULT_X_EXTREMITY_OFFSET, noBackgroundMode);
-            this.MainBox.AddItem(this.ScrollBox);
+            ScrollBox = new HAutoSizeBox(false, null, Border.GetBoxBorderWidth(), HBox.DEFAULT_X_EXTREMITY_OFFSET, noBackgroundMode);
+            MainBox.AddItem(ScrollBox);
 
-            this.ExtendedBox = new ExtendedVBox(size);
-            this.ScrollBox.AddItem(this.ExtendedBox);
+            ExtendedBox = new ExtendedVBox(size);
+            ScrollBox.AddItem(ExtendedBox);
 
-            this.VScrollBar = new VScrollBar();
-            this.VScrollBar.MouseWheelVZone = 1F;
-            this.ScrollBox.AddItem(this.VScrollBar);
-            this.VScrollBar.Scrolled += new ScrollEventHandler(OnScroll);
+            VScrollBar = new VScrollBar();
+            VScrollBar.MouseWheelVZone = 1F;
+            ScrollBox.AddItem(VScrollBar);
+            VScrollBar.Scrolled += new ScrollEventHandler(OnScroll);
         }
 
         protected virtual void OnScroll(object sender, ScrollEventArgs e)
         {
-            this.ExtendedBox.SetCurrentPointer(this.VScrollBar.CursorPosition);
+            ExtendedBox.SetCurrentPointer(VScrollBar.CursorPosition);
         }
 
         protected virtual void AddItem(Widget widget)
         {
-            this.ExtendedBox.AddItem(widget);
+            ExtendedBox.AddItem(widget);
 
             RefreshScrollBar();
         }
 
         void RefreshScrollBar()
         {
-            this.VScrollBar.DisplayedValue = this.ExtendedBox.Size;
-            this.VScrollBar.TotalValue = this.ExtendedBox.GetTotalSize();
+            VScrollBar.DisplayedValue = ExtendedBox.Size;
+            VScrollBar.TotalValue = ExtendedBox.GetTotalSize();
         }
 
         public virtual Boolean RemoveItem(Widget widget)
@@ -58,8 +58,8 @@ namespace BlazeraLib
             if (!ExtendedBox.RemoveItem(widget))
                 return false;
 
-            this.VScrollBar.DisplayedValue = this.ExtendedBox.Size;
-            this.VScrollBar.TotalValue = this.ExtendedBox.GetTotalSize();
+            VScrollBar.DisplayedValue = ExtendedBox.Size;
+            VScrollBar.TotalValue = ExtendedBox.GetTotalSize();
 
             return true;
         }
@@ -71,15 +71,15 @@ namespace BlazeraLib
 
         public void ResetScrollBar()
         {
-            if (this.VScrollBar != null)
-                this.VScrollBar.Reset();
+            if (VScrollBar != null)
+                VScrollBar.Reset();
         }
 
         public virtual void Clear()
         {
-            this.ResetScrollBar();
+            ResetScrollBar();
 
-            this.ExtendedBox.Clear();
+            ExtendedBox.Clear();
 
             RefreshScrollBar();
         }
@@ -88,18 +88,18 @@ namespace BlazeraLib
         {
             get
             {
-                if (this.MainBox == null)
+                if (MainBox == null)
                     return base.Dimension;
 
-                return this.MainBox.BackgroundDimension;
+                return MainBox.BackgroundDimension;
             }
         }
 
         public override void Refresh()
         {
-            this.VScrollBar.Dimension = new Vector2f(
-                this.VScrollBar.Dimension.X,
-                ExtendedBox.GetTotalSize() == 0 ? DEFAULT_EMPTY_SIZE : this.ExtendedBox.BackgroundDimension.Y);
+            VScrollBar.Dimension = new Vector2f(
+                VScrollBar.Dimension.X,
+                ExtendedBox.GetTotalSize() == 0 ? DEFAULT_EMPTY_SIZE : ExtendedBox.BackgroundDimension.Y);
         }
     }
 }

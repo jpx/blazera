@@ -44,7 +44,7 @@ namespace BlazeraLib
                 MainBox.SetCurrentConfiguration(configurationName);
         }
 
-        public override void Draw(RenderWindow window)
+        public override void Draw(RenderTarget window)
         {
             if (BackgroundShape != null)
                 BackgroundShape.Draw(window);
@@ -57,7 +57,7 @@ namespace BlazeraLib
             base.Refresh();
 
             BackgroundShape = new RoundedRectangleShape(Dimension, 20F, 3F, Color.Black, Color.Black, true);
-            BackgroundShape.SetPosition(Position);
+            BackgroundShape.Position = Position;
             MainBox.Position = GetGlobalFromLocal(new Vector2f());
 
             if (GetRoot() == null)

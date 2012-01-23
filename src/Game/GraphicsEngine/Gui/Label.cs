@@ -26,7 +26,7 @@ namespace BlazeraLib
             SpeechBubbleLarge
         }
 
-        public UInt32 GetSizeFromESize(ESize size)
+        public static UInt32 GetSizeFromESize(ESize size)
         {
             switch (size)
             {
@@ -70,8 +70,8 @@ namespace BlazeraLib
         public Label(String text = null, ESize size = DEFAULT_TEXT_SIZE) :
             base()
         {
-            this.Text2D = new Text(text == null ? "" : text, GameDatas.DEFAULT_FONT, this.GetSizeFromESize(size));
-            this.Text2D.Color = DEFAULT_COLOR;
+            Text2D = new Text(text == null ? "" : text, GameData.DEFAULT_FONT, GetSizeFromESize(size));
+            Text2D.Color = DEFAULT_COLOR;
         }
 
         public Label(String text, Color color, ESize size = DEFAULT_TEXT_SIZE) :
@@ -80,12 +80,12 @@ namespace BlazeraLib
             Color = color;
         }
 
-        public override void Draw(RenderWindow window)
+        public override void Draw(RenderTarget window)
         {
             base.Draw(window);
 
-            if (this.Text2D != null)
-                window.Draw(this.Text2D);
+            if (Text2D != null)
+                window.Draw(Text2D);
         }
 
         private Text _text2D;
@@ -96,10 +96,10 @@ namespace BlazeraLib
             {
                 _text2D = value;
 
-                if (this.Text2D != null)
-                    this.Dimension = new Vector2f(
-                        this.Text2D.GetRect().Width,
-                        this.Text2D.GetRect().Height);
+                if (Text2D != null)
+                    Dimension = new Vector2f(
+                        Text2D.GetRect().Width,
+                        Text2D.GetRect().Height);
             }
         }
 
@@ -143,10 +143,10 @@ namespace BlazeraLib
 
         public override void Refresh()
         {
-            if (this.Text2D == null)
+            if (Text2D == null)
                 return;
 
-            this.Text2D.Position = Vector2I.FromVector2(this.GetGlobalFromLocal(
+            Text2D.Position = Vector2I.FromVector2(GetGlobalFromLocal(
                          new Vector2f(
                              0F,
                              0F))).ToVector2();
@@ -156,42 +156,42 @@ namespace BlazeraLib
         {
             get
             {
-                if (this.Text2D == null)
+                if (Text2D == null)
                     return base.Dimension;
 
                 return new Vector2f(
-                    this.Text2D.GetRect().Width,
-                    this.Text2D.GetRect().Height);
+                    Text2D.GetRect().Width,
+                    Text2D.GetRect().Height);
             }
         }
 
         public UInt32 Size
         {
-            get { return this.Text2D.CharacterSize; }
+            get { return Text2D.CharacterSize; }
         }
 
         public void SetSize(ESize size)
         {
-            this.Text2D.CharacterSize = this.GetSizeFromESize(size);
+            Text2D.CharacterSize = GetSizeFromESize(size);
         }
 
         public String Text
         {
             get
             {
-                if (this.Text2D == null)
+                if (Text2D == null)
                     return null;
 
-                return this.Text2D.DisplayedString;
+                return Text2D.DisplayedString;
             }
             set
             {
-                if (this.Text2D == null)
+                if (Text2D == null)
                     return;
 
-                this.Text2D.DisplayedString = value;
+                Text2D.DisplayedString = value;
 
-                this.CallChanged(new TextChangeEventArgs(this.Text));
+                CallChanged(new TextChangeEventArgs(Text));
             }
         }
 
@@ -202,11 +202,11 @@ namespace BlazeraLib
 
         public Text.Styles Style
         {
-            get { return this.Text2D.Style; }
+            get { return Text2D.Style; }
             set
             {
-                this.Text2D.Style = value;
-                this.CallChanged(new TextChangeEventArgs(this.Text));
+                Text2D.Style = value;
+                CallChanged(new TextChangeEventArgs(Text));
             }
         }
 
@@ -224,8 +224,8 @@ namespace BlazeraLib
 
         public Font Font
         {
-            get { return this.Text2D.Font; }
-            set { this.Text2D.Font = value; }
+            get { return Text2D.Font; }
+            set { Text2D.Font = value; }
         }
 
         public Vector2f Scale
@@ -310,7 +310,7 @@ namespace BlazeraLib
             return Texts.Length == 1;
         }
 
-        public override void Draw(RenderWindow window)
+        public override void Draw(RenderTarget window)
         {
             if (IsNormal())
             {

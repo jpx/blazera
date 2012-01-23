@@ -7,7 +7,7 @@ namespace BlazeraLib
     {
         #region Constants
 
-        const float DEFAULT_OUTLINE_THICKNESS = 1F;
+        const float DEFAULT_OUTLINE_THICKNESS = 2F;
         const double DEFAULT_PROGRESS_VALUE = 0D;
 
         #endregion
@@ -20,7 +20,7 @@ namespace BlazeraLib
         #endregion
 
         public ProgressBarShape(Vector2f dimension) :
-            base(dimension, Color.White, true, Color.Blue, DEFAULT_OUTLINE_THICKNESS, true, true, 4F)
+            base(dimension, new Color(0, 0, 0, 128), true, Color.Black, DEFAULT_OUTLINE_THICKNESS, false, false, 4F)
         {
             Reset();
         }
@@ -29,7 +29,13 @@ namespace BlazeraLib
         {
             ProgressValue = progressValue;
             
-            InnerBar = new RectangleShape(new Vector2f((float)(ProgressValue / 100D * GetInnerDimension().X), GetInnerDimension().Y), Color.Green, false, Color.Black);
+            InnerBar = new RectangleShape(
+                new Vector2f((float)(ProgressValue / 100D * GetInnerDimension().X), GetInnerDimension().Y),
+                new Color(0, 255, 255, 128),
+                false,
+                Color.Black, // outline color
+                2,
+                true);
 
             InnerBar.Position = Position + GetPositionOffset();
         }
@@ -39,7 +45,7 @@ namespace BlazeraLib
             return Dimension;
         }
 
-        public override void Draw(RenderWindow window)
+        public override void Draw(RenderTarget window)
         {
             if (!IsVisible)
                 return;

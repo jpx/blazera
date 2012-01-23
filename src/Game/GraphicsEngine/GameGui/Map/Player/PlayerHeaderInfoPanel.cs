@@ -19,12 +19,12 @@
         {
             Player = player;
 
-            Player.OnMove += new MoveEventHandler(Player_OnMove);
+           // Player.OnMove += new MoveEventHandler(Player_OnMove);
         }
 
-        void Player_OnMove(WorldObject sender, MoveEventArgs e)
+        void Player_OnMove(IDrawable sender, MoveEventArgs e)
         {
-           // Center = this.GetGuiPointFromMapPoint(new SFML.Window.Vector2f(Player.Center.X, Center.Y));
+           // Center = GetGuiPointFromMapPoint(new SFML.Window.Vector2f(Player.Center.X, Center.Y));
            // Bottom = Player.Top - DEFAULT_PLAYER_Y_MARGIN;
         }
     }

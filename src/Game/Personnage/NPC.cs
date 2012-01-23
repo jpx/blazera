@@ -17,5 +17,10 @@ namespace BlazeraLib
             base(copy)
         {
         }
+
+        public override object Clone()
+        {
+            return new NPC(this);
+        }
     }
 }

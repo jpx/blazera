@@ -20,7 +20,7 @@ namespace BlazeraLib
             bool outlineMode,
             Color outlineColor,
             float outlineThickness = DEFAULT_OUTLINE_THICKNESS,
-            bool ShadeMode = DEFAULT_SHADE_MODE,
+            bool shadeMode = DEFAULT_SHADE_MODE,
             bool shadowMode = DEFAULT_SHADOW_MODE,
             float shadowOffset = DEFAULT_SHADOW_OFFSET) :
             base()
@@ -32,7 +32,7 @@ namespace BlazeraLib
             if (outlineMode)
                 SetOutlineSettings(outlineColor, outlineThickness);
 
-            if (ShadeMode)
+            if (shadeMode)
                 SetEffect(ShapeEffect.Shade);
 
             if (shadowMode)
@@ -61,6 +61,11 @@ namespace BlazeraLib
             AddPoint(new Vector2f(0F, Dimension.Y));
             AddShadePoint(new Vector2f(0F, Dimension.Y), false);
             AddShadowPoint(new Vector2f(0F, Dimension.Y));
+        }
+
+        public override object Clone()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

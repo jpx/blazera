@@ -12,7 +12,7 @@ namespace Blazera
         public Game()
         {
             Game.IsRunning = true;
-            this.Init();
+            Init();
         }
 
         private void Init()
@@ -26,13 +26,14 @@ namespace Blazera
         {
             while (Game.IsRunning)
             {
-                Time Dt = GameTime.GetDt();
-                Game.IsRunning = GraphicsEngine.Instance.Update(Dt);
+                GameTime.Update();
+
+                Game.IsRunning = GraphicsEngine.Instance.Update(GameTime.Dt);
             }
 
             if (GameSession.Instance.IsOnline())
             {
-                this.SendDeco();
+                SendDeco();
             }
         }
 

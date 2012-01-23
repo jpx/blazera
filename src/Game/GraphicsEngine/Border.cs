@@ -25,7 +25,8 @@ namespace BlazeraLib
 
     public class Border
     {
-        public static readonly Color DEFAULT_AMBIENT_COLOR = new Color(71, 60, 139);
+        public static readonly Color DEFAULT_AMBIENT_COLOR = BlazeraLib.Graphics.Color.GetColorFromName(Graphics.Color.ColorName.DarkGreen).ToSFColor();//new Color(71, 60, 139);
+        public static readonly Color DEFAULT_FOCUSED_AMBIENT_COLOR = BlazeraLib.Graphics.Color.GetColorFromName(Graphics.Color.ColorName.ForestGreen).ToSFColor();
 
         public enum EMode
         {
@@ -83,7 +84,7 @@ namespace BlazeraLib
 
         private Texture GetCorner()
         {
-            switch (this.Mode)
+            switch (Mode)
             {
                 case EMode.Window:  return Border.WindowCornerTexture;
                 case EMode.Box:     return Border.BoxCornerTexture;
@@ -111,65 +112,65 @@ namespace BlazeraLib
 
         public Border(Vector2f dimension, EMode mode = EMode.Window, Boolean noBackgroundMode = false)
         {
-            this.Dimension = dimension;
+            Dimension = dimension;
 
-            this.Mode = mode;
+            Mode = mode;
 
             NoBackgroundMode = noBackgroundMode;
 
-            if (!this.NoBackgroundMode)
-                this.Background = new Texture(Border.WindowBackgroundTexture);
+            if (!NoBackgroundMode)
+                Background = new Texture(Border.WindowBackgroundTexture);
 
-            this.Visible = true;
+            Visible = true;
 
-            this.Borders = new Dictionary<BorderType, List<Sprite>>();
+            Borders = new Dictionary<BorderType, List<Sprite>>();
             foreach (BorderType borderType in Enum.GetValues(typeof(BorderType)))
-                this.Borders[borderType] = new List<Sprite>();
+                Borders[borderType] = new List<Sprite>();
 
-            this.Corners = new Dictionary<CornerType, Sprite>();
+            Corners = new Dictionary<CornerType, Sprite>();
 
-            this.RefreshInfo = new RefreshInfo();
+            RefreshInfo = new RefreshInfo();
 
-            this.Color = DEFAULT_AMBIENT_COLOR;
+            Color = DEFAULT_AMBIENT_COLOR;
 
             BackgroundAlphaFactor = DEFAULT_BACKGROUND_ALPHA_FACTOR;
 
-            this.Build();
+            Build();
         }
 
         private void Build()
         {
-            this.Corners.Clear();
+            Corners.Clear();
             foreach (BorderType borderType in Enum.GetValues(typeof(BorderType)))
-                this.Borders[borderType].Clear();
+                Borders[borderType].Clear();
 
-            if (!this.NoBackgroundMode)
-                this.Background.Dimension = new Vector2f(
-                    this.Dimension.X - this.GetBorderDimension(BorderType.Left).X * BACKGROUND_RESIZE_OFFSET_FACTOR,
-                    this.Dimension.Y - this.GetBorderDimension(BorderType.Top).Y * BACKGROUND_RESIZE_OFFSET_FACTOR);
+            if (!NoBackgroundMode)
+                Background.Dimension = new Vector2f(
+                    Dimension.X - GetBorderDimension(BorderType.Left).X * BACKGROUND_RESIZE_OFFSET_FACTOR,
+                    Dimension.Y - GetBorderDimension(BorderType.Top).Y * BACKGROUND_RESIZE_OFFSET_FACTOR);
 
-            this.AddCorner(CornerType.TopLeft);
-            this.AddCorner(CornerType.TopRight);
-            this.AddCorner(CornerType.BottomLeft);
-            this.AddCorner(CornerType.BottomRight);
+            AddCorner(CornerType.TopLeft);
+            AddCorner(CornerType.TopRight);
+            AddCorner(CornerType.BottomLeft);
+            AddCorner(CornerType.BottomRight);
 
-            while (this.GetDimension().X < this.Dimension.X)
+            while (GetDimension().X < Dimension.X)
             {
-                this.AddBorder(BorderType.Top);
-                this.AddBorder(BorderType.Bottom);
+                AddBorder(BorderType.Top);
+                AddBorder(BorderType.Bottom);
             }
 
-            while (this.GetDimension().Y < this.Dimension.Y)
+            while (GetDimension().Y < Dimension.Y)
             {
-                this.AddBorder(BorderType.Left);
-                this.AddBorder(BorderType.Right);
+                AddBorder(BorderType.Left);
+                AddBorder(BorderType.Right);
             }
 
             CutLast();
 
-            this.SetColor(this.Color);
+            SetColor(Color);
 
-            this.UpdatePosition();
+            UpdatePosition();
         }
 
         void CutLast()
@@ -217,27 +218,27 @@ namespace BlazeraLib
             }
         }
 
-        public void Draw(RenderWindow window)
+        public void Draw(RenderTarget window)
         {
-            if (!this.Visible)
+            if (!Visible)
                 return;
 
-            if (!this.NoBackgroundMode)
-                this.Background.Draw(window);
+            if (!NoBackgroundMode)
+                Background.Draw(window);
 
-            foreach (Sprite spr in this.Borders[BorderType.Left])
+            foreach (Sprite spr in Borders[BorderType.Left])
                 window.Draw(spr);
-            foreach (Sprite spr in this.Borders[BorderType.Top])
+            foreach (Sprite spr in Borders[BorderType.Top])
                 window.Draw(spr);
-            foreach (Sprite spr in this.Borders[BorderType.Right])
+            foreach (Sprite spr in Borders[BorderType.Right])
                 window.Draw(spr);
-            foreach (Sprite spr in this.Borders[BorderType.Bottom])
+            foreach (Sprite spr in Borders[BorderType.Bottom])
                 window.Draw(spr);
 
-            window.Draw(this.Corners[CornerType.TopLeft]);
-            window.Draw(this.Corners[CornerType.TopRight]);
-            window.Draw(this.Corners[CornerType.BottomLeft]);
-            window.Draw(this.Corners[CornerType.BottomRight]);
+            window.Draw(Corners[CornerType.TopLeft]);
+            window.Draw(Corners[CornerType.TopRight]);
+            window.Draw(Corners[CornerType.BottomLeft]);
+            window.Draw(Corners[CornerType.BottomRight]);
         }
 
         public void Resize(Vector2f scale)
@@ -246,11 +247,11 @@ namespace BlazeraLib
                 scale.Y == 1F)
                 return;
 
-            this.Dimension = new Vector2f(
-                this.Dimension.X * scale.X,
-                this.Dimension.Y * scale.Y);
+            Dimension = new Vector2f(
+                Dimension.X * scale.X,
+                Dimension.Y * scale.Y);
 
-            this.Build();
+            Build();
         }
 
         public void Move(Vector2f move)
@@ -259,23 +260,23 @@ namespace BlazeraLib
                 move.Y == 0F)
                 return;
 
-            this.Position += move;
+            Position += move;
 
-            if (!this.NoBackgroundMode)
-                this.Background.Position += move;
+            if (!NoBackgroundMode)
+                Background.Position += move;
 
-            this.Corners[CornerType.TopLeft].Position += move;
-            this.Corners[CornerType.TopRight].Position += move;
-            this.Corners[CornerType.BottomLeft].Position += move;
-            this.Corners[CornerType.BottomRight].Position += move;
+            Corners[CornerType.TopLeft].Position += move;
+            Corners[CornerType.TopRight].Position += move;
+            Corners[CornerType.BottomLeft].Position += move;
+            Corners[CornerType.BottomRight].Position += move;
 
-            foreach (Sprite spr in this.Borders[BorderType.Left])
+            foreach (Sprite spr in Borders[BorderType.Left])
                 spr.Position += move;
-            foreach (Sprite spr in this.Borders[BorderType.Top])
+            foreach (Sprite spr in Borders[BorderType.Top])
                 spr.Position += move;
-            foreach (Sprite spr in this.Borders[BorderType.Right])
+            foreach (Sprite spr in Borders[BorderType.Right])
                 spr.Position += move;
-            foreach (Sprite spr in this.Borders[BorderType.Bottom])
+            foreach (Sprite spr in Borders[BorderType.Bottom])
                 spr.Position += move;
         }
 
@@ -286,32 +287,32 @@ namespace BlazeraLib
 
         public void SetColor(Color color)
         {
-            this.Color = color;
+            Color = color;
 
-            if (!this.NoBackgroundMode)
+            if (!NoBackgroundMode)
             {
-                this.Background.Color = this.Color;
+                Background.Color = Color;
                 Background.SetAlpha(BackgroundAlphaFactor);
             }
 
-            this.Corners[CornerType.TopLeft].Color = this.Color;
-            this.Corners[CornerType.TopRight].Color = this.Color;
-            this.Corners[CornerType.BottomLeft].Color = this.Color;
-            this.Corners[CornerType.BottomRight].Color = this.Color;
+            Corners[CornerType.TopLeft].Color = Color;
+            Corners[CornerType.TopRight].Color = Color;
+            Corners[CornerType.BottomLeft].Color = Color;
+            Corners[CornerType.BottomRight].Color = Color;
 
-            foreach (Sprite spr in this.Borders[BorderType.Left])
-                spr.Color = this.Color;
-            foreach (Sprite spr in this.Borders[BorderType.Top])
-                spr.Color = this.Color;
-            foreach (Sprite spr in this.Borders[BorderType.Right])
-                spr.Color = this.Color;
-            foreach (Sprite spr in this.Borders[BorderType.Bottom])
-                spr.Color = this.Color;
+            foreach (Sprite spr in Borders[BorderType.Left])
+                spr.Color = Color;
+            foreach (Sprite spr in Borders[BorderType.Top])
+                spr.Color = Color;
+            foreach (Sprite spr in Borders[BorderType.Right])
+                spr.Color = Color;
+            foreach (Sprite spr in Borders[BorderType.Bottom])
+                spr.Color = Color;
         }
 
         public float GetWindowYPos()
         {
-            return this.Position.Y + this.Dimension.Y - this.GetBorderDimension(BorderType.Bottom).Y * 2F;
+            return Position.Y + Dimension.Y - GetBorderDimension(BorderType.Bottom).Y * 2F;
         }
 
         public static float GetWindowBorderWidth()
@@ -326,41 +327,41 @@ namespace BlazeraLib
 
         private Vector2f GetScaleFactor()
         {
-            Vector2f topLeftCorner = this.GetCornerDimension(CornerType.TopLeft);
-            Vector2f bottomLeftCorner = this.GetCornerDimension(CornerType.BottomLeft);
+            Vector2f topLeftCorner = GetCornerDimension(CornerType.TopLeft);
+            Vector2f bottomLeftCorner = GetCornerDimension(CornerType.BottomLeft);
             float minLeftCornerWidth = Math.Min(topLeftCorner.X, bottomLeftCorner.X);
             float minLeftCornerHeight = Math.Min(topLeftCorner.Y, bottomLeftCorner.Y);
 
-            Vector2f topRightCorner = this.GetCornerDimension(CornerType.TopRight);
-            Vector2f bottomRightCorner = this.GetCornerDimension(CornerType.BottomRight);
+            Vector2f topRightCorner = GetCornerDimension(CornerType.TopRight);
+            Vector2f bottomRightCorner = GetCornerDimension(CornerType.BottomRight);
             float minRightCornerWidth = Math.Min(topRightCorner.X, bottomRightCorner.X);
             float minRightCornerHeight = Math.Min(topRightCorner.Y, bottomRightCorner.Y);
 
             float factor = 1F;
 
-            if (this.Dimension.X < minLeftCornerWidth + minRightCornerWidth)
-                factor = this.Dimension.X / (minLeftCornerWidth + minRightCornerWidth);
+            if (Dimension.X < minLeftCornerWidth + minRightCornerWidth)
+                factor = Dimension.X / (minLeftCornerWidth + minRightCornerWidth);
 
-            if (this.Dimension.Y < minLeftCornerHeight + minRightCornerHeight)
-                factor = Math.Min(factor, this.Dimension.Y / (minLeftCornerHeight + minRightCornerHeight));
+            if (Dimension.Y < minLeftCornerHeight + minRightCornerHeight)
+                factor = Math.Min(factor, Dimension.Y / (minLeftCornerHeight + minRightCornerHeight));
 
             return new Vector2f(factor, factor);
         }
 
         private void AddBorder(BorderType borderType)
         {
-            Sprite border = new Sprite(this.GetBorder(borderType).Sprite);
+            Sprite border = new Sprite(GetBorder(borderType).Sprite);
 
-            //border.Scale = this.GetScaleFactor();
+            //border.Scale = GetScaleFactor();
 
-            this.Borders[borderType].Add(border);
+            Borders[borderType].Add(border);
         }
 
         private void AddCorner(CornerType cornerType)
         {
-            Sprite corner = new Sprite(this.GetCorner().Sprite);
+            Sprite corner = new Sprite(GetCorner().Sprite);
 
-            //corner.Scale = this.GetScaleFactor();
+            //corner.Scale = GetScaleFactor();
 
             corner.Origin = new Vector2f(
                 corner.Width / 2F,
@@ -375,7 +376,7 @@ namespace BlazeraLib
                 default:                                                break;
             }
 
-            this.Corners[cornerType] = corner;
+            Corners[cornerType] = corner;
         }
 
         private Vector2f GetDimension()
@@ -383,11 +384,11 @@ namespace BlazeraLib
             Vector2f dimension = new Vector2f();
 
             dimension += new Vector2f(
-                this.GetCorner().Dimension.X + this.GetCorner().Dimension.Y,
-                this.GetCorner().Dimension.X + this.GetCorner().Dimension.Y);
+                GetCorner().Dimension.X + GetCorner().Dimension.Y,
+                GetCorner().Dimension.X + GetCorner().Dimension.Y);
 
-            dimension.X += this.Borders[BorderType.Top].Count * this.GetBorder(BorderType.Top).Dimension.X;
-            dimension.Y += this.Borders[BorderType.Left].Count * this.GetBorder(BorderType.Left).Dimension.Y;
+            dimension.X += Borders[BorderType.Top].Count * GetBorder(BorderType.Top).Dimension.X;
+            dimension.Y += Borders[BorderType.Left].Count * GetBorder(BorderType.Left).Dimension.Y;
 
             return dimension;
         }
@@ -396,11 +397,11 @@ namespace BlazeraLib
         {
             switch (cornerType)
             {
-                case CornerType.TopLeft: return new Vector2f(this.GetCorner().Dimension.Y, this.GetCorner().Dimension.X);
-                case CornerType.TopRight: return this.GetCorner().Dimension;
-                case CornerType.BottomLeft: return this.GetCorner().Dimension;
-                case CornerType.BottomRight: return new Vector2f(this.GetCorner().Dimension.Y, this.GetCorner().Dimension.X);
-                default: return this.GetCorner().Dimension;
+                case CornerType.TopLeft: return new Vector2f(GetCorner().Dimension.Y, GetCorner().Dimension.X);
+                case CornerType.TopRight: return GetCorner().Dimension;
+                case CornerType.BottomLeft: return GetCorner().Dimension;
+                case CornerType.BottomRight: return new Vector2f(GetCorner().Dimension.Y, GetCorner().Dimension.X);
+                default: return GetCorner().Dimension;
             }
         }
 
@@ -411,43 +412,43 @@ namespace BlazeraLib
 
         private void UpdatePosition()
         {
-            if (!this.NoBackgroundMode)
-                this.Background.Position = new Vector2f(
-                    this.Position.X + this.Dimension.X / 2F - this.Background.Dimension.X / 2F,
-                    this.Position.Y + this.Dimension.Y / 2F - this.Background.Dimension.Y / 2F);
+            if (!NoBackgroundMode)
+                Background.Position = new Vector2f(
+                    Position.X + Dimension.X / 2F - Background.Dimension.X / 2F,
+                    Position.Y + Dimension.Y / 2F - Background.Dimension.Y / 2F);
 
-            this.Corners[CornerType.TopLeft].Position = new Vector2f(
-                this.Position.X + this.GetCornerDimension(CornerType.TopLeft).X / 2F,
-                this.Position.Y + this.GetCornerDimension(CornerType.TopLeft).Y / 2F);
-            this.Corners[CornerType.TopRight].Position = new Vector2f(
-                this.Position.X + this.Dimension.X - this.GetCornerDimension(CornerType.TopLeft).X / 2F,
-                this.Position.Y + this.GetCornerDimension(CornerType.TopRight).Y / 2F);
-            this.Corners[CornerType.BottomLeft].Position = new Vector2f(
-                this.Position.X + this.GetCornerDimension(CornerType.BottomLeft).X / 2F,
-                this.Position.Y + this.Dimension.Y - this.GetCornerDimension(CornerType.BottomLeft).X / 2F);
-            this.Corners[CornerType.BottomRight].Position = new Vector2f(
-                this.Position.X + this.Dimension.X - this.GetCornerDimension(CornerType.BottomRight).X / 2F,
-                this.Position.Y + this.Dimension.Y - this.GetCornerDimension(CornerType.BottomRight).Y / 2F);
+            Corners[CornerType.TopLeft].Position = new Vector2f(
+                Position.X + GetCornerDimension(CornerType.TopLeft).X / 2F,
+                Position.Y + GetCornerDimension(CornerType.TopLeft).Y / 2F);
+            Corners[CornerType.TopRight].Position = new Vector2f(
+                Position.X + Dimension.X - GetCornerDimension(CornerType.TopLeft).X / 2F,
+                Position.Y + GetCornerDimension(CornerType.TopRight).Y / 2F);
+            Corners[CornerType.BottomLeft].Position = new Vector2f(
+                Position.X + GetCornerDimension(CornerType.BottomLeft).X / 2F,
+                Position.Y + Dimension.Y - GetCornerDimension(CornerType.BottomLeft).X / 2F);
+            Corners[CornerType.BottomRight].Position = new Vector2f(
+                Position.X + Dimension.X - GetCornerDimension(CornerType.BottomRight).X / 2F,
+                Position.Y + Dimension.Y - GetCornerDimension(CornerType.BottomRight).Y / 2F);
 
-            for (Int32 count = 0; count < this.Borders[BorderType.Left].Count; ++count)
-                this.Borders[BorderType.Left][count].Position = new Vector2f(
-                    this.Position.X,
-                    this.Position.Y + this.GetCornerDimension(CornerType.TopLeft).Y + count * this.GetBorderDimension(BorderType.Left).Y);
+            for (Int32 count = 0; count < Borders[BorderType.Left].Count; ++count)
+                Borders[BorderType.Left][count].Position = new Vector2f(
+                    Position.X,
+                    Position.Y + GetCornerDimension(CornerType.TopLeft).Y + count * GetBorderDimension(BorderType.Left).Y);
 
-            for (Int32 count = 0; count < this.Borders[BorderType.Top].Count; ++count)
-                this.Borders[BorderType.Top][count].Position = new Vector2f(
-                    this.Position.X + this.GetCornerDimension(CornerType.TopLeft).X + count * this.GetBorderDimension(BorderType.Top).X,
-                    this.Position.Y);
+            for (Int32 count = 0; count < Borders[BorderType.Top].Count; ++count)
+                Borders[BorderType.Top][count].Position = new Vector2f(
+                    Position.X + GetCornerDimension(CornerType.TopLeft).X + count * GetBorderDimension(BorderType.Top).X,
+                    Position.Y);
 
-            for (Int32 count = 0; count < this.Borders[BorderType.Right].Count; ++count)
-                this.Borders[BorderType.Right][count].Position = new Vector2f(
-                    this.Position.X + this.Dimension.X - this.GetBorderDimension(BorderType.Right).X,
-                    this.Position.Y + this.GetCornerDimension(CornerType.TopRight).Y + count * this.GetBorderDimension(BorderType.Right).Y);
+            for (Int32 count = 0; count < Borders[BorderType.Right].Count; ++count)
+                Borders[BorderType.Right][count].Position = new Vector2f(
+                    Position.X + Dimension.X - GetBorderDimension(BorderType.Right).X,
+                    Position.Y + GetCornerDimension(CornerType.TopRight).Y + count * GetBorderDimension(BorderType.Right).Y);
 
-            for (Int32 count = 0; count < this.Borders[BorderType.Bottom].Count; ++count)
-                this.Borders[BorderType.Bottom][count].Position = new Vector2f(
-                    this.Position.X + this.GetCornerDimension(CornerType.BottomLeft).X + count * this.GetBorderDimension(BorderType.Bottom).X,
-                    this.Position.Y + this.Dimension.Y - this.GetBorderDimension(BorderType.Bottom).Y);
+            for (Int32 count = 0; count < Borders[BorderType.Bottom].Count; ++count)
+                Borders[BorderType.Bottom][count].Position = new Vector2f(
+                    Position.X + GetCornerDimension(CornerType.BottomLeft).X + count * GetBorderDimension(BorderType.Bottom).X,
+                    Position.Y + Dimension.Y - GetBorderDimension(BorderType.Bottom).Y);
         }
     }
 }

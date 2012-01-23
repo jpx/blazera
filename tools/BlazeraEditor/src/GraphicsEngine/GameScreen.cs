@@ -17,16 +17,16 @@ namespace BlazeraEditor
 
         public GameScreen(RenderWindow window)
         {
-            this.Window = window;
-            this.GuiView = new View(this.Window.GetView());
+            Window = window;
+            GuiView = new View(Window.GetView());
             GameGuiView = new View(Window.GetView());
-            this.Gui = new EditorBaseWidget(this.Window, this.GuiView);
-            this.Gui.Dimension = this.GuiView.Size;
+            Gui = new EditorBaseWidget(Window, GuiView);
+            Gui.Dimension = GuiView.Size;
 
             PlayerHdl.Instance.Init("");
 
             MapHandler.Instance.SetGameRoot(Window);
-            MapMan.Instance.InitMap(GameDatas.INIT_MAP);
+            MapMan.Instance.InitMap(GameData.INIT_MAP);
 
             Gui.AddWindow(MiscWidget.Instance, true);
             Gui.AddWindow(MapHandler.Instance, true);
@@ -49,7 +49,6 @@ namespace BlazeraEditor
             Gui.AddWindow(TileCreator.Instance);
             Gui.AddWindow(EventCreator.Instance);
             Gui.AddWindow(ActionCreator.Instance);
-            Gui.AddWindow(ConditionCreator.Instance);
 
             Gui.AddKeyWindowBind(Keyboard.Key.M, MapMan.Instance);
             Gui.AddKeyWindowBind(Keyboard.Key.G, MiscWidget.Instance);
@@ -58,14 +57,16 @@ namespace BlazeraEditor
             Gui.AddKeyWindowBind(Keyboard.Key.H, MapHandler.Instance);
             Gui.AddKeyWindowBind(Keyboard.Key.I, TileMan.Instance);
             Gui.AddKeyWindowBind(Keyboard.Key.L, TileSetMan.Instance);
+
+            PlayerHdl.Vlad.ToScript();
         }
 
         public void Run(Time dt)
         {
-            this.Window.SetView(this.GuiView);
+            Window.SetView(GuiView);
 
-            this.Gui.Update(dt);
-            this.Gui.Draw(this.Window);
+            Gui.Update(dt);
+            Gui.Draw(Window);
 
             while (WindowEvents.EventHappened())
             {
@@ -82,9 +83,9 @@ namespace BlazeraEditor
 
         public void Init()
         {
-            this.Gui.Init();
+            Gui.Init();
 
-            MiscWidget.Instance.BackgroundRight = this.Gui.Right;
+            MiscWidget.Instance.BackgroundRight = Gui.Right;
             MapMan.Instance.Left = MapHandler.Instance.BackgroundRight;
         }
 
@@ -107,7 +108,7 @@ namespace BlazeraEditor
 
                     if (evt.Key.Code == Keyboard.Key.Escape)
                     {
-                        this.Window.Close();
+                        Window.Close();
                         return true;
                     }
 
@@ -115,9 +116,9 @@ namespace BlazeraEditor
             
                 case EventType.Resized:
 
-                    this.Gui.Dimension = new Vector2f((float)this.Window.Width, (float)this.Window.Height);
-                    this.GuiView.Reset(new SFML.Graphics.FloatRect(0F, 0F, (float)this.Window.Width, (float)this.Window.Height));
-                    this.GuiView.Viewport = new SFML.Graphics.FloatRect(0F, 0F, 1F, 1F);
+                    Gui.Dimension = new Vector2f((float)Window.Width, (float)Window.Height);
+                    GuiView.Reset(new SFML.Graphics.FloatRect(0F, 0F, (float)Window.Width, (float)Window.Height));
+                    GuiView.Viewport = new SFML.Graphics.FloatRect(0F, 0F, 1F, 1F);
 
                     break;
             }

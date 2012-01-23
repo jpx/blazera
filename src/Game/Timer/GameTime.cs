@@ -6,62 +6,37 @@ using BlazeraLib;
 
 namespace BlazeraLib
 {
-    public class Time
-    {
-        public Time(double value)
-        {
-            this.Value = value;
-        }
-
-        public double MS
-        {
-            get
-            {
-                return this.Value * 1000D;
-            }
-        }
-
-        public double Value
-        {
-            get;
-            set;
-        }
-
-        public double Minutes
-        {
-            get
-            {
-                return this.Value / 60D;
-            }
-        }
-
-        public double Hours
-        {
-            get
-            {
-                return this.Minutes / 60D;
-            }
-        }
-    }
-
     public class GameTime
     {
+        #region Members
+
+        public static Time Dt { get; private set; }
+
+        Timer Timer;
+
+        Time SessionTime;
+        Time TotalTime;
+
+        #endregion Members
+
         private GameTime()
         {
-            this.Timer = new Timer();
+            Timer = new Timer();
         }
 
         public void Init()
         {
-            this.Init(0.0D);
+            Init(0.0D);
         }
 
         public void Init(double initTotalTime)
         {
-            GameTime.Dt = new Time(0D);
-            this.SessionTime = new Time(0D);
-            this.TotalTime = new Time(initTotalTime);
-            this.Timer.Start();
+            Dt = new Time();
+
+            SessionTime = new Time();
+            TotalTime = new Time(initTotalTime);
+
+            Timer.Start();
         }
 
         private static GameTime _instance;
@@ -70,9 +45,7 @@ namespace BlazeraLib
             get
             {
                 if (_instance == null)
-                {
-                    GameTime.Instance = new GameTime();
-                }
+                    Instance = new GameTime();
                 return _instance;
             }
             set
@@ -81,46 +54,22 @@ namespace BlazeraLib
             }
         }
 
-        public static Time Dt
+        public static void Update()
         {
-            get;
-            private set;
-        }
-
-        public static Time GetDt()
-        {
-            GameTime.Dt.Value = GameTime.Instance.Timer.GetElapsedTime().Value - GameTime.Instance.SessionTime.Value;
-            GameTime.Instance.SessionTime.Value += GameTime.Dt.Value;
-            GameTime.Instance.TotalTime.Value += GameTime.Dt.Value;
-            return GameTime.Dt;
+            Dt = Instance.Timer.GetElapsedTime() - Instance.SessionTime;
+            Instance.SessionTime.Value += Dt.Value;
+            Instance.TotalTime.Value += Dt.Value;
         }
 
         public static Time GetSessionTime()
         {
-            return GameTime.Instance.SessionTime;
+            return Instance.SessionTime;
         }
 
         public static Time GetTotalTime()
         {
-            return GameTime.Instance.TotalTime;
+            return Instance.TotalTime;
         }
 
-        private Timer Timer
-        {
-            get;
-            set;
-        }
-
-        private Time SessionTime
-        {
-            get;
-            set;
-        }
-
-        private Time TotalTime
-        {
-            get;
-            set;
-        }
     }
 }

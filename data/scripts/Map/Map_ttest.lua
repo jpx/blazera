@@ -1,0 +1,10 @@
+Map_ttest = Map()
+Map_ttest.Ground = Create:Ground("ttest")
+Element_DeadTree_110857 = Create:Element("DeadTree")
+Element_DeadTree_110857:SetMap(Map_ttest, 9, -43)
+Element_DeadTree_110859 = Create:Element("DeadTree")
+Element_DeadTree_110859:SetMap(Map_ttest, -3, -46)
+Element_DeadTree_110861 = Create:Element("DeadTree")
+Element_DeadTree_110861:SetMap(Map_ttest, 10, -31)
+Map_ttest:AddWarpPoint("Default", Vector2 ( 0, 0 ), Direction.S)
+return Map_ttest

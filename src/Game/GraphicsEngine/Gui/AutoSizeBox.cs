@@ -14,8 +14,8 @@ namespace BlazeraLib
         public HAutoSizeBox(Boolean noBackgroundMode = true, String name = null, float offset = DEFAULT_BORDER_WIDTH, float xExtremityOffset = DEFAULT_X_EXTREMITY_OFFSET, Boolean backgroundNoBackgroundMode = true) :
             base(noBackgroundMode, name, xExtremityOffset, backgroundNoBackgroundMode)
         {
-            this.Offset = offset;
-            this.XExtremityOffset = xExtremityOffset;
+            Offset = offset;
+            XExtremityOffset = xExtremityOffset;
         }
 
         private Vector2f GetMaxDimension()
@@ -25,24 +25,24 @@ namespace BlazeraLib
 
             Vector2f maxDimension = new Vector2f();
 
-            IEnumerator<Widget> iEnum = this.Items.GetEnumerator();
+            IEnumerator<Widget> iEnum = Items.GetEnumerator();
 
             while (iEnum.MoveNext())
             {
                 maxDimension = new Vector2f(
-                    maxDimension.X + iEnum.Current.BackgroundDimension.X + this.Offset,
-                    iEnum.Current.BackgroundDimension.Y + this.GetLevelOffset(iEnum.Current) > maxDimension.Y ? iEnum.Current.BackgroundDimension.Y + this.GetLevelOffset(iEnum.Current) : maxDimension.Y);
+                    maxDimension.X + iEnum.Current.BackgroundDimension.X + Offset,
+                    iEnum.Current.BackgroundDimension.Y + GetLevelOffset(iEnum.Current) > maxDimension.Y ? iEnum.Current.BackgroundDimension.Y + GetLevelOffset(iEnum.Current) : maxDimension.Y);
             }
 
-            if (this.Items.Count > 0)
-                maxDimension = new Vector2f(maxDimension.X - this.Offset + this.XExtremityOffset * 2F, maxDimension.Y);
+            if (Items.Count > 0)
+                maxDimension = new Vector2f(maxDimension.X - Offset + XExtremityOffset * 2F, maxDimension.Y);
 
             return maxDimension;
         }
 
         public override void Refresh()
         {
-            this.Dimension = this.GetMaxDimension();
+            Dimension = GetMaxDimension();
 
             base.Refresh();
         }
@@ -55,8 +55,8 @@ namespace BlazeraLib
         public VAutoSizeBox(Boolean noBackgroundMode = true, String name = null, float offset = DEFAULT_BORDER_WIDTH, float yExtremityOffset = DEFAULT_Y_EXTREMITY_OFFSET, Boolean backgroundNoBackgroundMode = true) :
             base(noBackgroundMode, name, yExtremityOffset, backgroundNoBackgroundMode)
         {
-            this.Offset = offset;
-            this.YExtremityOffset = yExtremityOffset;
+            Offset = offset;
+            YExtremityOffset = yExtremityOffset;
         }
 
         private Vector2f GetMaxDimension()
@@ -66,24 +66,24 @@ namespace BlazeraLib
 
             Vector2f maxDimension = new Vector2f();
 
-            IEnumerator<Widget> iEnum = this.Items.GetEnumerator();
+            IEnumerator<Widget> iEnum = Items.GetEnumerator();
 
             while (iEnum.MoveNext())
             {
                 maxDimension = new Vector2f(
-                    iEnum.Current.BackgroundDimension.X + this.GetLevelOffset(iEnum.Current) > maxDimension.X ? iEnum.Current.BackgroundDimension.X + this.GetLevelOffset(iEnum.Current) : maxDimension.X,
-                    maxDimension.Y + iEnum.Current.BackgroundDimension.Y + this.Offset);
+                    iEnum.Current.BackgroundDimension.X + GetLevelOffset(iEnum.Current) > maxDimension.X ? iEnum.Current.BackgroundDimension.X + GetLevelOffset(iEnum.Current) : maxDimension.X,
+                    maxDimension.Y + iEnum.Current.BackgroundDimension.Y + Offset);
             }
 
-            if (this.Items.Count > 0)
-                maxDimension = new Vector2f(maxDimension.X, maxDimension.Y - this.Offset + this.YExtremityOffset * 2F);
+            if (Items.Count > 0)
+                maxDimension = new Vector2f(maxDimension.X, maxDimension.Y - Offset + YExtremityOffset * 2F);
 
             return maxDimension;
         }
 
         public override void Refresh()
         {
-            this.Dimension = this.GetMaxDimension();
+            Dimension = GetMaxDimension();
 
             base.Refresh();
         }

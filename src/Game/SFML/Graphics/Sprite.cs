@@ -156,7 +156,7 @@ namespace SFML
             public float Width
             {
                 get { return sfSprite_GetWidth(This); }
-                set { sfSprite_Resize(This, value, this.Height); }
+                set { sfSprite_Resize(This, value, Height); }
             }
 
             ////////////////////////////////////////////////////////////
@@ -167,7 +167,7 @@ namespace SFML
             public float Height
             {
                 get { return sfSprite_GetHeight(This); }
-                set { sfSprite_Resize(This, this.Width, value); }
+                set { sfSprite_Resize(This, Width, value); }
             }
 
             ////////////////////////////////////////////////////////////

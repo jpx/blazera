@@ -21,10 +21,10 @@ namespace BlazeraLib
         public TextList(Int32 size = BlazeraLib.ExtendedBox.DEFAULT_SIZE, Boolean cursorMode = true) :
             base(size)
         {
-            if (this.CursorMode = cursorMode)
+            if (CursorMode = cursorMode)
             {
-                this.Cursor = new PictureBox(Create.Texture("Gui_TextListSl"));
-                this.AddWidget(this.Cursor);
+                Cursor = new PictureBox(Create.Texture("Gui_TextListSl"));
+                AddWidget(Cursor);
             }
 
             Texts = new List<Button>();
@@ -158,7 +158,7 @@ namespace BlazeraLib
             
             Init(); // pour eviter l'absence de resize de la box
 
-            this.RefreshCursor();
+            RefreshCursor();
         }
 
         public void AddText(List<Button> texts, Int32 currentIndex = 0)
@@ -200,7 +200,7 @@ namespace BlazeraLib
                 Current.CallClicked(null);
             }
 
-            this.RefreshCursor();
+            RefreshCursor();
 
             Init();  // pour eviter l'absence de resize de la box
 
@@ -250,58 +250,58 @@ namespace BlazeraLib
 
         void button_Clicked(object sender, MouseButtonEventArgs e)
         {
-            this.Current = (Button)sender;
+            Current = (Button)sender;
 
-            this.RefreshCursor();
+            RefreshCursor();
         }
 
         protected override void OnScroll(object sender, ScrollEventArgs e)
         {
             base.OnScroll(sender, e);
 
-            this.RefreshCursor();
+            RefreshCursor();
         }
 
         public override void Clear()
         {
             base.Clear();
 
-            this.Current = null;
+            Current = null;
 
             Texts.Clear();
 
-            this.RefreshCursor();
+            RefreshCursor();
         }
 
         private void RefreshCursor()
         {
-            if (!this.CursorMode)
+            if (!CursorMode)
                 return;
 
-            if (this.ExtendedBox.CurrentContains(this.Current) &&
+            if (ExtendedBox.CurrentContains(Current) &&
                 Texts.Count != 0)
-                this.Cursor.Open();
+                Cursor.Open();
             else
-                this.Cursor.Close();
+                Cursor.Close();
         }
 
         public override void Update(Time dt)
         {
             base.Update(dt);
 
-            if (!this.CursorMode)
+            if (!CursorMode)
                 return;
 
-            if (this.Current == null)
+            if (Current == null)
                 return;
 
-            this.Cursor.Dimension += new Vector2f(
-                (this.Current.Dimension.X - this.Cursor.Dimension.X) / CURSOR_VELOCITY * (float)dt.MS,
-                (this.Current.Dimension.Y - this.Cursor.Dimension.Y) / CURSOR_VELOCITY * (float)dt.MS);
+            Cursor.Dimension += new Vector2f(
+                (Current.Dimension.X - Cursor.Dimension.X) / CURSOR_VELOCITY * (float)dt.MS,
+                (Current.Dimension.Y - Cursor.Dimension.Y) / CURSOR_VELOCITY * (float)dt.MS);
 
-            this.Cursor.Position += new Vector2f(
-                this.Current.Position.X - this.Cursor.Position.X,
-                (this.Current.Center.Y - this.Cursor.Center.Y) / CURSOR_VELOCITY * (float)dt.MS);
+            Cursor.Position += new Vector2f(
+                Current.Position.X - Cursor.Position.X,
+                (Current.Center.Y - Cursor.Center.Y) / CURSOR_VELOCITY * (float)dt.MS);
         }
 
         public override void Open(OpeningInfo openingInfo = null)

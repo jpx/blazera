@@ -41,5 +41,10 @@ namespace BlazeraLib
         public abstract void Start(StartInfo startInfo = null);
         public abstract void Perform();
         public abstract void End();
+
+        public void Log(string message)
+        {
+            Combat.Log(message);
+        }
     }
 }

@@ -143,7 +143,7 @@ namespace BlazeraLib
     {
         #region Classes
 
-        #region MoveInfo
+        #region CMoveInfo
 
         /// <summary>
         /// Moves handler for combatant.
@@ -303,7 +303,7 @@ namespace BlazeraLib
         const double BASE_POINT_HEIGHT_PERCENTAGE = 85D;
 
         //!\\ TEMP //!\\
-        const float DEFAULT_VELOCITY = 140F;
+        const float DEFAULT_VELOCITY = 240F;
 
         #endregion
 
@@ -371,21 +371,21 @@ namespace BlazeraLib
 
             CellPosition = new Vector2I();
 
-            Direction = GameDatas.DEFAULT_DIRECTION;
+            Direction = GameData.DEFAULT_DIRECTION;
 
             Animations = new Dictionary<CombatantState, Dictionary<Direction, Animation>>();
             foreach (CombatantState combatantState in System.Enum.GetValues(typeof(CombatantState)))
                 Animations.Add(combatantState, new Dictionary<Direction, Animation>());
 
-            AddAnimation(CombatantState.Normal, Direction.N, new Animation(basePersonnage.GetAnimation(MovingState.Normal, Direction.N)));
-            AddAnimation(CombatantState.Normal, Direction.E, new Animation(basePersonnage.GetAnimation(MovingState.Normal, Direction.E)));
-            AddAnimation(CombatantState.Normal, Direction.S, new Animation(basePersonnage.GetAnimation(MovingState.Normal, Direction.S)));
-            AddAnimation(CombatantState.Normal, Direction.O, new Animation(basePersonnage.GetAnimation(MovingState.Normal, Direction.O)));
+            AddAnimation(CombatantState.Normal, Direction.N, new Animation((Animation)basePersonnage.GetSkin("Inactive", Direction.N)));
+            AddAnimation(CombatantState.Normal, Direction.E, new Animation((Animation)basePersonnage.GetSkin("Inactive", Direction.E)));
+            AddAnimation(CombatantState.Normal, Direction.S, new Animation((Animation)basePersonnage.GetSkin("Inactive", Direction.S)));
+            AddAnimation(CombatantState.Normal, Direction.O, new Animation((Animation)basePersonnage.GetSkin("Inactive", Direction.O)));
 
-            AddAnimation(CombatantState.Moving, Direction.N, new Animation(basePersonnage.GetAnimation(MovingState.Walking, Direction.N)));
-            AddAnimation(CombatantState.Moving, Direction.E, new Animation(basePersonnage.GetAnimation(MovingState.Walking, Direction.E)));
-            AddAnimation(CombatantState.Moving, Direction.S, new Animation(basePersonnage.GetAnimation(MovingState.Walking, Direction.S)));
-            AddAnimation(CombatantState.Moving, Direction.O, new Animation(basePersonnage.GetAnimation(MovingState.Walking, Direction.O)));
+            AddAnimation(CombatantState.Moving, Direction.N, new Animation((Animation)basePersonnage.GetSkin("Moving", Direction.N)));
+            AddAnimation(CombatantState.Moving, Direction.E, new Animation((Animation)basePersonnage.GetSkin("Moving", Direction.E)));
+            AddAnimation(CombatantState.Moving, Direction.S, new Animation((Animation)basePersonnage.GetSkin("Moving", Direction.S)));
+            AddAnimation(CombatantState.Moving, Direction.O, new Animation((Animation)basePersonnage.GetSkin("Moving", Direction.O)));
 
             foreach (CombatantState state in Animations.Keys)
                 foreach (Animation animation in Animations[state].Values)
@@ -410,7 +410,7 @@ namespace BlazeraLib
             GetCurrentAnimation().Update(dt);
         }
 
-        public override void Draw(RenderWindow window)
+        public override void Draw(RenderTarget window)
         {
             GetCurrentAnimation().Draw(window);
         }
@@ -487,12 +487,14 @@ namespace BlazeraLib
         }
 
         //!\\ TODO //!\\
-        public void TakeDamage()
+        public int TakeDamage()
         {
-            int damages = RandomHelper.Get(0, 10);
+            int damages = RandomHelper.Get(0, 100);
             Status[BaseCaracteristic.Hp] -= (uint)damages;
 
-            MapEffectManager.Instance.AddEffect(new MapTextEffect(damages.ToString(), Color.Black), new Vector2f(Center.X, Top));
+            MapEffectManager.Instance.AddEffect(new TextMapEffect(damages.ToString(), Color.Black), new Vector2f(Center.X, Top));
+
+            return damages;
         }
     }
 }

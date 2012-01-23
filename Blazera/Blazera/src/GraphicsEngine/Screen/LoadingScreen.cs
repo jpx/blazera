@@ -13,21 +13,21 @@ namespace Blazera
         public LoadingScreen(RenderWindow window) :
             base(window)
         {
-            this.Type = ScreenType.LoadingScreen;
+            Type = ScreenType.LoadingScreen;
         }
 
-        public override void Init()
+        public override void Init(ScreenArgs args = null)
         {
             
         }
 
         public override ScreenType Run(Time dt)
         {
-            this.NextScreen = base.Run(dt);
+            NextScreen = base.Run(dt);
 
-            this.NextScreen = ScreenType.LoginScreen;
+            NextScreen = ScreenType.LoginScreen;
 
-            return this.NextScreen;
+            return NextScreen;
         }
 
         public override bool HandleEvent(BlzEvent evt)
@@ -45,7 +45,7 @@ namespace Blazera
 
                     if (Inputs.IsGameInput(InputType.Action))
                     {
-                        this.NextScreen = ScreenType.LoginScreen;
+                        NextScreen = ScreenType.LoginScreen;
 
                         return true;
                     }

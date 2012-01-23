@@ -1,20 +1,16 @@
 ﻿namespace BlazeraLib
 {
     /// <summary>
-    /// Base class of the scriptables objects constituting the game.
+    /// Base class of the scriptable objects constituting the game.
     /// </summary>
     public abstract class BaseObject : IScriptable
     {
-        #region Constants
+        #region Members
 
         /// <summary>
         /// Current unique identifier count of the objects.
         /// </summary>
         private static uint IdCount = 0;
-
-        #endregion
-
-        #region Members
 
         /// <summary>
         /// Script type name.
@@ -69,7 +65,16 @@
         }
 
         /// <summary>
-        /// Virtual method thats set script type name of the object.
+        /// String that allows to create the object into a given script.
+        /// </summary>
+        /// <returns></returns>
+        public virtual string ToScriptString()
+        {
+            return string.Empty;
+        }
+
+        /// <summary>
+        /// Virtual method that sets script type name of the object.
         /// </summary>
         /// <param name="type">Script type name to set.</param>
         /// <param name="creation">Specifies if it is the creation of the object.</param>

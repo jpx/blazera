@@ -128,8 +128,8 @@ namespace BlazeraEditor
 
             CurrentTileList.Clear();
 
-            Int32 width = (Int32)(CurrentTileSetTexture.Dimension.X / GameDatas.TILE_SIZE);
-            Int32 height = (Int32)(CurrentTileSetTexture.Dimension.Y / GameDatas.TILE_SIZE);
+            Int32 width = (Int32)(CurrentTileSetTexture.Dimension.X / GameData.TILE_SIZE);
+            Int32 height = (Int32)(CurrentTileSetTexture.Dimension.Y / GameData.TILE_SIZE);
             Int32 count = 0;
 
             for (Int32 y = 0; y < height; ++y)
@@ -138,10 +138,10 @@ namespace BlazeraEditor
                 {
                     BlazeraLib.Texture tileTexture = new BlazeraLib.Texture(CurrentTileSetTexture);
                     tileTexture.ImageSubRect = new BlazeraLib.IntRect(
-                        x * GameDatas.TILE_SIZE,
-                        y * GameDatas.TILE_SIZE,
-                        x * GameDatas.TILE_SIZE + GameDatas.TILE_SIZE,
-                        y * GameDatas.TILE_SIZE + GameDatas.TILE_SIZE);
+                        x * GameData.TILE_SIZE,
+                        y * GameData.TILE_SIZE,
+                        x * GameData.TILE_SIZE + GameData.TILE_SIZE,
+                        y * GameData.TILE_SIZE + GameData.TILE_SIZE);
                     tileTexture.SetType("Tile_" + CurrentTileSetTexture.Type + "_" + count);
                     //tileTexture.ToScript();
 

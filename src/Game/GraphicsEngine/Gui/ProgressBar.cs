@@ -63,7 +63,7 @@ namespace BlazeraLib
             SetProgressValue(Bar.ProgressValue + progressValueOffset);
         }
 
-        public override void Draw(RenderWindow window)
+        public override void Draw(RenderTarget window)
         {
             if (!IsVisible)
                 return;

@@ -12,51 +12,51 @@ namespace BlazeraLib
         public ScrollableWindowedWidget(String title) :
             base(title)
         {
-            this.VScrollBar = new VScrollBar();
-            this.AddWidget(this.VScrollBar);
-            this.HScrollBar = new HScrollBar();
-            this.AddWidget(this.HScrollBar);
+            VScrollBar = new VScrollBar();
+            AddWidget(VScrollBar);
+            HScrollBar = new HScrollBar();
+            AddWidget(HScrollBar);
 
-            //this.Refresh();
+            //Refresh();
         }
 
         public override void Refresh()
         {
             base.Refresh();
 
-            this.UpdateScrollBars();
+            UpdateScrollBars();
         }
 
         public void ResetScrollBars()
         {
-            if (this.VScrollBar != null)
+            if (VScrollBar != null)
             {
-                this.VScrollBar.Reset();
+                VScrollBar.Reset();
             }
 
-            if (this.HScrollBar != null)
+            if (HScrollBar != null)
             {
-                this.HScrollBar.Reset();
+                HScrollBar.Reset();
             }
         }
 
         private void UpdateScrollBars()
         {
-            this.VScrollBar.Dimension = new Vector2f(
-                this.VScrollBar.Dimension.X,
-                this.Dimension.Y + this.Margins);
+            VScrollBar.Dimension = new Vector2f(
+                VScrollBar.Dimension.X,
+                Dimension.Y + Margins);
 
-            this.VScrollBar.Position = this.GetGlobalFromLocal(new Vector2f(
-                this.Dimension.X + this.Margins,
+            VScrollBar.Position = GetGlobalFromLocal(new Vector2f(
+                Dimension.X + Margins,
                 0F));
 
-            this.HScrollBar.Dimension = new Vector2f(
-                this.Dimension.X + this.Margins,
-                this.HScrollBar.Dimension.Y);
+            HScrollBar.Dimension = new Vector2f(
+                Dimension.X + Margins,
+                HScrollBar.Dimension.Y);
 
-            this.HScrollBar.Position = this.GetGlobalFromLocal(new Vector2f(
+            HScrollBar.Position = GetGlobalFromLocal(new Vector2f(
                 0F,
-                this.Dimension.Y + this.Margins));
+                Dimension.Y + Margins));
         }
 
         protected override Vector2f GetBasePosition()
@@ -66,7 +66,7 @@ namespace BlazeraLib
 
         protected override Vector2f GetStructureDimension()
         {
-            return base.GetStructureDimension() + new Vector2f(this.VScrollBar.Dimension.X + this.Margins, this.HScrollBar.Dimension.Y + this.Margins);
+            return base.GetStructureDimension() + new Vector2f(VScrollBar.Dimension.X + Margins, HScrollBar.Dimension.Y + Margins);
         }
 
         protected VScrollBar VScrollBar { get; set; }

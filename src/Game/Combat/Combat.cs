@@ -78,6 +78,8 @@ namespace BlazeraLib
 
         public CombatMap Map { get; private set; }
 
+        CombatLogger Logger;
+
         #endregion
 
         #region Events
@@ -120,6 +122,8 @@ namespace BlazeraLib
                 { EState.Over,                  new Over(this) }
             };
 
+            Logger = new CombatLogger();
+
             Teams = new List<Team>();
             Combatants = new List<BaseCombatant>();
 
@@ -158,6 +162,8 @@ namespace BlazeraLib
 
         public void AddTeam(Team team)
         {
+
+
             Teams.Add(team);
 
             IEnumerator<BaseCombatant> combatants = team.GetCombatantEnumerator();
@@ -211,7 +217,7 @@ namespace BlazeraLib
 
             State = state;
 
-            Log.Cl("Combat state : " + State.ToString(), System.ConsoleColor.Yellow);
+            Log("Combat state : " + State.ToString());
 
             CallOnStateChange();
 
@@ -312,6 +318,11 @@ namespace BlazeraLib
         public void AttachViewToCurrentCombatant()
         {
             ViewFollowingTarget = CurrentCombatant;
+        }
+
+        public void Log(string message)
+        {
+            Logger.Log(message);
         }
     }
 }

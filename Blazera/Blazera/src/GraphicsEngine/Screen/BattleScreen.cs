@@ -13,19 +13,25 @@ namespace Blazera
         CombatMap Map;
         FpsLabel Fps = new FpsLabel();
 
+        //!\\ TODO : put here all combat widgets (packed into a class) and instanciate them only once (combat only holds a 'reference' to them) //!\\
+        CombatBaseWidget CombatGui;
+
+
         public BattleScreen(RenderWindow window) :
             base(window)
         {
             Type = ScreenType.BattleScreen;
         }
 
-        public override void FirstInit()
+        //!\\ TODO (test phase) //!\\
+        public override void Init(ScreenArgs args = null)
         {
-            base.FirstInit();
+            base.Init(args);
 
-            Map = new CombatMap(GameScreen.GetCurrentMap());
+            Map = new CombatMap(args.Get<Map>("Map"));
 
-            Gui.AddWidget(Fps);
+
+            Gui.AddGameWidget(Fps);
 
             Gui.AddGameWidget(Map.Combat.MainMenu);
             Gui.AddGameWidget(Map.Combat.ActionMenu);
@@ -34,10 +40,7 @@ namespace Blazera
 
             Map.Combat.InfoPanel.SetLocation(GameWidget.ELocation.BottomRight);
             Gui.AddGameWidget(Map.Combat.InfoPanel);
-
-            Map.Combat.MainMenu.BackgroundBottom = Gui.Bottom;
-            Map.Combat.InfoPanel.BackgroundRight = Gui.Right;
-            Map.Combat.InfoPanel.BackgroundBottom = Gui.Bottom;
+            Map.Combat.MainMenu.SetLocation(GameWidget.ELocation.BottomLeft);
 
             Gui.SetFirst(Map.Combat.Cursor);
         }
@@ -85,9 +88,9 @@ namespace Blazera
             float velocity = 200F - CombatCursor.TRANSITION_VELOCITY;
 
             if (Math.Abs(p.X - GameView.Center.X) > VIEW_MOVE_TRIGGER_LIMIT)
-                moveX = velocity * (p.X - GameView.Center.X) / 50f * GameDatas.WINDOW_WIDTH / GameDatas.WINDOW_HEIGHT * (float)dt.Value;
+                moveX = velocity * (p.X - GameView.Center.X) / 50f * GameData.WINDOW_WIDTH / GameData.WINDOW_HEIGHT * (float)dt.Value;
             if (Math.Abs(p.Y - GameView.Center.Y) > VIEW_MOVE_TRIGGER_LIMIT)
-                moveY = velocity * (p.Y - GameView.Center.Y) / 50f * GameDatas.WINDOW_HEIGHT / GameDatas.WINDOW_WIDTH * (float)dt.Value;
+                moveY = velocity * (p.Y - GameView.Center.Y) / 50f * GameData.WINDOW_HEIGHT / GameData.WINDOW_WIDTH * (float)dt.Value;
 
             if (GameView.Center.X - GameView.Size.X / 2 + moveX < 0F)
             {

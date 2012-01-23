@@ -77,6 +77,20 @@ namespace BlazeraLib
             return worldItem;
         }
 
+        public static Teleporter Teleporter(String type)
+        {
+            Teleporter teleporter = new Teleporter(ScriptManager.Get<Teleporter>(Create.GetFullType(typeof(Teleporter), type)));
+            teleporter.SetType(type, false);
+            return teleporter;
+        }
+
+        public static Door Door(String type)
+        {
+            Door door = new Door(ScriptManager.Get<Door>(Create.GetFullType(typeof(Door), type)));
+            door.SetType(type, false);
+            return door;
+        }
+
         public static GroundElement GroundElement(String type)
         {
             GroundElement groundElement = new GroundElement(ScriptManager.Get<GroundElement>(Create.GetFullType(typeof(GroundElement), type)));
@@ -96,6 +110,13 @@ namespace BlazeraLib
             Wall wall = new Wall(ScriptManager.Get<Wall>(Create.GetFullType(typeof(Wall), type)));
             wall.SetType(type, false);
             return wall;
+        }
+
+        public static Platform Platform(String type)
+        {
+            Platform platform = new Platform(ScriptManager.Get<Platform>(Create.GetFullType(typeof(Platform), type)));
+            platform.SetType(type, false);
+            return platform;
         }
 
         public static DisplaceableElement DisplaceableElement(String type)

@@ -16,6 +16,17 @@ namespace BlazeraLib
             base()
         {
             DrawOrder = BlazeraLib.DrawOrder.Normal;
+
+            OnMove += new MoveEventHandler(AnimationMapEffect_OnMove);
+        }
+
+        void AnimationMapEffect_OnMove(IDrawable sender, MoveEventArgs e)
+        {
+            if (Effect == null)
+                return;
+
+            Effect.Position += e.Move;
+            Effect.Z += e.ZOffset;
         }
 
         public AnimationMapEffect(AnimationMapEffect copy) :
@@ -23,6 +34,13 @@ namespace BlazeraLib
         {
             Effect = new Animation(copy.Effect);
             SoundName = copy.SoundName;
+
+            OnMove += new MoveEventHandler(AnimationMapEffect_OnMove);
+        }
+
+        public override object Clone()
+        {
+            return new AnimationMapEffect(this);
         }
 
         public override void Update(Time dt)
@@ -30,7 +48,7 @@ namespace BlazeraLib
             Effect.Update(dt);
         }
 
-        public override void Draw(RenderWindow window)
+        public override void Draw(RenderTarget window)
         {
             if (!IsVisible)
                 return;
@@ -57,36 +75,13 @@ namespace BlazeraLib
 
         void Effect_OnStopping(Animation sender, AnimationEventArgs e)
         {
+            Effect.OnStopping -= new AnimationEventHandler(Effect_OnStopping);
             CallOnStopping();
-        }
-
-        public override void SetBasePosition(Vector2f basePosition)
-        {
-            base.SetBasePosition(basePosition);
-
-            Position = BasePosition;
         }
 
         public override Vector2f Position
         {
-            get
-            {
-                if (Effect == null)
-                    return base.Position;
-
-                return Effect.Position;
-            }
-            set
-            {
-                Vector2f offset = value - Position;
-
-                base.Position = value;
-
-                if (Effect == null)
-                    return;
-
-                Effect.Position += offset;
-            }
+            get { return Effect.Position; }
         }
 
         public override Vector2f Dimension
@@ -97,6 +92,17 @@ namespace BlazeraLib
                     return base.Dimension;
 
                 return Effect.Dimension;
+            }
+        }
+
+        public override Color Color
+        {
+            set
+            {
+                base.Color = value;
+
+                if (Effect != null)
+                    Effect.Color = Color;
             }
         }
     }

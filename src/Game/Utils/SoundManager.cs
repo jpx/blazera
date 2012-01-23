@@ -12,14 +12,14 @@ namespace BlazeraLib
 
         private SoundManager()
         {
-            this.Sounds = new Dictionary<string, Sound>();
-            this.SoundBuffers = new Dictionary<string, SoundBuffer>();
-            this.Musics = new Dictionary<string, Music>();
+            Sounds = new Dictionary<string, Sound>();
+            SoundBuffers = new Dictionary<string, SoundBuffer>();
+            Musics = new Dictionary<string, Music>();
         }
 
         public void Init()
         {
-            this.Init(GameDatas.SOUNDS_DEFAULT_PATH);
+            Init(GameData.SOUNDS_DEFAULT_PATH);
         }
 
         private static SoundManager _instance;
@@ -41,50 +41,50 @@ namespace BlazeraLib
 
         public void Init(String soundsPath)
         {
-            this.Sounds = new Dictionary<String, Sound>();
-            this.SoundsPath = soundsPath;
+            Sounds = new Dictionary<String, Sound>();
+            SoundsPath = soundsPath;
         }
 
         public void PlaySound(String soundPath)
         {
-            if (!this.Sounds.ContainsKey(soundPath))
+            if (!Sounds.ContainsKey(soundPath))
             {
-                this.SoundBuffers.Add(soundPath, new SoundBuffer(this.SoundsPath + soundPath));
-                this.Sounds.Add(soundPath, new Sound(this.SoundBuffers[soundPath]));
+                SoundBuffers.Add(soundPath, new SoundBuffer(SoundsPath + soundPath));
+                Sounds.Add(soundPath, new Sound(SoundBuffers[soundPath]));
             }
-            if (this.IsActived)
-                this.Sounds[soundPath].Play();
+            if (IsActived)
+                Sounds[soundPath].Play();
         }
 
         private Music GetMusic(String musicPath)
         {
-            if (this.Musics.ContainsKey(musicPath))
+            if (Musics.ContainsKey(musicPath))
                 return Musics[musicPath];
-            this.Musics.Add(musicPath, new Music(this.SoundsPath + musicPath));
-            return this.Musics[musicPath];
+            Musics.Add(musicPath, new Music(SoundsPath + musicPath));
+            return Musics[musicPath];
         }
 
         public void PlayMusic(String musicPath)
         {
-            foreach (Music music in this.Musics.Values)
+            foreach (Music music in Musics.Values)
                 music.Stop();
-            if (this.IsActived)
-                this.GetMusic(musicPath).Play();
+            if (IsActived)
+                GetMusic(musicPath).Play();
         }
 
         public void PlayMusic(String musicPath, int volume)
         {
-            this.Stop();
-            if (this.IsActived)
+            Stop();
+            if (IsActived)
             {
-                this.GetMusic(musicPath).Volume = volume;
-                this.GetMusic(musicPath).Play();
+                GetMusic(musicPath).Volume = volume;
+                GetMusic(musicPath).Play();
             }
         }
 
         public void Stop()
         {
-            foreach (Music music in this.Musics.Values)
+            foreach (Music music in Musics.Values)
                 music.Stop();
         }
 

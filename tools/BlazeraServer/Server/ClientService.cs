@@ -142,7 +142,7 @@ namespace BlazeraServer
 
             SPlayer = new SPlayer(Create.Player("Vlad"), this);
             SPlayer.Guid = Guid;
-            string map = GameDatas.INIT_MAP;
+            string map = GameData.INIT_MAP;
             SWorld.Instance.AddMap(map);
             SPlayer.SetMap(SWorld.Instance.GetMap(map), RandomHelper.Get(40F, 400F), RandomHelper.Get(40F, 400F));
 

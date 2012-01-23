@@ -46,8 +46,8 @@ namespace SFML
             public View(Vector2f center, Vector2f size) :
                 base(sfView_Create())
             {
-                this.Center = center;
-                this.Size   = size;
+                Center = center;
+                Size   = size;
             }
 
             ////////////////////////////////////////////////////////////

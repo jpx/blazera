@@ -233,9 +233,6 @@ namespace BlazeraEditor
         ConfigurableBox TypeConfigurableBox = new ConfigurableBox();
         WarpActionBox WarpActionBox = new WarpActionBox();
         TakeItemActionBox TakeItemActionBox = new TakeItemActionBox();
-        VAutoSizeBox ConditionBox = new VAutoSizeBox(false, "Conditions");
-        TextList ConditionTextList = new TextList(4, false);
-        Button ConditionAddButton = new Button("Add condition");
         HAutoSizeBox ButtonBox = new HAutoSizeBox();
         Button SaveButton = new Button("Save");
         Button CancelButton = new Button("Cancel");
@@ -259,11 +256,6 @@ namespace BlazeraEditor
             TypeConfigurableBox.AddConfiguration("Warp", WarpActionBox);
             TypeConfigurableBox.AddConfiguration("TakeItem", TakeItemActionBox);
 
-            ActionCreatorMainHBox.AddItem(ConditionBox);
-            ConditionBox.AddItem(ConditionTextList);
-            ConditionAddButton.Clicked += new ClickEventHandler(ConditionAddButton_Clicked);
-            ConditionBox.AddItem(ConditionAddButton);
-
             ActionCreatorMainVBox.AddItem(ButtonBox);
             SaveButton.Clicked += new ClickEventHandler(SaveButton_Clicked);
             ButtonBox.AddItem(SaveButton);
@@ -286,11 +278,6 @@ namespace BlazeraEditor
         void actionTypeButton_Clicked(object sender, SFML.Window.MouseButtonEventArgs e)
         {
             TypeConfigurableBox.SetCurrentConfiguration(((Button)sender).Text);
-        }
-
-        void ConditionAddButton_Clicked(object sender, SFML.Window.MouseButtonEventArgs e)
-        {
-            SetFocusedWindow(ConditionCreator.Instance, new OpeningInfo(true), null);
         }
         #endregion
 
@@ -355,32 +342,6 @@ namespace BlazeraEditor
             }
 
             return onValidate;
-        }
-    }
-
-    public class ConditionCreator : WindowedWidget
-    {
-        #region Singleton
-
-        private static ConditionCreator _instance;
-        public static ConditionCreator Instance
-        {
-            get
-            {
-                if (_instance == null)
-                    Instance = new ConditionCreator();
-
-                return _instance;
-            }
-            private set { _instance = value; }
-        }
-
-        #endregion
-
-        ConditionCreator() :
-            base("Condition creator")
-        {
-
         }
     }
 }

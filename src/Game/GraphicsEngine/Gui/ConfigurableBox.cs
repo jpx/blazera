@@ -16,7 +16,7 @@ namespace BlazeraLib
         public ConfigurableBox() :
             base()
         {
-            this.Configurations = new Dictionary<String, Box>();
+            Configurations = new Dictionary<String, Box>();
         }
 
         public void AddConfiguration(String configurationName, Box box)
@@ -24,8 +24,8 @@ namespace BlazeraLib
             if (configurationName == null || box == null)
                 return;
 
-            if (!this.Configurations.ContainsKey(configurationName))
-                this.Configurations.Add(configurationName, box);
+            if (!Configurations.ContainsKey(configurationName))
+                Configurations.Add(configurationName, box);
 
             if (Configurations.Count == 1)
             {
@@ -36,23 +36,23 @@ namespace BlazeraLib
 
         public void SetCurrentConfiguration(String configurationName)
         {
-            if (configurationName == null || !this.Configurations.ContainsKey(configurationName))
+            if (configurationName == null || !Configurations.ContainsKey(configurationName))
                 return;
 
             if (CurrentConfiguration != null &&
                 !RemoveWidget(GetCurrentConfiguration()))
                 return;
 
-            this.CurrentConfiguration = configurationName;
+            CurrentConfiguration = configurationName;
 
             AddWidget(GetCurrentConfiguration());
 
-            this.EnableCurrentConfiguration();
+            EnableCurrentConfiguration();
         }
 
         private Box GetCurrentConfiguration()
         {
-            return this.Configurations[this.CurrentConfiguration];
+            return Configurations[CurrentConfiguration];
         }
 
         public Box GetConfiguration(string configurationName)
@@ -62,7 +62,7 @@ namespace BlazeraLib
 
         private void EnableCurrentConfiguration()
         {
-            this.GetCurrentConfiguration().Open();
+            GetCurrentConfiguration().Open();
         }
 
         public override void Refresh()
@@ -76,8 +76,8 @@ namespace BlazeraLib
         {
             get
             {
-                if (this.CurrentConfiguration != null)
-                    return this.GetCurrentConfiguration().BackgroundDimension;
+                if (CurrentConfiguration != null)
+                    return GetCurrentConfiguration().BackgroundDimension;
 
                 return base.Dimension;
             }
@@ -90,7 +90,7 @@ namespace BlazeraLib
             if (Configurations == null)
                 return;
 
-            this.EnableCurrentConfiguration();
+            EnableCurrentConfiguration();
         }
 
         public override Color Color

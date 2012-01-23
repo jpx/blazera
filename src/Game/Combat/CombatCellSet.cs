@@ -33,7 +33,7 @@ namespace BlazeraLib
                 for (int x = 0; x < Width; ++x)
                     CellSet[y, x] = new CombatCell(new Vector2I(x, y));
 
-            foreach (WorldObject wObj in map.Objects)
+            foreach (WorldObject wObj in map.GetObjects())
             {
                 foreach (BBoundingBox BB in wObj.BBoundingBoxes)
                 {
@@ -45,7 +45,13 @@ namespace BlazeraLib
 
                     for (int y = top; y < bottom; ++y)
                         for (int x = left; x < right; ++x)
-                            GetCell(x, y).State = CombatCell.EState.Unusable;
+                        {
+                            CombatCell cell = GetCell(x, y);
+                            if (cell == null)
+                                continue;
+
+                            cell.State = CombatCell.EState.Unusable;
+                        }
                 }
             }
         }

@@ -6,6 +6,7 @@
 
         public enum ColorName
         {
+            //!\\ TODO : list all
             // Shades of Black and Gray
             White,
             Black,
@@ -20,9 +21,12 @@
             SlateGray3,
             SlateGray4,
 
+            tan2,
             tan3,
+            tan4,
 
             DarkGreen,
+            ForestGreen,
 
             red4
         }
@@ -44,18 +48,21 @@
 
         static System.Collections.Generic.Dictionary<ColorName, Color> Colors = new System.Collections.Generic.Dictionary<ColorName, Color>()
         {
-            { ColorName.White,      new Color(255,  255,    255)    },
-            { ColorName.Black,      new Color(0,    0,      0)      },
-            { ColorName.Grey,       new Color(84,   84,     84)     },
-            { ColorName.Silver,     new Color(192,  192,    192)    },
-            { ColorName.grey,       new Color(190,  190,    190)    },
-            { ColorName.LightGray,  new Color(211,  211,    211)    },
+            { ColorName.White,          new Color(255,  255,    255)    },
+            { ColorName.Black,          new Color(0,    0,      0)      },
+            { ColorName.Grey,           new Color(84,   84,     84)     },
+            { ColorName.Silver,         new Color(192,  192,    192)    },
+            { ColorName.grey,           new Color(190,  190,    190)    },
+            { ColorName.LightGray,      new Color(211,  211,    211)    },
 
-            { ColorName.tan3,       new Color(205,  133,    63)     },
+            { ColorName.tan2,           new Color(238,  154,    73)     },
+            { ColorName.tan3,           new Color(205,  133,    63)     },
+            { ColorName.tan4,           new Color(139,  90,     43)     },
 
-            { ColorName.DarkGreen,  new Color(47,   79,     47)     },
+            { ColorName.DarkGreen,      new Color(47,   79,     47)     },
+            { ColorName.ForestGreen,    new Color(34,   139,    34)     },
 
-            { ColorName.red4,       new Color(139,  0,      0)      }
+            { ColorName.red4,           new Color(139,  0,      0)      }
         };
 
         #endregion

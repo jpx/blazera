@@ -84,7 +84,7 @@ namespace BlazeraEditor
         {
             ++FpsCount;
             
-            UInt32 fps = (UInt32)(1F / (this.Root.Window.GetFrameTime() / 1000D));
+            UInt32 fps = (UInt32)(1F / GameTime.Dt);
 
             TotalFps += fps;
 
@@ -98,12 +98,12 @@ namespace BlazeraEditor
             if (fps < 20)
                 Fps.Color = Color.Black;
             else if (fps < 50)
-                this.Fps.Color = Color.Red;
+                Fps.Color = Color.Red;
             
             else
-                this.Fps.Color = Color.Green;
+                Fps.Color = Color.Green;
 
-            this.Fps.Text = "FPS : " + fps.ToString();
+            Fps.Text = "FPS : " + fps.ToString();
 
             EventCountLabel.Text = "Event count : " + GameScoring.EventCount;
             EventHandledLabel.Text = "Event handled : " + GameScoring.EventHandled;

@@ -40,88 +40,245 @@ namespace BlazeraLib
         }
     }
 
-    public class MoveEventArgs : EventArgs
-    {
-        public Vector2f Move { get; private set; }
-
-        public MoveEventArgs(Vector2f move)
-        {
-            Move = move;
-        }
-    }
-
-    public delegate void MoveEventHandler(WorldObject sender, MoveEventArgs e);
-
     public delegate void DirectionEventHandler(WorldObject sender, DirectionEventArgs e);
 
-    public abstract class WorldObject : DrawableBaseObject, IUpdateable
+    public abstract class WorldObject : DrawableBaseObject, IUpdateable, IVisitable<WorldObject>
     {
+        #region Classes
+
+        protected class CMovingStateInfo : IUpdateable
+        {
+            public delegate void DirectionEventHandler(CMovingStateInfo sender, DirectionEventArgs e);
+
+            public event DirectionEventHandler OnDirectionChange;
+
+            bool CallOnDirectionChange() { if (OnDirectionChange == null) return false; OnDirectionChange(this, new DirectionEventArgs(Direction)); return true; }
+
+            #region Members
+
+            protected WorldObject Parent { get; private set; }
+
+            float BaseVelocity;
+
+            Dictionary<Direction, bool> DirectionStates;
+
+            public Direction Direction { get; private set; }
+
+            #endregion Members
+
+            public CMovingStateInfo(WorldObject parent)
+            {
+                Parent = parent;
+
+                BaseVelocity = GameData.DEFAULT_WALK_VELOCITY;
+                Direction = GameData.DEFAULT_DIRECTION;
+
+                DirectionStates = new Dictionary<Direction, bool>()
+                {
+                    { Direction.N, false },
+                    { Direction.E, false },
+                    { Direction.S, false },
+                    { Direction.O, false }
+                };
+                ResetDirectionStates();
+            }
+
+            public virtual void Update(Time dt) { }
+
+            protected bool IsEnabled(Direction direction)
+            {
+                return DirectionStates[direction];
+            }
+
+            public void Enable(Direction direction, bool isEnabled = true)
+            {
+                DirectionStates[direction] = isEnabled;
+
+                RefreshDirection();
+            }
+
+            public void ResetDirectionStates(bool isEnabled = false)
+            {
+                Enable(Direction.N, isEnabled);
+                Enable(Direction.E, isEnabled);
+                Enable(Direction.S, isEnabled);
+                Enable(Direction.O, isEnabled);
+            }
+
+            public virtual float GetVelocity()
+            {
+                return BaseVelocity;
+            }
+
+            protected virtual void RefreshDirection()
+            {
+                if (!IsMoving() || (Parent.IsActive() && !Parent.IsMoving()))
+                {
+                    if (Parent.IsMoving())
+                        Parent.TrySetState("Inactive");
+                    return;
+                }
+
+                if (IsEnabled(Direction.N) && IsEnabled(Direction.E))
+                    SetDirection(Direction.NE);
+                else if (IsEnabled(Direction.N) && IsEnabled(Direction.O))
+                    SetDirection(Direction.NO);
+                else if (IsEnabled(Direction.S) && IsEnabled(Direction.E))
+                    SetDirection(Direction.SE);
+                else if (IsEnabled(Direction.S) && IsEnabled(Direction.O))
+                    SetDirection(Direction.SO);
+                else if (IsEnabled(Direction.N))
+                    SetDirection(Direction.N);
+                else if (IsEnabled(Direction.S))
+                    SetDirection(Direction.S);
+                else if (IsEnabled(Direction.E))
+                    SetDirection(Direction.E);
+                else if (IsEnabled(Direction.O))
+                    SetDirection(Direction.O);
+
+                Parent.TrySetState("Moving");
+            }
+
+            public void SetDirection(Direction direction)
+            {
+                Direction = direction;
+
+                CallOnDirectionChange();
+            }
+
+            public void SetBaseVelocity(float baseVelocity)
+            {
+                BaseVelocity = baseVelocity;
+            }
+
+            /// <summary>
+            /// Specifies if the parent object is trying to move.
+            /// </summary>
+            /// <returns>True if the parent object is trying to move.</returns>
+            public bool IsMoving()
+            {
+                return
+                    IsEnabled(Direction.N) ||
+                    IsEnabled(Direction.S) ||
+                    IsEnabled(Direction.E) ||
+                    IsEnabled(Direction.O);
+            }
+        }
+
+        #endregion Classes
+
+        //!\\ TODO: move from here
+        public static Dictionary<string, string[]> JoinableStateTable = new Dictionary<string, string[]>()
+        {
+            // personnage
+            { "Moving", new string[] { "Running", "Rotating" } },
+            { "Running", new string[] { "Moving", "Rotating" } },
+            { "Rotating", new string[] { "Moving", "Running" } },
+
+            // door
+            { "Open", new string[] { "Closed", "Closing" } },
+            { "Closed", new string[] { "Open", "Opening", "Locked" } },
+            { "Locked", new string[] { "Closed" } },
+            { "Opening", new string[] { "Open" } },
+            { "Closing", new string[] { "Closed" } }
+        };
+
+        public class UpdateEventArgs : EventArgs { }
+        public delegate void UpdateEventHandler(WorldObject sender, UpdateEventArgs e);
+        public class StateEventArgs : EventArgs
+        {
+            public State<string> State { get; private set; }
+            public StateEventArgs(State<string> state) { State = state; }
+        }
+        public delegate void StateEventHandler(WorldObject sender, StateEventArgs e);
+
+        public class MapChangeEventArgs : EventArgs
+        {
+            public Map Map { get; private set; }
+            public MapChangeEventArgs(Map map) { Map = map; }
+        }
+        public delegate void MapChangeEventHandler(WorldObject sender, MapChangeEventArgs e);
+
         public DrawOrder DrawOrder { get; set; }
+
+        //!\\ TMP //!\\
         public float DrawBottomMargin { get; set; }
 
-        Boolean RunningIsCalled;
+        #region Events
 
         public event DirectionEventHandler OnDirectionEnablement;
         public event DirectionEventHandler OnDirectionDisablement;
-        public event MoveEventHandler OnMove;
         Boolean CallOnDirectionEnablement(Direction direction) { if (OnDirectionEnablement == null) return false; OnDirectionEnablement(this, new DirectionEventArgs(direction)); return true; }
         Boolean CallOnDirectionDisablement(Direction direction) { if (OnDirectionDisablement == null) return false; OnDirectionDisablement(this, new DirectionEventArgs(direction)); return true; }
-        Boolean CallOnMove(Vector2f move) { if (OnMove == null) return false; OnMove(this, new MoveEventArgs(move)); return true; }
 
-        public DirectionInfo DirectionInfo { get; private set; }
+        public event UpdateEventHandler OnUpdate;
+        bool CallOnUpdate() { if (OnUpdate == null) return false; OnUpdate(this, new UpdateEventArgs()); return true; }
+
+        public event StateEventHandler OnStateChange;
+        bool CallOnStateChange() { if (OnStateChange == null) return false; OnStateChange(this, new StateEventArgs(State)); return true; }
+
+        public event MapChangeEventHandler OnMapChange;
+        bool CallOnMapChange() { if (OnMapChange == null) return false; OnMapChange(this, new MapChangeEventArgs(Map)); return true; }
+
+        #endregion Events
+
+        static readonly string DEFAULT_STATE = SkinSet.DEFAULT_DEFAULT_STATE;
+
+        #region Members
+
+        protected SkinSet Skin { get; private set; }
+
+        #endregion Members
+
+        public DirectionHandler DirectionHandler { get; private set; }
+
+        protected State<string> State { get; private set; }
+
+        protected CMovingStateInfo MovingStateInfo;
 
         public WorldObject() :
             base()
         {
-            Direction = GameDatas.DEFAULT_DIRECTION;
-            Velocity = GameDatas.DEFAULT_WALK_VELOCITY;
-
             DrawBottomMargin = 0F;
 
-            DrawOrder = DrawOrder.Normal;
+            Skin = new SkinSet();
 
-            RunningIsCalled = false;
+            SetState(DEFAULT_STATE);
+
+            DrawOrder = DrawOrder.Normal;
 
             BBoundingBoxes = new List<BBoundingBox>();
             BodyBoundingBoxes = new List<EBoundingBox>();
             EventBoundingBoxes = new Dictionary<EventBoundingBoxType, List<EBoundingBox>>();
             foreach (EventBoundingBoxType BBT in Enum.GetValues(typeof(EventBoundingBoxType)))
-                this.EventBoundingBoxes[BBT] = new List<EBoundingBox>();
+                EventBoundingBoxes[BBT] = new List<EBoundingBox>();
 
             Position = new Vector2f();
             Dimension = new Vector2f();
 
-            DirectionInfo = new DirectionInfo(this);
+            DirectionHandler = new DirectionHandler(this);
 
             Map = null;
 
-            DirectionStates = new Dictionary<Direction, Boolean>()
-            {
-                { Direction.N, false },
-                { Direction.E, false },
-                { Direction.S, false },
-                { Direction.O, false }
-            };
-
-            MoveInfo = new MoveInfo(this);
-            UpdateStates();
+            MoveHandler = new MoveHandler(this);
 
             IsVisible = true;
+
+            InitMovingStateInfo();
+
+            Stop();
         }
 
         public WorldObject(WorldObject copy) :
             base(copy)
         {
-            Direction = GameDatas.DEFAULT_DIRECTION;
-            Velocity = GameDatas.DEFAULT_WALK_VELOCITY;
-
             DrawBottomMargin = copy.DrawBottomMargin;
+
+            SetState(copy.State);
 
             DrawOrder = DrawOrder.Normal;
 
-            RunningIsCalled = false;
-
-            DirectionInfo = new DirectionInfo(this);
+            DirectionHandler = new DirectionHandler(this);
 
             BBoundingBoxes = new List<BBoundingBox>();
             foreach (BBoundingBox BB in copy.BBoundingBoxes)
@@ -136,42 +293,35 @@ namespace BlazeraLib
             EventBoundingBoxes = new Dictionary<EventBoundingBoxType, List<EBoundingBox>>();
             EventBoundingBoxes.Add(EventBoundingBoxType.Internal, new List<EBoundingBox>());
             EventBoundingBoxes.Add(EventBoundingBoxType.External, new List<EBoundingBox>());
-            foreach (EBoundingBox BB in copy.EventBoundingBoxes[EventBoundingBoxType.External])
-                AddEventBoundingBox(new EBoundingBox(BB, this), EventBoundingBoxType.External);
+            foreach (EventBoundingBoxType EBBType in Enum.GetValues(typeof(EventBoundingBoxType)))
+                foreach (EBoundingBox BB in copy.EventBoundingBoxes[EBBType])
+                    AddEventBoundingBox(new EBoundingBox(BB, this), EBBType);
 
             if (copy.Skin != null)
-            {
-                Skin = new Texture(copy.Skin);
-            }
+                Skin = new SkinSet(copy.Skin);
 
             Position = new Vector2f(copy.Position.X,
                                    copy.Position.Y);
-            Dimension = new Vector2f(copy.Dimension.X,
-                                    copy.Dimension.Y);
+
             Map = copy.Map;
 
-            DirectionStates = new Dictionary<Direction, Boolean>()
-            {
-                { Direction.N, false },
-                { Direction.E, false },
-                { Direction.S, false },
-                { Direction.O, false }
-            };
-
-            MoveInfo = new MoveInfo(this);
-            UpdateStates();
+            MoveHandler = new MoveHandler(this);
 
             IsVisible = true;
+
+            InitMovingStateInfo();
+
+            Stop();
+        }
+
+        protected virtual void InitMovingStateInfo()
+        {
+            MovingStateInfo = new CMovingStateInfo(this);
         }
 
         public override void ToScript()
         {
             base.ToScript();
-
-            if (Skin != null)
-            {
-                Sw.WriteProperty("Skin", "Create:Texture(" + ScriptWriter.GetStringOf(Skin.Type) + ")");
-            }
 
             foreach (BBoundingBox BB in BBoundingBoxes)
             {
@@ -200,66 +350,124 @@ namespace BlazeraLib
                                         });
             }
 
-            foreach (EBoundingBox BB in EventBoundingBoxes[EventBoundingBoxType.Internal])
-            {
-                Sw.WriteMethod("AddEventBoundingBox",
-                                    new String[]
-                                        {
-                                            "EBoundingBox(" + Sw.Name + ", " +
-                                                              "EBoundingBoxType." + BB.Type.ToString() + ", " +
-                                                              BB.BaseLeft.ToString() + ", " +
-                                                              BB.BaseTop.ToString() + ", " +
-                                                              BB.BaseRight.ToString() + ", " +
-                                                              BB.BaseBottom.ToString() + ")", "EventBoundingBoxType.Internal"
-                                        });
-            }
+            SkinToScript();
+        }
 
+        protected virtual void SkinToScript()
+        {
+            IEnumerator<KeyValuePair<State<string>, Skin>> skinEnum = Skin.GetEnumerator();
+            while (skinEnum.MoveNext())
+                Sw.WriteMethod("AddSkin", new string[] { ScriptWriter.GetStringOf(skinEnum.Current.Key), skinEnum.Current.Value.ToScriptString() });
+        }
+
+        public Skin GetSkin(string state)
+        {
+            return Skin.GetSkin(GetDrawingState(state));
+        }
+
+        string GetDrawingState(string state)
+        {
+            if (!Skin.ContainsState(state))
+                return "Inactive";
+
+            return state;
+        }
+
+        public void SetSkin(Skin skin)
+        {
+            Skin.AddSkin(skin);
+        }
+
+        public void AddSkin(string state, Skin skin)
+        {
+            Skin.AddSkin(state, skin);
         }
 
         public virtual void Update(Time dt)
         {
-            this.MoveInfo.Update();
+            CallOnUpdate();
 
-            this.UpdateStates();
+            MoveHandler.Update();
+            MovingStateInfo.Update(dt);
+
+            if (Skin != null)
+                Skin.Update(dt);
         }
 
-        public override void Draw(RenderWindow window)
+        public override void Draw(RenderTarget window)
         {
-            if (!this.IsVisible)
+            if (!IsVisible)
                 return;
 
-            if (this.Skin != null)
-            {
-                this.Skin.Draw(window);
-            }
+            if (Skin != null)
+                Skin.Draw(window);
         }
 
-        public void Move(float x, float y)
+        /// <summary>
+        /// TODO: Change skin into ISkin (represents any kind of graphical representation of the object, i-e anim, texture...).
+        /// GetSkin returns a texture from the ISkin.
+        /// It may be an animation, thus it returns the current frame.
+        /// </summary>
+        /// <returns></returns>
+        public virtual Texture GetSkinTexture()
         {
-            this.Move(new Vector2f(x, y));
+            return Skin.GetTexture();
+        }
+
+        public void Move(float xOffset, float yOffset)
+        {
+            Move(new Vector2f(xOffset, yOffset), BaseDrawable.DEFAULT_Z);
+        }
+
+        public void Move(float xOffset, float yOffset, int zOffset)
+        {
+            Move(new Vector2f(xOffset, yOffset), zOffset);
         }
 
         public void MoveTo(float x, float y)
         {
-            this.MoveTo(new Vector2f(x, y));
+            MoveTo(new Vector2f(x, y), Z);
+        }
+
+        public void MoveTo(float x, float y, int z)
+        {
+            MoveTo(new Vector2f(x, y), z);
         }
 
         public void Move(Vector2f move)
         {
-            this.MoveTo(this.Position + move);
+            MoveTo(Position + move, Z);
         }
-        
+
+        public void Move(Vector2f move, int z)
+        {
+            MoveTo(Position + move, z);
+        }
+
         public void MoveTo(Vector2f point)
+        {
+            MoveTo(point, Z);
+        }
+
+        public void MoveTo(Vector2f point, int z)
         {
             if (Map == null)
                 return;
 
-            Vector2f offset = point - Position;
-
             Map.Ground.RemoveObjectBoundingBoxes(this);
 
             Position = point;
+            Z = z;
 
+            UpdateBoundingBoxes();
+
+            Map.Ground.AddObjectBoundingBoxes(this);
+
+            Map.UpdateObjectEvents(this);
+        }
+
+        void UpdateBoundingBoxes()
+        {
             foreach (BBoundingBox BB in BBoundingBoxes)
                 BB.Update();
 
@@ -269,12 +477,6 @@ namespace BlazeraLib
             foreach (EventBoundingBoxType BBT in Enum.GetValues(typeof(EventBoundingBoxType)))
                 foreach (EBoundingBox BB in EventBoundingBoxes[BBT])
                     BB.Update();
-
-            Map.Ground.AddObjectBoundingBoxes(this);
-
-            Map.UpdateObjectEvents(this);
-
-            CallOnMove(offset);
         }
 
         void RefreshMapBoundingBoxes()
@@ -298,10 +500,16 @@ namespace BlazeraLib
             RefreshMapBoundingBoxes();
         }
 
-        public void AddEventBoundingBox(EBoundingBox BB, EventBoundingBoxType type)
+        public void AddEventBoundingBox(EBoundingBox BB, EventBoundingBoxType type = EventBoundingBoxType.External)
         {
             EventBoundingBoxes[type].Add(BB);
             RefreshMapBoundingBoxes();
+        }
+
+        public void AddEvent(EBoundingBox BB, ObjectEvent evt, EventBoundingBoxType type = EventBoundingBoxType.External)
+        {
+            BB.AddEvent(evt);
+            AddEventBoundingBox(BB, type);
         }
 
         public Boolean RemoveBoundingBox(BBoundingBox BB)
@@ -340,26 +548,40 @@ namespace BlazeraLib
             return true;
         }
 
-        public void SetMap(Map map, float x, float y)
+        public void ActivateEvents(bool eventsAreActive = true)
+        {
+            foreach (EBoundingBox BB in BodyBoundingBoxes)
+                BB.Activate(eventsAreActive);
+
+            foreach (EventBoundingBoxType EventBBType in Enum.GetValues(typeof(EventBoundingBoxType)))
+                foreach (EBoundingBox BB in EventBoundingBoxes[EventBBType])
+                    BB.Activate(eventsAreActive);
+
+            RefreshMapBoundingBoxes();
+        }
+
+        public virtual void SetMap(Map map, float x, float y, int z = BaseDrawable.DEFAULT_Z)
         {
             if (Map == map)
             {
-                MoveTo(x, y);
+                MoveTo(x, y, z);
 
                 return;
             }
 
-            if (this.Map != null)
+            if (Map != null)
             {
                 // Remove this from the old map
-                this.Map.RemoveObject(this);
+                Map.RemoveObject(this);
             }
             // Set the new map
-            this.Map = map;
+            Map = map;
             // Add this to the new map
-            this.Map.AddObject(this);
+            Map.AddObject(this);
             // Set this position to (x, y)
-            this.MoveTo(x, y);
+            MoveTo(x, y, z);
+
+            CallOnMapChange();
         }
 
         public virtual void SetMap(Map map, String warpPointName)
@@ -371,9 +593,9 @@ namespace BlazeraLib
 
             Vector2f position = warpPoint.Point;
 
-            SetMap(map, position.X, position.Y);
+            SetMap(map, position.X, position.Y, warpPoint.Z);
 
-            Direction = warpPoint.Direction;
+            MovingStateInfo.SetDirection(warpPoint.Direction);
         }
 
         public virtual void SetMap(String mapType, String warpPointName)
@@ -381,9 +603,35 @@ namespace BlazeraLib
             SetMap(Create.Map(mapType), warpPointName);
         }
 
+        public virtual void UnsetMap()
+        {
+            Map = null;
+        }
+
         public List<BBoundingBox> BBoundingBoxes { get; private set; }
         public List<EBoundingBox> BodyBoundingBoxes { get; private set; }
-        public Dictionary<EventBoundingBoxType, List<EBoundingBox>> EventBoundingBoxes { get; private set; }
+        Dictionary<EventBoundingBoxType, List<EBoundingBox>> EventBoundingBoxes { get; set; }
+
+        public List<EBoundingBox> GetEventBoundingBoxes(EventBoundingBoxType EBBType)
+        {
+            return EventBoundingBoxes[EBBType];
+        }
+
+        public List<EBoundingBox> GetActiveEventBoundingBoxes(EventBoundingBoxType EBBType)
+        {
+            return EventBoundingBoxes[EBBType];
+        }
+
+        public override Color Color
+        {
+            set
+            {
+                base.Color = value;
+
+                if (Skin != null)
+                    Skin.Color = Color;
+            }
+        }
 
         public override Vector2f Position
         {
@@ -392,21 +640,60 @@ namespace BlazeraLib
                 base.Position = value;
 
                 if (Skin != null)
-                    Skin.Position = Position;
+                    Skin.Position = DrawingPosition;
             }
         }
 
-        public Int32 Z { get; set; }
+        public override Vector2f BasePoint
+        {
+            set
+            {
+                base.BasePoint = value;
+
+                if (Skin != null)
+                    Skin.BasePoint = BasePoint;
+            }
+        }
+
+        public override int Z
+        {
+            set
+            {
+                base.Z = value;
+
+                if (Skin != null)
+                    Skin.Position = DrawingPosition;
+            }
+        }
+
+        public override int H
+        {
+            get
+            {
+                return 1 + (int)(Dimension.Y / GameData.TILE_SIZE);
+            }
+        }
+
+        public override Vector2f Dimension
+        {
+            get
+            {
+                if (Skin == null)
+                    return base.Dimension;
+
+                return Skin.Dimension;
+            }
+        }
 
         public Vector2I TPosition
         {
             get
             {
-                return Vector2I.FromVector2(this.Position) / GameDatas.TILE_SIZE;
+                return Vector2I.FromVector2(Position) / GameData.TILE_SIZE;
             }
             protected set
             {
-                this.Position = value.ToVector2() * GameDatas.TILE_SIZE;
+                Position = value.ToVector2() * GameData.TILE_SIZE;
             }
         }
 
@@ -414,11 +701,11 @@ namespace BlazeraLib
         {
             get
             {
-                return (int)this.Left / GameDatas.TILE_SIZE;
+                return (int)Left / GameData.TILE_SIZE;
             }
             set
             {
-                this.Left = value * GameDatas.TILE_SIZE;
+                Left = value * GameData.TILE_SIZE;
             }
         }
 
@@ -426,11 +713,11 @@ namespace BlazeraLib
         {
             get
             {
-                return (int)this.Top / GameDatas.TILE_SIZE;
+                return (int)Top / GameData.TILE_SIZE;
             }
             set
             {
-                this.Top = value * GameDatas.TILE_SIZE;
+                Top = value * GameData.TILE_SIZE;
             }
         }
 
@@ -438,11 +725,11 @@ namespace BlazeraLib
         {
             get
             {
-                return (int)this.Right / GameDatas.TILE_SIZE;
+                return (int)Right / GameData.TILE_SIZE;
             }
             set
             {
-                this.Right = value * GameDatas.TILE_SIZE;
+                Right = value * GameData.TILE_SIZE;
             }
         }
 
@@ -450,11 +737,11 @@ namespace BlazeraLib
         {
             get
             {
-                return (int)this.Bottom / GameDatas.TILE_SIZE;
+                return (int)Bottom / GameData.TILE_SIZE;
             }
             set
             {
-                this.Bottom = value * GameDatas.TILE_SIZE;
+                Bottom = value * GameData.TILE_SIZE;
             }
         }
 
@@ -464,244 +751,192 @@ namespace BlazeraLib
             private set;
         }
 
+        protected virtual string GetLogicalState()
+        {
+            return State;
+        }
+
+        public bool IsActive()
+        {
+            return GetLogicalState() != "Inactive";
+        }
+
         public Boolean IsMoving()
         {
-            return MovingState == MovingState.Walking
-                || MovingState == MovingState.Running;
+            return GetLogicalState() == "Moving";
         }
 
-        private Texture _skin;
-        public virtual Texture Skin
+        public bool TrySetState(string state)
         {
-            get
+            if (IsActive())
             {
-                return _skin;
-            }
-            set
-            {
-                _skin = value;
+                if (InternalTrySetState(state))
+                    return true;
 
-                if (Skin != null)
-                    Dimension = Skin.Dimension;
-            }
-        }
+                if (state != "Inactive")
+                    return State == state;
 
-        public Direction Direction
-        {
-            get;
-            set;
-        }
-
-        public virtual float Velocity
-        {
-            get;
-            set;
-        }
-
-        public Dictionary<Direction, Boolean> DirectionStates
-        {
-            get;
-            protected set;
-        }
-
-        public void ResetDirectionStates(Dictionary<Direction, bool> directionStates)
-        {
-            DirectionStates = directionStates;
-        }
-
-        public State State { get; private set; }
-        public MovingState MovingState { get; private set; }
-
-        public Boolean TrySetState(State state)
-        {
-            if (state != State.Moving)
-            {
-                if (State == State.Active)
-                    return state == State.Active;
-
-                if (State == State.Moving)
-                    StopMove();
-
-                State = state;
-
+                SetState("Inactive");
                 return true;
             }
 
-            if (State == State.Active)
-                return false;
-
-            State = state;
-
-            return true;
-        }
-
-        protected Boolean TrySetMovingStateFromState(State state)
-        {
-            if (!TrySetState(state))
-                return false;
-
-            if (State != State.Moving)
-            {
-                MovingState = MovingState.Normal;
-                return false;
-            }
-
-            if (MovingState == MovingState.Normal)
-                MovingState = RunningIsCalled ? MovingState.Running : MovingState.Walking;
+            SetState(state);
 
             return true;
         }
 
         /// <summary>
-        /// Forces the WorldObject.State property to be State.Inactive
+        /// Tries to set the current state checking in the table what are the enabled state transitions.
+        /// </summary>
+        /// <param name="state"></param>
+        /// <returns></returns>
+        bool InternalTrySetState(string state)
+        {
+            if (!JoinableStateTable.ContainsKey(State) ||
+                !JoinableStateTable[State].Contains(state))
+                return false;
+
+            SetState(state);
+
+            return true;
+        }
+
+        void SetState(string state)
+        {
+            State = state;
+
+            CallOnStateChange();
+
+            if (Skin == null)
+                return;
+
+            Skin.Stop();
+
+            Skin.SetCurrentState(GetDrawingState(State));
+
+            Skin.Start();
+        }
+
+        /// <summary>
+        /// Forces the WorldObject.State property to be "Inactive".
         /// </summary>
         public void Stop()
         {
-            State = State.Inactive;
+            SetState("Inactive");
         }
 
         public void StopMove()
         {
-            State = State.Inactive;
-            MovingState = MovingState.Normal;
-
-            foreach (Direction direction in Enum.GetValues(typeof(Direction)))
-                DirectionStates[direction] = false;
+            MovingStateInfo.ResetDirectionStates();
         }
 
-        public void SetRunning(Boolean running = true)
+        public void EnableDirection(Direction direction)
         {
-            RunningIsCalled = running;
+            MovingStateInfo.Enable(direction);
 
-            if (MovingState == MovingState.Normal)
-                return;
-
-            if (running)
-                MovingState = MovingState.Running;
-            else
-                MovingState = MovingState.Walking;
+            CallOnDirectionEnablement(direction);
         }
 
-        protected virtual void UpdateStates()
+        public void DisableDirection(Direction direction)
         {
-            if (this.DirectionStates[Direction.N] || this.DirectionStates[Direction.S] || this.DirectionStates[Direction.E] || this.DirectionStates[Direction.O])
-            {
-                if (!TrySetState(State.Moving))
-                    return;
+            MovingStateInfo.Enable(direction, false);
 
-                if (this.DirectionStates[Direction.N] && this.DirectionStates[Direction.E])
-                    this.Direction = Direction.NE;
-                else if (this.DirectionStates[Direction.N] && this.DirectionStates[Direction.O])
-                    this.Direction = Direction.NO;
-                else if (this.DirectionStates[Direction.S] && this.DirectionStates[Direction.E])
-                    this.Direction = Direction.SE;
-                else if (this.DirectionStates[Direction.S] && this.DirectionStates[Direction.O])
-                    this.Direction = Direction.SO;
-                else if (this.DirectionStates[Direction.N])
-                    this.Direction = Direction.N;
-                else if (this.DirectionStates[Direction.S])
-                    this.Direction = Direction.S;
-                else if (this.DirectionStates[Direction.E])
-                    this.Direction = Direction.E;
-                else if (this.DirectionStates[Direction.O])
-                    this.Direction = Direction.O;
-            }
-            else
-            {
-                TrySetState(State.Inactive);
-            }
+            CallOnDirectionDisablement(direction);
         }
 
-        public void EnableDirection(Direction dir)
+        public virtual Direction Direction
         {
-            this.DirectionStates[dir] = true;
-
-            CallOnDirectionEnablement(dir);
+            get { return MovingStateInfo.Direction; }
+            set { MovingStateInfo.SetDirection(value); }
         }
 
-        public void DisableDirection(Direction dir)
+        public float Velocity
         {
-            this.DirectionStates[dir] = false;
-
-            CallOnDirectionDisablement(dir);
+            get { return MovingStateInfo.GetVelocity(); }
+            set { MovingStateInfo.SetBaseVelocity(value); }
         }
 
-        public MoveInfo MoveInfo { get; set; }
+        public void Accept(IVisitor<WorldObject> visitor)
+        {
+            visitor.Visit(this);
+        }
+
+        public MoveHandler MoveHandler { get; set; }
     }
 
     #region MovesInfo
 
-    public class MoveInfo
+    public class MoveHandler
     {
         private const Int32 XDIR = 0;
         private const Int32 YDIR = 1;
 
-        public MoveInfo(WorldObject holder)
+        public MoveHandler(WorldObject holder)
         {
-            this.Holder = holder;
-            this.Directions = new Direction[2];
-            this.GoalX = true;
-            this.GoalY = true;
-            this.Path = new Queue<Vector2f>();
+            Holder = holder;
+            Directions = new Direction[2];
+            GoalX = true;
+            GoalY = true;
+            Path = new Queue<Vector2f>();
         }
 
         private void Init(Vector2f goal)
         {
-            this.Goal = goal;
+            Goal = goal;
 
-            if (this.Holder.Position.X == this.Goal.X)
+            if (Holder.Position.X == Goal.X)
             {
-                this.GoalX = true;
+                GoalX = true;
             }
             else
             {
-                this.GoalX = false;
+                GoalX = false;
             }
 
-            if (this.Holder.Position.Y == this.Goal.Y)
+            if (Holder.Position.Y == Goal.Y)
             {
-                this.GoalY = true;
+                GoalY = true;
             }
             else
             {
-                this.GoalY = false;
+                GoalY = false;
             }
 
-            if (!this.IsRunning)
+            if (!IsRunning)
             {
                 return;
             }
 
-            if (this.Holder.Position.X < this.Goal.X)
+            if (Holder.Position.X < Goal.X)
             {
-                this.Directions[XDIR] = Direction.E;
-                this.Holder.EnableDirection(Direction.E);
+                Directions[XDIR] = Direction.E;
+                Holder.EnableDirection(Direction.E);
             }
             else
             {
-                this.Directions[XDIR] = Direction.O;
-                this.Holder.EnableDirection(Direction.O);
+                Directions[XDIR] = Direction.O;
+                Holder.EnableDirection(Direction.O);
             }
 
-            if (this.Holder.Position.Y < this.Goal.Y)
+            if (Holder.Position.Y < Goal.Y)
             {
-                this.Directions[YDIR] = Direction.S;
-                this.Holder.EnableDirection(Direction.S);
+                Directions[YDIR] = Direction.S;
+                Holder.EnableDirection(Direction.S);
             }
             else
             {
-                this.Directions[YDIR] = Direction.N;
-                this.Holder.EnableDirection(Direction.N);
+                Directions[YDIR] = Direction.N;
+                Holder.EnableDirection(Direction.N);
             }
         }
 
         public void Update()
         {
-            if (!this.IsRunning)
+            if (!IsRunning)
             {
-                if (this.Path.Count > 0)
+                if (Path.Count > 0)
                 {
-                    this.Init(this.Path.Dequeue());
+                    Init(Path.Dequeue());
                 }
                 else
                 {
@@ -709,73 +944,73 @@ namespace BlazeraLib
                 }
             }
 
-            this.UpdateDirection();
+            UpdateDirection();
         }
 
         private void UpdateDirection()
         {
-            if (this.Directions[XDIR] == Direction.E)
+            if (Directions[XDIR] == Direction.E)
             {
-                if (this.Holder.Position.X >= this.Goal.X)
+                if (Holder.Position.X >= Goal.X)
                 {
-                    this.GoalX = true;
-                    this.Holder.DisableDirection(Direction.E);
-                    this.Holder.MoveTo(new Vector2f(this.Goal.X, this.Holder.Position.Y)); //illegal
+                    GoalX = true;
+                    Holder.DisableDirection(Direction.E);
+                    Holder.MoveTo(new Vector2f(Goal.X, Holder.Position.Y)); //illegal
                 }
             }
             else
             {
-                if (this.Holder.Position.X <= this.Goal.X)
+                if (Holder.Position.X <= Goal.X)
                 {
-                    this.GoalX = true;
-                    this.Holder.DisableDirection(Direction.O);
-                    this.Holder.MoveTo(new Vector2f(this.Goal.X, this.Holder.Position.Y));
+                    GoalX = true;
+                    Holder.DisableDirection(Direction.O);
+                    Holder.MoveTo(new Vector2f(Goal.X, Holder.Position.Y));
                 }
             }
 
-            if (this.Directions[YDIR] == Direction.S)
+            if (Directions[YDIR] == Direction.S)
             {
-                if (this.Holder.Position.Y >= this.Goal.Y)
+                if (Holder.Position.Y >= Goal.Y)
                 {
-                    this.GoalY = true;
-                    this.Holder.DisableDirection(Direction.S);
-                    this.Holder.MoveTo(new Vector2f(this.Holder.Position.X, this.Goal.Y));
+                    GoalY = true;
+                    Holder.DisableDirection(Direction.S);
+                    Holder.MoveTo(new Vector2f(Holder.Position.X, Goal.Y));
                 }
             }
             else
             {
-                if (this.Holder.Position.Y <= this.Goal.Y)
+                if (Holder.Position.Y <= Goal.Y)
                 {
-                    this.GoalY = true;
-                    this.Holder.DisableDirection(Direction.N);
-                    this.Holder.MoveTo(new Vector2f(this.Holder.Position.X, this.Goal.Y));
+                    GoalY = true;
+                    Holder.DisableDirection(Direction.N);
+                    Holder.MoveTo(new Vector2f(Holder.Position.X, Goal.Y));
                 }
             }
         }
 
         public void AddPoint(Vector2f point)
         {
-            this.Path.Enqueue(point);
+            Path.Enqueue(point);
         }
 
         public void AddPath(List<Vector2f> path)
         {
             foreach (Vector2f point in path)
             {
-                this.AddPoint(point);
+                AddPoint(point);
             }
         }
 
         public void AddPoint(Vector2I point)
         {
-            this.Path.Enqueue(new Vector2f(point.X * GameDatas.TILE_SIZE, point.Y * GameDatas.TILE_SIZE));
+            Path.Enqueue(new Vector2f(point.X * GameData.TILE_SIZE, point.Y * GameData.TILE_SIZE));
         }
 
         public void AddPath(List<Vector2I> path)
         {
             foreach (Vector2I point in path)
             {
-                this.AddPoint(point);
+                AddPoint(point);
             }
         }
 
@@ -783,8 +1018,8 @@ namespace BlazeraLib
         {
             get
             {
-                return !this.GoalX ||
-                       !this.GoalY;
+                return !GoalX ||
+                       !GoalY;
             }
         }
 
@@ -829,13 +1064,13 @@ namespace BlazeraLib
 
     #region DirectionInfo
 
-    public class DirectionInfo
+    public class DirectionHandler
     {
         const float PERCENT_CENTER_ZONE = 15F;
 
         WorldObject Holder;
 
-        public DirectionInfo(WorldObject holder)
+        public DirectionHandler(WorldObject holder)
         {
             Holder = holder;
         }

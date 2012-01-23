@@ -5,6 +5,9 @@ using System.Text;
 
 namespace BlazeraLib
 {
+    /// <summary>
+    /// Default console logger.
+    /// </summary>
     public static class Log
     {
         public static void Cl()

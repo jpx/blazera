@@ -68,5 +68,10 @@
         {
             return Holder.Map.Combat;
         }
+
+        public string GetName()
+        {
+            return Spell.Name;
+        }
     }
 }

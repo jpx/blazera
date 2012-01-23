@@ -89,16 +89,16 @@ namespace BlazeraLib
             if (!IsEnabled)
                 return;
 
-            FastCursorMode = Inputs.IsGameInput(InputType.Misc, null, false);
+            FastCursorMode = Inputs.IsGameInput(InputType.Misc, false);
             double cursorMoveDelay = FastCursorMode ? FAST_CURSOR_MOVE_DELAY : CRUSOR_MOVE_DELAY;
 
-            if (Inputs.IsGameInput(InputType.Left, null, false, cursorMoveDelay))
+            if (Inputs.IsGameInput(InputType.Left, false, cursorMoveDelay))
                 Move(new Vector2I(-MOVE_CELL_OFFSET, 0));
-            else if (Inputs.IsGameInput(InputType.Up, null, false, cursorMoveDelay))
+            else if (Inputs.IsGameInput(InputType.Up, false, cursorMoveDelay))
                 Move(new Vector2I(0, -MOVE_CELL_OFFSET));
-            else if (Inputs.IsGameInput(InputType.Right, null, false, cursorMoveDelay))
+            else if (Inputs.IsGameInput(InputType.Right, false, cursorMoveDelay))
                 Move(new Vector2I(MOVE_CELL_OFFSET, 0));
-            else if (Inputs.IsGameInput(InputType.Down, null, false, cursorMoveDelay))
+            else if (Inputs.IsGameInput(InputType.Down, false, cursorMoveDelay))
                 Move(new Vector2I(0, MOVE_CELL_OFFSET));
         }
 

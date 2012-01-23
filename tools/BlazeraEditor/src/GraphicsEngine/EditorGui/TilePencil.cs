@@ -37,7 +37,7 @@ namespace BlazeraEditor
         {
             Name = "TilePencil";
 
-            LockValue = (UInt32)GameDatas.TILE_SIZE;
+            LockValue = (UInt32)GameData.TILE_SIZE;
         }
 
         public void SetCurrentTile(Tile currentTile)
@@ -68,8 +68,8 @@ namespace BlazeraEditor
 
         protected override Boolean Paint(Vector2f point)
         {
-            Int32 x = (Int32)point.X / GameDatas.TILE_SIZE;
-            Int32 y = (Int32)point.Y / GameDatas.TILE_SIZE;
+            Int32 x = (Int32)point.X / GameData.TILE_SIZE;
+            Int32 y = (Int32)point.Y / GameData.TILE_SIZE;
 
             switch (Mode)
             {

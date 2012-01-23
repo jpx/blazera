@@ -32,39 +32,39 @@ namespace BlazeraLib
         protected ExtendedBox(EType type = DEFAULT_TYPE, Boolean noBorderMode = true, Int32 size = DEFAULT_SIZE) :
             base()
         {
-            this.Size = size;
-            this.CurrentPointer = 0;
+            Size = size;
+            CurrentPointer = 0;
 
-            this.ExtendedItems = new List<Widget>();
+            ExtendedItems = new List<Widget>();
 
-            this.Type = type;
+            Type = type;
 
-            if (this.Type == EType.Vertical)
+            if (Type == EType.Vertical)
             {
-                this.VMainBox = new VAutoSizeBox(noBorderMode);
-                this.AddWidget(this.VMainBox);
+                VMainBox = new VAutoSizeBox(noBorderMode);
+                AddWidget(VMainBox);
             }
             else
             {
-                this.HMainBox = new HAutoSizeBox(noBorderMode);
-                this.AddWidget(this.HMainBox);
+                HMainBox = new HAutoSizeBox(noBorderMode);
+                AddWidget(HMainBox);
             }
         }
 
         public void AddItem(Widget widget)
         {
-            this.ExtendedItems.Add(widget);
+            ExtendedItems.Add(widget);
 
-            if (this.GetCurrentSize() <= this.Size)
-                this.RefreshBox();
+            if (GetCurrentSize() <= Size)
+                RefreshBox();
         }
 
         public Boolean RemoveItem(Widget widget)
         {
-            if (!this.ExtendedItems.Remove(widget))
+            if (!ExtendedItems.Remove(widget))
                 return false;
 
-            this.CurrentPointer = 0;
+            CurrentPointer = 0;
 
             if (VMainBox != null)
                 VMainBox.RemoveItem(widget);
@@ -72,34 +72,34 @@ namespace BlazeraLib
             if (HMainBox != null)
                 HMainBox.RemoveItem(widget);
 
-            this.RefreshBox();
+            RefreshBox();
 
             return true;
         }
 
         public void Clear()
         {
-            this.CurrentPointer = 0;
+            CurrentPointer = 0;
 
-            this.ExtendedItems.Clear();
-            if (this.HMainBox == null)
-                this.VMainBox.Clear();
+            ExtendedItems.Clear();
+            if (HMainBox == null)
+                VMainBox.Clear();
             else
-                this.HMainBox.Clear();
+                HMainBox.Clear();
         }
 
         public void SetCurrentPointer(Int32 pointer)
         {
-            this.CurrentPointer = pointer;
+            CurrentPointer = pointer;
 
-            if (this.ExtendedItems.Count > 0 &&
-                this.CurrentPointer >= this.ExtendedItems.Count - this.GetCurrentSize())
-                this.CurrentPointer = this.ExtendedItems.Count - this.GetCurrentSize();
+            if (ExtendedItems.Count > 0 &&
+                CurrentPointer >= ExtendedItems.Count - GetCurrentSize())
+                CurrentPointer = ExtendedItems.Count - GetCurrentSize();
 
-            if (this.CurrentPointer < 0)
-                this.CurrentPointer = 0;
+            if (CurrentPointer < 0)
+                CurrentPointer = 0;
 
-            this.RefreshBox();
+            RefreshBox();
         }
 
         public override void Open(OpeningInfo openingInfo = null)
@@ -142,33 +142,33 @@ namespace BlazeraLib
 
         private void RefreshBox()
         {
-            if (this.HMainBox == null)
+            if (HMainBox == null)
             {
-                if (this.CurrentPointer + this.GetCurrentSize() < this.Size &&
-                !(this.VMainBox.GetCount() < this.GetCurrentSize()))
+                if (CurrentPointer + GetCurrentSize() < Size &&
+                !(VMainBox.GetCount() < GetCurrentSize()))
                     return;
 
-                this.VMainBox.Clear();
+                VMainBox.Clear();
 
                 List<Widget> newList = new List<Widget>();
-                for (Int32 count = this.CurrentPointer; count < this.CurrentPointer + this.GetCurrentSize(); count++)
-                    newList.Add(this.ExtendedItems[count]);
+                for (Int32 count = CurrentPointer; count < CurrentPointer + GetCurrentSize(); count++)
+                    newList.Add(ExtendedItems[count]);
 
-                this.VMainBox.AddItem(newList, 0, HAlignment.Left);
+                VMainBox.AddItem(newList, 0, HAlignment.Left);
             }
             else
             {
-                if (this.CurrentPointer + this.GetCurrentSize() < this.Size &&
-                !(this.HMainBox.GetCount() < this.GetCurrentSize()))
+                if (CurrentPointer + GetCurrentSize() < Size &&
+                !(HMainBox.GetCount() < GetCurrentSize()))
                     return;
 
-                this.HMainBox.Clear();
+                HMainBox.Clear();
 
                 List<Widget> newList = new List<Widget>();
-                for (Int32 count = this.CurrentPointer; count < this.CurrentPointer + this.GetCurrentSize(); count++)
-                    newList.Add(this.ExtendedItems[count]);
+                for (Int32 count = CurrentPointer; count < CurrentPointer + GetCurrentSize(); count++)
+                    newList.Add(ExtendedItems[count]);
 
-                this.HMainBox.AddItem(newList, 0, VAlignment.Top);
+                HMainBox.AddItem(newList, 0, VAlignment.Top);
             }
         }
 
@@ -176,32 +176,32 @@ namespace BlazeraLib
         {
             get
             {
-                if (this.VMainBox == null && this.HMainBox == null)
+                if (VMainBox == null && HMainBox == null)
                     return base.Dimension;
 
-                if (this.HMainBox == null)
-                    return this.VMainBox.BackgroundDimension;
+                if (HMainBox == null)
+                    return VMainBox.BackgroundDimension;
 
-                return this.HMainBox.BackgroundDimension;
+                return HMainBox.BackgroundDimension;
             }
         }
 
         private Int32 GetCurrentSize()
         {
-            return Math.Min(this.ExtendedItems.Count, this.Size);
+            return Math.Min(ExtendedItems.Count, Size);
         }
 
         public Int32 GetTotalSize()
         {
-            return this.ExtendedItems.Count;
+            return ExtendedItems.Count;
         }
 
         public Boolean CurrentContains(Widget widget)
         {
-            if (this.HMainBox == null)
-                return this.VMainBox.Contains(widget);
+            if (HMainBox == null)
+                return VMainBox.Contains(widget);
 
-            return this.HMainBox.Contains(widget);
+            return HMainBox.Contains(widget);
         }
     }
 
@@ -574,18 +574,18 @@ namespace BlazeraLib
         public MultiBox(Int32 vSize = DEFAULT_SIZE, Int32 hSize = DEFAULT_SIZE) :
             base()
         {
-            this.VSize = vSize;
-            this.CurrentVPointer = 0;
+            VSize = vSize;
+            CurrentVPointer = 0;
 
-            this.HSize = hSize;
-            this.CurrentMaxHSize = 0;
-            this.CurrentMinHSize = 0;
-            this.CurrentHPointer = 0;
+            HSize = hSize;
+            CurrentMaxHSize = 0;
+            CurrentMinHSize = 0;
+            CurrentHPointer = 0;
 
-            this.ExtendedItems = new List<List<Widget>>();
+            ExtendedItems = new List<List<Widget>>();
 
-            this.MainBox = new VAutoSizeBox(true, null, 0F);
-            this.AddWidget(this.MainBox);
+            MainBox = new VAutoSizeBox(true, null, 0F);
+            AddWidget(MainBox);
         }
 
         public void AddItem(Int32 row, Widget widget)
@@ -663,12 +663,12 @@ namespace BlazeraLib
 
         void UpdateVPointer()
         {
-            if (this.ExtendedItems.Count > 0 &&
-                this.CurrentVPointer >= this.ExtendedItems.Count - this.GetCurrentVSize())
-                this.CurrentVPointer = this.ExtendedItems.Count - this.GetCurrentVSize();
+            if (ExtendedItems.Count > 0 &&
+                CurrentVPointer >= ExtendedItems.Count - GetCurrentVSize())
+                CurrentVPointer = ExtendedItems.Count - GetCurrentVSize();
 
-            if (this.CurrentVPointer < 0)
-                this.CurrentVPointer = 0;
+            if (CurrentVPointer < 0)
+                CurrentVPointer = 0;
 
             UpdateCurrentMinHSize();
             UpdateCurrentMaxHSize();
@@ -676,14 +676,14 @@ namespace BlazeraLib
 
         void UpdateHPointer()
         {
-            if (this.CurrentHPointer < 0)
-                this.CurrentHPointer = 0;
+            if (CurrentHPointer < 0)
+                CurrentHPointer = 0;
         }
 
         public void SetCurrentPointers(Int32 vPointer, Int32 hPointer)
         {
-            this.SetCurrentVPointer(vPointer);
-            this.SetCurrentHPointer(hPointer);
+            SetCurrentVPointer(vPointer);
+            SetCurrentHPointer(hPointer);
         }
 
         public void SetCurrentVPointer(Int32 pointer)
@@ -691,11 +691,11 @@ namespace BlazeraLib
             if (CurrentVPointer == pointer)
                 return;
 
-            this.CurrentVPointer = pointer;
+            CurrentVPointer = pointer;
 
             UpdateVPointer();
 
-            this.RefreshBox();
+            RefreshBox();
         }
 
         public void SetCurrentHPointer(Int32 pointer)
@@ -703,19 +703,19 @@ namespace BlazeraLib
             if (CurrentHPointer == pointer)
                 return;
 
-            this.CurrentHPointer = pointer;
+            CurrentHPointer = pointer;
 
             UpdateHPointer();
 
-            this.RefreshBox();
+            RefreshBox();
         }
 
         private void RefreshBox()
         {
-            this.MainBox.Clear();
+            MainBox.Clear();
 
             Int32 vOffset = 0;
-            for (Int32 vCount = this.CurrentVPointer; vCount < this.CurrentVPointer + this.GetCurrentVSize() + vOffset; vCount++)
+            for (Int32 vCount = CurrentVPointer; vCount < CurrentVPointer + GetCurrentVSize() + vOffset; vCount++)
             {
                 List<Widget> newList = GetItems(vCount, CurrentHPointer, GetCurrentHSize(vCount));
 
@@ -791,7 +791,7 @@ namespace BlazeraLib
             if (ExtendedItems.Count == 0)
                 return;
 
-            this.CurrentMinHSize = ExtendedItems[CurrentVPointer].Count;
+            CurrentMinHSize = ExtendedItems[CurrentVPointer].Count;
 
             for (Int32 vCount = CurrentVPointer + 1; vCount < CurrentVPointer + GetCurrentVSize(); ++vCount)
                 if (ExtendedItems[vCount].Count < CurrentMinHSize)
@@ -803,7 +803,7 @@ namespace BlazeraLib
             if (ExtendedItems.Count == 0)
                 return;
 
-            this.CurrentMaxHSize = ExtendedItems[CurrentVPointer].Count;
+            CurrentMaxHSize = ExtendedItems[CurrentVPointer].Count;
 
             for (Int32 vCount = CurrentVPointer + 1; vCount < CurrentVPointer + GetCurrentVSize(); ++vCount)
                 if (ExtendedItems[vCount].Count > CurrentMaxHSize)

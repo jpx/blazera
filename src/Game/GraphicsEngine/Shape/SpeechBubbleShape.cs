@@ -327,7 +327,7 @@ namespace BlazeraLib
             }
         }
 
-        public void Draw(RenderWindow window)
+        public void Draw(RenderTarget window)
         {
             if (ShadowMode)
                 window.Draw(ShadowEffect);
